@@ -22,11 +22,91 @@ model User {
 }
 
 model Account {
-  id            Int      @id @default(autoincrement())
-  account_email String   @unique
+  id            Int            @id @default(autoincrement())
+  account_email String         @unique
   user_id       Int
-  user          User     @relation(fields: [user_id], references: [id])
-  status        Boolean  @default(true)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  user          User           @relation(fields: [user_id], references: [id])
+  status        Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  Subscription  Subscription[]
+
+  @@map("accounts")
+}
+
+model Categories_service {
+  id         Int       @id @default(autoincrement())
+  name       String
+  status     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  services   Service[]
+
+  @@map("categories_services")
+}
+
+model Service {
+  id                     Int                @id @default(autoincrement())
+  name                   String
+  categories_services_id Int
+  categories_services    Categories_service @relation(fields: [categories_services_id], references: [id])
+  status                 Boolean            @default(true)
+  created_at             DateTime           @default(now())
+  updated_at             DateTime           @updatedAt
+  subcription            Subscription[]
+
+  @@map("services")
+}
+
+model Subscription {
+  id                     Int                  @id @default(autoincrement())
+  user_name_subscription String?
+  services_id            Int
+  account_id             Int
+  services               Service              @relation(fields: [services_id], references: [id])
+  accounts               Account              @relation(fields: [account_id], references: [id])
+  status                 Boolean              @default(true)
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+  Subscription_detail    Subscription_detail?
+
+  @@map("subscriptions")
+}
+
+model Subscription_detail {
+  id                Int                @id @default(autoincrement())
+  subcription_id    Int                @unique
+  subcription       Subscription       @relation(fields: [subcription_id], references: [id])
+  password          String?
+  secret_question   String?
+  connect_google    Boolean            @default(false)
+  connect_github    Boolean            @default(false)
+  connect_microsoft Boolean            @default(false)
+  other_connect     String?
+  status            Boolean            @default(true)
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  Recovery_methods  Recovery_methods[]
+
+  @@map("subscriptions_details")
+}
+
+enum Method_type {
+  password_recovery
+  email_recovery
+  token_recovery
+  phone_recovery
+}
+
+model Recovery_methods {
+  id                     Int                 @id @default(autoincrement())
+  subscription_detail_id Int
+  subcription_detail     Subscription_detail @relation(fields: [subscription_detail_id], references: [id])
+  method_type            Method_type
+  method_value           String?
+  status                 Boolean             @default(true)
+  created_at             DateTime            @default(now())
+  updated_at             DateTime            @updatedAt
+
+  @@map("recovery_methods")
 }
