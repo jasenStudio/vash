@@ -1,0 +1,18 @@
+POST http://localhost:3000/api/users/new
+Content-Type: application/json
+
+{
+    "email":"jsalgadoecheverria19@gmail.com",
+    "password":"123456",
+    "user_name":"jorge0191"
+}
+
+###
+POST http://localhost:3000/api/auth/sign-up
+Content-Type: application/json
+
+{
+    "email":"jsalgadoe@gmail.com",
+    "password":"123456",
+    "user_name":"jorge10"
+}
