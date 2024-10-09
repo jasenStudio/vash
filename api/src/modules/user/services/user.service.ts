@@ -6,7 +6,7 @@ import { CreateUserDTO } from '../dto/user.dto';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
   async getUserByEmailOrUserName(search: string) {
-    return this.userRepository.getUserByTerm(search);
+    return await this.userRepository.getUserByTerm(search);
   }
 
   async createUser(userPayload: CreateUserDTO) {

@@ -7,8 +7,8 @@ import { CreateUserDTO } from '../dto/user.dto';
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserByTerm(search: string): Promise<User[]> {
-    return this.prisma.user.findMany({
+  async getUserByTerm(search: string) {
+    return this.prisma.user.findFirst({
       where: { OR: [{ email: search }, { user_name: search }] },
     });
   }

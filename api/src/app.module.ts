@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common';
+import {
+  Logger,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -8,6 +14,8 @@ import * as Joi from 'joi';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 
+import { ValidateToken } from './common/middlewares/validateJwt.middleware';
+import { JwtHelper } from './common/helpers/helperJwt';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +31,13 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtHelper],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ValidateToken).forRoutes('users', {
+      path: 'auth/renew',
+      method: RequestMethod.GET,
+    });
+  }
+}

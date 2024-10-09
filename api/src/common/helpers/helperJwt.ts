@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import config from '../../config/configuration';
@@ -15,14 +15,14 @@ export class JwtHelper {
     return this.jwtService.sign(payload);
   }
 
-  verifyToken(token: string): any {
+  async verifyToken(token: string) {
     try {
-      return this.jwtService.verifyAsync(token, {
+      const verify = await this.jwtService.verifyAsync(token, {
         secret: this.__config.api_secret,
       });
+      return verify;
     } catch (error) {
-      console.log(error);
-      throw new Error('Token inválido');
+      throw new ForbiddenException('Token invalido');
     }
   }
 
