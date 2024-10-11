@@ -28,7 +28,7 @@ export class ValidateToken implements NestMiddleware {
   }
 
   private getToken(token: string) {
-    return token.length !== 0 && token.startsWith('Bearer ')
+    return token.length > 0 && token.startsWith('Bearer ')
       ? token.split(' ')[1]
       : null;
   }

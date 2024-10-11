@@ -1,3 +1,30 @@
+
+
+###* auth module
+
+###
+POST http://localhost:3000/api/auth/sign-in
+Content-Type: application/json
+
+{
+ 
+    "password":"123456",
+    "user_name":"jsalgado@gmail.com"
+}
+
+###
+GET http://localhost:3000/api/auth/renew
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImVtYWlsIjoianNhbGdhZG9lY2hlQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg0NDcwMDUsImV4cCI6MTcyODQ1NDIwNX0.jGlJN6gJISgKC8dgZqzEmMBQ9RPhqzgVcCEvtFwH1wU
+
+{
+ 
+    "password":"123456",
+    "user_name":"jsalgadoeche@gmail.com"
+}
+
+###*users module
+
 POST http://localhost:3000/api/users/new
 Content-Type: application/json
 
@@ -9,7 +36,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImVtYWlsIjoianNhbGdhZG9lY2hlQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg0NDI1NDgsImV4cCI6MTcyODQ0OTc0OH0.maA2tdetSj-9oU6oXParFAd2y3zVursPkHLeX4O0i7w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImVtYWlsIjoianNhbGdhZG9AZ21haWwuY29tIiwiaXNfYWRtaW4iOnRydWUsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzI4NjA3MzUxLCJleHAiOjE3Mjg2MTQ1NTF9.heC4YScfKxd4ZoDcMROv6QQgbBW9t_srg9Zf6ko95tU
 
 {
    
@@ -25,23 +52,3 @@ Content-Type: application/json
     "user_name":"jorge99"
 }
 
-###
-POST http://localhost:3000/api/auth/sign-in
-Content-Type: application/json
-
-{
- 
-    "password":"123456",
-    "user_name":"jsalgadoeche@gmail.com"
-}
-
-###
-GET http://localhost:3000/api/auth/renew
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImVtYWlsIjoianNhbGdhZG9lY2hlQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg0NDcwMDUsImV4cCI6MTcyODQ1NDIwNX0.jGlJN6gJISgKC8dgZqzEmMBQ9RPhqzgVcCEvtFwH1wU
-
-{
- 
-    "password":"123456",
-    "user_name":"jsalgadoeche@gmail.com"
-}
