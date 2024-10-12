@@ -8,14 +8,20 @@ import {
 } from 'class-validator';
 
 export class LoginUserDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'johndoe@example.com',
+    description: 'El correo del usuario',
+  })
   @IsNotEmpty()
   @MinLength(4, {
     message: 'El usuario debe tener al menos 4 caracteres',
   })
   readonly user_name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '123456',
+    description: 'La contraseña del usuario',
+  })
   @IsNotEmpty({ message: 'La contraseña es obligatoria' })
   @MinLength(6, {
     message: 'La contraseña debe tener al menos 6 caracteres',
@@ -24,7 +30,10 @@ export class LoginUserDto {
 }
 
 export class CreateAuthUserDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'El correo del usuario',
+  })
   @IsEmail({}, { message: 'El correo es obligatorio' })
   readonly email: string;
 

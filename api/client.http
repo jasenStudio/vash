@@ -52,3 +52,6 @@ Content-Type: application/json
     "user_name":"jorge99"
 }
 
+###* module services
+GET http://localhost:3000/api/services
+Content-Type: application/json

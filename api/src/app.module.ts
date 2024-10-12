@@ -16,6 +16,7 @@ import { AuthModule } from './modules/auth/auth.module';
 
 import { ValidateToken } from './common/middlewares/validateJwt.middleware';
 import { JwtHelper } from './common/helpers/helperJwt';
+import { ServiceModule } from './modules/services_platform_web/service.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +30,7 @@ import { JwtHelper } from './common/helpers/helperJwt';
     }),
     UserModule,
     AuthModule,
+    ServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtHelper],
