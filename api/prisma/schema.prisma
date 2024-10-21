@@ -76,7 +76,7 @@ model Subscription {
 model Subscription_detail {
   id                Int                @id @default(autoincrement())
   subcription_id    Int                @unique
-  subcription       Subscription       @relation(fields: [subcription_id], references: [id])
+  subcription       Subscription       @relation(fields: [subcription_id], references: [id], onDelete: Cascade)
   password          String?
   secret_question   String?
   connect_google    Boolean            @default(false)
@@ -101,7 +101,7 @@ enum Method_type {
 model Recovery_methods {
   id                     Int                 @id @default(autoincrement())
   subscription_detail_id Int
-  subcription_detail     Subscription_detail @relation(fields: [subscription_detail_id], references: [id])
+  subcription_detail     Subscription_detail @relation(fields: [subscription_detail_id], references: [id], onDelete: Cascade)
   method_type            Method_type
   method_value           String?
   status                 Boolean             @default(true)

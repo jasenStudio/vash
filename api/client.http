@@ -9,7 +9,17 @@ Content-Type: application/json
 {
  
     "password":"123456",
-    "user_name":"jsalgado@gmail.com"
+    "user_name":"jsalgadoecheverria@gmail.com"
+}
+
+###
+POST http://localhost:3000/api/auth/sign-in
+Content-Type: application/json
+
+{
+ 
+    "password":"123456",
+    "user_name":"jsalgadoe@gmail.com"
 }
 
 ###
@@ -55,3 +65,100 @@ Content-Type: application/json
 ###* module services
 GET http://localhost:3000/api/services
 Content-Type: application/json
+
+
+###* module subcription
+POST http://localhost:3000/api/subcription/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImVtYWlsIjoianNhbGdhZG9AZ21haWwuY29tIiwiaXNfYWRtaW4iOnRydWUsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzI4NzgwMDY3LCJleHAiOjE3Mjg3ODcyNjd9.YHJTnnlOISbhNNe0f7_07aVGP5xs-ZYYmAnHLmRnYK4
+
+{
+    "account_id":1,
+    "services_id":1,
+    "subcriptionDetail":{}
+}
+
+###
+GET http://localhost:3000/api/subcription
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoianNhbGdhZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5MjY1NzYsImV4cCI6MTcyODkzMzc3Nn0.F_xX1t7DGDx9TeTje4HZ_7QPIcavUohR6DSrs3O2uDU
+
+{}
+
+
+###
+GET http://localhost:3000/api/subcription/7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoianNhbGdhZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5MjY1NzYsImV4cCI6MTcyODkzMzc3Nn0.F_xX1t7DGDx9TeTje4HZ_7QPIcavUohR6DSrs3O2uDU
+
+{}
+
+###
+PUT http://localhost:3000/api/subcription/7/edit
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoianNhbGdhZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5MjY1NzYsImV4cCI6MTcyODkzMzc3Nn0.F_xX1t7DGDx9TeTje4HZ_7QPIcavUohR6DSrs3O2uDU
+
+{
+
+ "user_name_subscription":"",
+ "services_id": 1,
+ "account_id": 1
+
+}
+
+###
+PUT http://localhost:3000/api/subcription/2/subcription-detail/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5NjM2NTAsImV4cCI6MTcyODk3MDg1MH0.ywuwYKNARGAbmX8Wp2jqRBH5_mAwDRFsbYbIjY1GMjc
+
+{
+  "password":"12345"
+}
+###
+DELETE http://localhost:3000/api/subcription/7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5MjkxMTksImV4cCI6MTcyODkzNjMxOX0.uXjPtr9SH2tAo_GykQe34j7q3xyuGshbPjCu9q1d5Ig
+
+{}
+
+###* Metodos de recuperaciones
+
+###* Todos los metodos de recuperacion asociados a la subscripción
+GET http://localhost:3000/api/subcriptions-details/3/methods-recovery
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MjkwNDc4OTgsImV4cCI6MTcyOTA1NTA5OH0.y0189f4_vBJeq4x8iXyCFWjTLSTtNtEfe8wuAXIXUnw
+
+{}
+
+###* Crear los metodos de recuperación basado en los detalles de la subscripción
+POST http://localhost:3000/api/subcriptions-details/1/methods-recovery/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MjkwMzM1MDcsImV4cCI6MTcyOTA0MDcwN30.J0XVxxoOsD45f_wNdtNHnBRwLV9E56T4YNs2hlrFvpE
+
+{
+
+  "method_type":"email_recovery",
+  "method_value":"pepito@gmail.com"
+}
+
+
+###* actualizar metodo recuperacion
+
+PUT http://localhost:3000/api/subcriptions-details/2/methods-recovery/6/edit
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MjkwNDA3OTEsImV4cCI6MTcyOTA0Nzk5MX0.FXqDS1kdcAp66uyR_1bYCjtk02aIQdqnZaC46dJOZ-g
+
+{
+"method_type": "token_recovery",
+    "method_value": "pepito@gmail.com"
+}
+
+
+###
+DELETE http://localhost:3000/api/subcriptions-details/1/methods-recovery/6
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MjkwNDQ5NzYsImV4cCI6MTcyOTA1MjE3Nn0.xi-WnYIQoB7DQaz5MIfcbxAn-us7BD_AGGYwl05bMAA
+
+{
+
+}

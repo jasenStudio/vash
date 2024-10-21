@@ -11,13 +11,10 @@ import { JwtHelper } from '../helpers/helperJwt';
 export class ValidateToken implements NestMiddleware {
   constructor(private JwtHelper: JwtHelper) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    const authorization = req.header('authorization');
+    const authorization = req.headers?.authorization;
+
     const token = this.getToken(authorization);
-    if (!token) {
-      throw new UnauthorizedException(
-        'Token de autentificacion falta o es invalido ',
-      );
-    }
+
     try {
       const payload = await this.JwtHelper.verifyToken(token);
       req['user'] = payload;
@@ -28,8 +25,13 @@ export class ValidateToken implements NestMiddleware {
   }
 
   private getToken(token: string) {
-    return token.length > 0 && token.startsWith('Bearer ')
-      ? token.split(' ')[1]
-      : null;
+    if (token === undefined)
+      throw new UnauthorizedException(
+        'Token de autentificacion falta o es invalido ',
+      );
+
+    if (token.startsWith('Bearer ')) {
+      return token.split(' ')[1];
+    }
   }
 }

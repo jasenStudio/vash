@@ -18,6 +18,8 @@ import { ValidateToken } from './common/middlewares/validateJwt.middleware';
 import { JwtHelper } from './common/helpers/helperJwt';
 import { ServiceModule } from './modules/services_platform_web/service.module';
 import { AccountModule } from './modules/account/account.module';
+import { SubcriptionService } from './modules/subcription/services/subcription.service';
+import { SubcriptionModule } from './modules/subcription/subcription.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,15 +35,18 @@ import { AccountModule } from './modules/account/account.module';
     AuthModule,
     ServiceModule,
     AccountModule,
+    SubcriptionModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtHelper],
+  providers: [AppService, JwtHelper, SubcriptionService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ValidateToken).forRoutes('users', {
-      path: 'auth/renew',
-      method: RequestMethod.GET,
-    });
+    consumer
+      .apply(ValidateToken)
+      .forRoutes('users', 'subcription', 'subcriptions-details', {
+        path: 'auth/renew',
+        method: RequestMethod.GET,
+      });
   }
 }

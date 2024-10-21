@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Response } from 'express';
+import { Request, Response, request } from 'express';
 // import { PrismaErrorMessages } from '../constants/prisma-error-codes';
 
 @Catch(PrismaClientKnownRequestError)
@@ -14,7 +14,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
   catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    console.log(exception.code);
+
     const { message, statusCode, field } = codeMessage(exception);
 
     response.status(statusCode).json({
@@ -35,6 +35,16 @@ const codeMessage = (exception) => {
       statusCode = HttpStatus.BAD_REQUEST;
       field = exception.meta?.target;
       message = `El campo ${field} ya está en uso`;
+      break;
+    case 'P2025':
+      statusCode = HttpStatus.BAD_REQUEST;
+      field = exception.meta?.target || '';
+      message = `El recurso solicitado no está disponible,no existe o no tiene permiso`;
+      break;
+    case 'P2003':
+      statusCode = HttpStatus.NOT_FOUND;
+      field = exception.meta?.target;
+      message = `El campo de referencia no existe`;
       break;
 
     default:
