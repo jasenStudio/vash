@@ -1,11 +1,13 @@
 import "./App.css";
-import { Button } from "@/components/ui/button";
+
 import { AppRoutes } from "./routes/AppRoutes";
+import { ThemeProvider } from "./providers/theme-provider";
 export const VashApp = () => {
   return (
     <>
-      <AppRoutes />{" "}
-      <Button className="bg-emerald-500 hover:bg-emerald-800">Click me</Button>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AppRoutes />{" "}
+      </ThemeProvider>
     </>
   );
 };
