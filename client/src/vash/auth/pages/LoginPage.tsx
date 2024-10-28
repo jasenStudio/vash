@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 export const LoginPage: FC = () => {
-  const [password, setPassword] = useState(false);
+  const [password, setPassword] = useState(true);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
