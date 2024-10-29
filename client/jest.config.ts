@@ -6,6 +6,7 @@ export default {
     // process `*.tsx` files with `ts-jest`
   },
   moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
     "\\.(gif|ttf|eot|svg|png)$": "<rootDir>/test/__ mocks __/fileMock.js",
   },
 };
