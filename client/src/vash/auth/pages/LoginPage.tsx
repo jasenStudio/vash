@@ -47,7 +47,10 @@ export const LoginPage: FC = () => {
         <div className="pl-10 mb-10">
           <h2 className="text-4xl font-bold">Iniciar Sesión</h2>
           <span>¿No tienes una cuenta?</span>
-          <Link className="ml-2 text-gray-400 font-semibold " to="/sign-up">
+          <Link
+            className="ml-2 text-gray-700 dark:text-gray-400 font-semibold "
+            to="/sign-up"
+          >
             Crear Cuenta
           </Link>
         </div>
