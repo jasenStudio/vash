@@ -1,9 +1,14 @@
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import { zodResolver } from "@hookform/resolvers/zod";
+//* react & react router dom
 import { FC, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
+//* zod & react hook form
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+//* shacdn/ui
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,13 +19,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeClosed, UserRound } from "lucide-react";
-import { Link } from "react-router-dom";
 
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  password: z.string(),
-});
+//* icons
+import { Eye, EyeClosed, UserRound } from "lucide-react";
+
+//* custom import
+import { formLoginSchema } from "@/constants";
+
+const formSchema = formLoginSchema;
 
 export const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
@@ -31,7 +37,6 @@ export const LoginPage: FC = () => {
       password: "",
     },
   });
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -40,7 +45,7 @@ export const LoginPage: FC = () => {
 
   return (
     <>
-      <div className="w-full sm:w-[450px]">
+      <div className="w-full sm:w-[450px] show-title">
         <div className="absolute ml-10 right-5 top-5">
           <ModeToggle />
         </div>
@@ -65,22 +70,20 @@ export const LoginPage: FC = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel id="username">
-                    Usuario o Correo Electrónico
-                  </FormLabel>
+                  <FormLabel>Usuario</FormLabel>
                   <FormControl>
-                    {/* <UserRound className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" /> */}
                     <Input
-                      type="email"
+                      placeholder="Ej: johndoe-019 o johndoe@contosos.com"
                       iconLeft
                       icon={
                         <UserRound className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       }
-                      placeholder="xxxxx@gmail.com"
                       {...field}
+                      id="username"
                       className="border-slate-400 py-7 rounded-sm"
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -92,12 +95,12 @@ export const LoginPage: FC = () => {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-1">
                   <FormLabel id="password">Contraseña</FormLabel>
                   <FormControl>
                     <Input
                       type={password ? "password" : "text"}
-                      placeholder="xxxxxxxxxxx"
+                      placeholder={password ? "xxxxxxxx" : "Ej:avSV-123"}
                       iconLeft
                       icon={
                         !password ? (
@@ -120,13 +123,14 @@ export const LoginPage: FC = () => {
                       }
                       {...field}
                       className="border-slate-400 py-7 rounded-sm"
-                      style={{}}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* button */}
             <Button
               type="submit"
               className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
