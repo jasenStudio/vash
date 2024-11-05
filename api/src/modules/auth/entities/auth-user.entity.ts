@@ -7,6 +7,15 @@ export interface auth_user {
 }
 
 export interface registerUserResponse {
+  ok?: boolean;
   user: auth_user;
   token: string;
+  expiration?: string;
+}
+
+export interface loginUserResponse {
+  ok?: boolean;
+  user: auth_user;
+  token: string;
+  expiration?: string;
 }
