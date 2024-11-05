@@ -10,7 +10,7 @@ export const AuthRouter = () => {
         <Route path="sign-in" element={<LoginPage />} />
         <Route path="sign-up" element={<RegisterPage />} />
 
-        <Route path="/*" element={<Navigate to="sign-in" />} />
+        <Route path="/*" element={<Navigate to="/sign-in" />} />
       </Routes>
     </AuthLayout>
   );

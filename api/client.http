@@ -25,13 +25,9 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/api/auth/renew
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTksImVtYWlsIjoianNhbGdhZG9lY2hlQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg0NDcwMDUsImV4cCI6MTcyODQ1NDIwNX0.jGlJN6gJISgKC8dgZqzEmMBQ9RPhqzgVcCEvtFwH1wU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzA2Njc0MDMsImV4cCI6MTczMDY3NDYwM30.XiYCbY6xFXIEs_hFRn7rHBICRMbbOpsquZUXVfc9rr0
 
-{
- 
-    "password":"123456",
-    "user_name":"jsalgadoeche@gmail.com"
-}
+{}
 
 ###*users module
 

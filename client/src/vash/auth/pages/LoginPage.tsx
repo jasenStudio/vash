@@ -1,5 +1,5 @@
 //* react & react router dom
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 //* zod & react hook form
@@ -26,21 +26,30 @@ import { Eye, EyeClosed, UserRound } from "lucide-react";
 //* custom import
 import { formLoginSchema } from "@/constants";
 
+//* store
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
+import { toast } from "sonner";
+
 const formSchema = formLoginSchema;
 
 export const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
+  const login = useAuthStore((state) => state.login);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: "jsalgadoecheverria@gmail.com",
+      password: "123456",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    const response = await login(values.username, values.password);
+
+    if (!response) toast.error("Credenciales incorrectas");
   }
 
   return (

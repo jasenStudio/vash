@@ -1,8 +1,9 @@
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import axios from "axios";
 // import { useAuthStore } from '../stores';
 
-const tesloApi = axios.create({
-  baseURL: "http://localhost:3000/api",
+const vashApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
@@ -10,10 +11,10 @@ const tesloApi = axios.create({
 });
 
 //TODO: interceptops
-tesloApi.interceptors.request.use((config) => {
+vashApi.interceptors.request.use((config) => {
   //   const token = useAuthStore.getState().token;
-  const token = "";
-  console.log(token);
+  const token = useAuthStore.getState().token;
+
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
@@ -21,4 +22,4 @@ tesloApi.interceptors.request.use((config) => {
   return config;
 });
 
-export { tesloApi };
+export { vashApi };
