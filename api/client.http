@@ -19,15 +19,26 @@ Content-Type: application/json
 {
  
     "password":"123456",
-    "user_name":"jsalgadoe@gmail.com"
+    "user_name":"johndoe-019@gmail.com"
 }
 
 ###
 GET http://localhost:3000/api/auth/renew
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzA2Njc0MDMsImV4cCI6MTczMDY3NDYwM30.XiYCbY6xFXIEs_hFRn7rHBICRMbbOpsquZUXVfc9rr0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzA3NzU0MDUsImV4cCI6MTczMDc4MjYwNX0.P17ePJJ7kd8ABGUumMFOwlIPmirSSkaGskqNoqQphIs
 
 {}
+
+
+###
+POST http://localhost:3000/api/auth/sign-up
+Content-Type: application/json
+
+{
+    "email":"johndoe-020@gmail.com",
+    "password":"123456",
+    "user_name":"john-020"
+}
 
 ###*users module
 
@@ -35,9 +46,9 @@ POST http://localhost:3000/api/users/new
 Content-Type: application/json
 
 {
-    "email":"jsalgadoecheverria19@gmail.com",
+    "email":"johndoe-019@gmail.com",
     "password":"123456",
-    "user_name":"jorge0191"
+    "user_name":"john-019"
 }
 ###
 GET http://localhost:3000/api/users

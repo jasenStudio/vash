@@ -29,4 +29,9 @@ export class JwtHelper {
   decodeToken(token: string): any {
     return this.jwtService.decode(token);
   }
+
+  expiresIn(seconds: number) {
+    const expirationDate = new Date(Date.now() + seconds * 1000);
+    return expirationDate.toISOString();
+  }
 }

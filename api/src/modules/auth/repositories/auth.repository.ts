@@ -6,7 +6,11 @@ import {
 import { CreateAuthUserDto, LoginUserDto, ReqUserToken } from '../dto/auth.dto';
 import { UserService } from 'src/modules/user/services/user.service';
 import { JwtHelper } from '../../../common/helpers/helperJwt';
-import { auth_user, registerUserResponse } from '../entities/auth-user.entity';
+import {
+  auth_user,
+  loginUserResponse,
+  registerUserResponse,
+} from '../entities/auth-user.entity';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthRepository {
@@ -14,7 +18,7 @@ export class AuthRepository {
     private readonly __userService: UserService,
     private JwtHelper: JwtHelper,
   ) {}
-  async login(userAuthLogin: LoginUserDto) {
+  async login(userAuthLogin: LoginUserDto): Promise<loginUserResponse> {
     const { user_name, password } = userAuthLogin;
     const user = await this.__userService.getUserByEmailOrUserName(user_name);
 
@@ -48,6 +52,7 @@ export class AuthRepository {
       ok: true,
       user: user_response,
       token: this.JwtHelper.generateToken(payload),
+      expiration: this.JwtHelper.expiresIn(7200),
     };
   }
 
@@ -72,8 +77,10 @@ export class AuthRepository {
     };
 
     return {
+      ok: true,
       user: user_response,
       token,
+      expiration: this.JwtHelper.expiresIn(7200),
     };
   }
 
@@ -82,6 +89,7 @@ export class AuthRepository {
       ok: true,
       user: payload,
       token: await this.JwtHelper.generateToken(payload),
+      expiration: this.JwtHelper.expiresIn(7200),
     };
   }
 }
