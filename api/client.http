@@ -27,11 +27,7 @@ GET http://localhost:3000/api/auth/renew
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzA3NzU0MDUsImV4cCI6MTczMDc4MjYwNX0.P17ePJJ7kd8ABGUumMFOwlIPmirSSkaGskqNoqQphIs
 
-{
- 
-    "password":"123456",
-    "user_name":"jsalgadoeche@gmail.com"
-}
+{}
 
 
 ###
