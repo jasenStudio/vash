@@ -8,7 +8,7 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, iconLeft, icon, ...props }, ref) => {
+  ({ className, type, iconLeft, icon, ...props }, _ref) => {
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     const handleIconClick = () => {

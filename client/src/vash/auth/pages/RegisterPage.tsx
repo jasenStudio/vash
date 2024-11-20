@@ -1,5 +1,4 @@
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +19,8 @@ import { Eye, EyeClosed, Mail, UserRound } from "lucide-react";
 import { formRegisterSchema } from "@/constants/formSchemas/formRegisteSchema";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import { toast } from "sonner";
 
 const formSchema = formRegisterSchema;
@@ -27,13 +28,15 @@ const formSchema = formRegisterSchema;
 export const RegisterPage = () => {
   const [password, setPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState(true);
+  const startRegister = useAuthStore((state) => state.register);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      username: "",
       password: "",
+      user_name: "",
       confirmPassword: "",
     },
   });
@@ -41,23 +44,22 @@ export const RegisterPage = () => {
   const {
     formState: { isSubmitting },
   } = form;
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    toast.success("Event has been created.");
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { confirmPassword, termsAndConditions, ...user } = values;
+    const response = await startRegister(user);
+
+    if (!response) return;
+
+    toast.success("Usuario registrado", { duration: 5000 });
+    setTimeout(() => {
+      navigate("/sign-in");
+    }, 1000);
   }
   return (
     <>
       {/* first opcion */}
       <div className="w-full sm:w-[750px] show-title">
-        <div className="absolute ml-10 right-5 top-5">
-          <ModeToggle />
-        </div>
-
         <div className="pl-10 mb-8 sm:mb-8 lg:mb-8 self-start">
           <h2 className="text-4xl sm:text-3xl lg:text-4xl font-bold">
             Crear Cuenta
@@ -102,7 +104,7 @@ export const RegisterPage = () => {
             {/* input usuario */}
             <FormField
               control={form.control}
-              name="username"
+              name="user_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Usuario</FormLabel>

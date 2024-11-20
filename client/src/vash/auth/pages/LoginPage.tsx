@@ -1,5 +1,5 @@
 //* react & react router dom
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 
 //* zod & react hook form
@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 //* shacdn/ui
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -35,6 +34,7 @@ const formSchema = formLoginSchema;
 export const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
   const login = useAuthStore((state) => state.login);
+  const clearMessage = useAuthStore((state) => state.clearMessage);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,23 +43,26 @@ export const LoginPage: FC = () => {
       password: "123456",
     },
   });
-
+  const {
+    formState: { isSubmitting },
+  } = form;
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     const response = await login(values.username, values.password);
 
-    if (!response) toast.error("Credenciales incorrectas");
+    if (!response)
+      setTimeout(() => {
+        const { msgError, status } = useAuthStore.getState();
+        status === "unauthenticated" && toast.error(msgError);
+        clearMessage();
+      }, 100);
   }
 
   return (
     <>
-      <div className="w-full sm:w-[450px] show-title">
-        <div className="absolute ml-10 right-5 top-5">
-          <ModeToggle />
-        </div>
-        <div className="pl-10 mb-10">
+      <div className="w-full sm:w-[450px] show-title animate-fade-down animate-once">
+        <div className="sm:pl-10 mb-10">
           <h2 className="text-4xl font-bold">Iniciar Sesión</h2>
+
           <span>¿No tienes una cuenta?</span>
           <Link
             className="ml-2 text-gray-700 dark:text-gray-400 font-semibold "
@@ -72,7 +75,7 @@ export const LoginPage: FC = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-full px-10"
+            className="space-y-8 w-[325px] sm:w-full px-0 sm:px-10"
           >
             <FormField
               control={form.control}
@@ -141,11 +144,16 @@ export const LoginPage: FC = () => {
 
             {/* button */}
             <Button
+              disabled={isSubmitting}
               type="submit"
               className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
               style={{ backgroundColor: "#09186f" }}
             >
-              Ingresar
+              {isSubmitting ? (
+                <span className="animate-pulse">Iniciando...</span>
+              ) : (
+                "Iniciar sesión"
+              )}
             </Button>
           </form>
         </Form>

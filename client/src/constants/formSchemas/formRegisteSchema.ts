@@ -7,7 +7,7 @@ import {
 export const formRegisterSchema = z
   .object({
     email: z.string().email({ message: registerVM.email.message }),
-    username: z
+    user_name: z
       .string({
         required_error: commonVM.required("usuario"),
       })
@@ -36,27 +36,27 @@ export const formRegisterSchema = z
       });
     }
 
-    if (/\s/.test(data.username)) {
+    if (/\s/.test(data.user_name)) {
       ctx.addIssue({
         code: "custom",
-        path: ["username"],
+        path: ["user_name"],
         message: "El nombre de usuario no debe contener espacios.",
       });
     }
 
-    if (!/^[a-zA-Z0-9._-]+$/.test(data.username)) {
+    if (!/^[a-zA-Z0-9._-]+$/.test(data.user_name)) {
       ctx.addIssue({
         code: "custom",
-        path: ["username"],
+        path: ["user_name"],
         message:
           "El nombre de usuario solo puede contener letras, números, (_)(.)(-).",
       });
     }
 
-    if (data.username.includes("@")) {
+    if (data.user_name.includes("@")) {
       ctx.addIssue({
         code: "custom",
-        path: ["username"],
+        path: ["user_name"],
         message: "Usuario no puede ser un correo electronico",
       });
     }

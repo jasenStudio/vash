@@ -1,14 +1,16 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { AuthRouter } from "../auth/router/AuthRouter";
 
 import { useEffect } from "react";
 import { useAuthStore } from "../store/auth/useAuthStore";
-import { AccountRouter } from "../account/router/AccountRouter";
+
+import { AuthRouter } from "../auth/router/AuthRouter";
+import { AccountRouter } from "../dashboard/account/router/AccountRouter";
+import { LayoutRoot } from "../Layout";
 
 export const AppRoutes = () => {
   const checkStatusAuth = useAuthStore((state) => state.checkStatusAuth);
   const current_status = useAuthStore((state) => state.status);
-
+  console.log(current_status);
   useEffect(() => {
     checkStatusAuth();
   }, []);
@@ -28,10 +30,12 @@ export const AppRoutes = () => {
         </>
       ) : (
         <>
-          <Routes>
-            <Route path="/accounts/*" element={<AccountRouter />} />
-            <Route path="/*" element={<Navigate to="/accounts/list" />} />
-          </Routes>
+          <LayoutRoot>
+            <Routes>
+              <Route path="/accounts/*" element={<AccountRouter />} />
+              <Route path="/*" element={<Navigate to="/accounts/list" />} />
+            </Routes>
+          </LayoutRoot>
         </>
       )}
     </>

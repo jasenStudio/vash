@@ -3,6 +3,7 @@
 import { AxiosError } from "axios";
 import { vashApi } from "@/api/vashApi";
 import { AuthResponse } from "@/infrastructure/interfaces/auth.responses";
+import { User } from "../../../domain/entities/user";
 
 export class AuthService {
   static login = async (user_name: string, password: string) => {
@@ -11,7 +12,9 @@ export class AuthService {
         user_name,
         password,
       });
-
+      if (data.expiration!.length > 0) {
+        localStorage.setItem("auth-token-expiration", data.expiration!);
+      }
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -27,6 +30,9 @@ export class AuthService {
     try {
       const { data } = await vashApi.get<AuthResponse>("/auth/renew");
 
+      if (data.expiration!.length > 0) {
+        localStorage.setItem("auth-token-expiration", data.expiration!);
+      }
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -34,6 +40,22 @@ export class AuthService {
         throw new Error(error.response?.data.message);
       }
       throw new Error("UnAuthorizard");
+    }
+  };
+
+  static registerUser = async (payload: User) => {
+    try {
+      const { data } = await vashApi.post<AuthResponse>("/auth/sign-up", {
+        ...payload,
+      });
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data);
+        throw new Error(error.response?.data.message);
+      }
+      // console.log(error);
+      throw new Error("Unable to register");
     }
   };
 }
