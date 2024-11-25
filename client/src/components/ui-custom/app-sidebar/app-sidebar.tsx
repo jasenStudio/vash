@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Eye } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -8,6 +8,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -17,9 +18,11 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavUser } from "./nav-user";
+import { NavUser } from "../nav-user";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
-import { useState } from "react";
+
+import { ModeToggle } from "../../ui/mode-toggle";
+import { useIsMobile } from "@/hooks/use-mobile";
 // This is sample data.
 const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
@@ -163,6 +166,7 @@ const data = {
 };
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userStore = useAuthStore((state) => state.user);
+  const isMobile = useIsMobile();
 
   const user = {
     avatar: "",
@@ -195,8 +199,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 asChild
                 className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
-                <CollapsibleTrigger>
-                  {item.title}{" "}
+                <CollapsibleTrigger className="my-2 flex justify-center items-center">
+                  <Eye className="mr-2" /> {item.title}{" "}
                   <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
@@ -217,6 +221,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Collapsible>
         ))}
       </SidebarContent>
+      <SidebarFooter className="flex items-center">
+        <ModeToggle
+          buttonVariant="sidebar"
+          buttonClassName="my-5"
+          buttonSideBar={isMobile}
+          alignMenu="center"
+        />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

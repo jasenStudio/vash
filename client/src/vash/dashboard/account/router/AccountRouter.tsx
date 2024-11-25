@@ -11,7 +11,7 @@ export const AccountRouter = () => {
         <AnimatePresence mode="wait">
           <Routes>
             <Route
-              path="list"
+              path=""
               element={
                 <AnimatedComponent
                   key={"list-account"}

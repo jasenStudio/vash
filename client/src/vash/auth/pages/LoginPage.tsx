@@ -59,8 +59,8 @@ export const LoginPage: FC = () => {
 
   return (
     <>
-      <div className="w-full sm:w-[450px] show-title animate-fade-down animate-once">
-        <div className="sm:pl-10 mb-10">
+      <div className="w-full sm:w-[450px]">
+        <div className="sm:pl-10 mb-10 pt-container-auth">
           <h2 className="text-4xl font-bold">Iniciar Sesión</h2>
 
           <span>¿No tienes una cuenta?</span>
@@ -75,7 +75,7 @@ export const LoginPage: FC = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 w-[325px] sm:w-full px-0 sm:px-10"
+            className="space-y-8 w-[325px] sm:w-full px-0 sm:px-10 pb-container-auth"
           >
             <FormField
               control={form.control}

@@ -59,8 +59,8 @@ export const RegisterPage = () => {
   return (
     <>
       {/* first opcion */}
-      <div className="w-full sm:w-[750px] show-title">
-        <div className="pl-10 mb-8 sm:mb-8 lg:mb-8 self-start">
+      <div className="w-full sm:w-[750px]">
+        <div className="pl-10 mb-8 sm:mb-8 lg:mb-8 self-start pt-container-auth">
           <h2 className="text-4xl sm:text-3xl lg:text-4xl font-bold">
             Crear Cuenta
           </h2>
@@ -76,7 +76,7 @@ export const RegisterPage = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full px-10  sm:grid sm:grid-cols-2 sm:justify-center sm:items-enter gap-4"
+            className="w-full px-10  sm:grid sm:grid-cols-2 sm:justify-center sm:items-enter gap-4 pb-container-auth"
           >
             {/* input correo electronico */}
             <FormField
