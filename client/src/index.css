@@ -83,12 +83,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@media (width <= 940px) and (orientation: landscape) {
-  .show-title {
-    height: 100%;
-  }
-  .mt-input-0 {
-    margin-top: 0 !important;
-  }
-}

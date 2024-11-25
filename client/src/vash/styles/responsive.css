@@ -1,0 +1,13 @@
+@media (width <= 940px) and (orientation: landscape) {
+  .pt-container-auth {
+    padding-block-start: 180px;
+  }
+
+  .pb-container-auth {
+    padding-block-end: 60px;
+  }
+
+  .mt-input-0 {
+    margin-top: 0 !important;
+  }
+}

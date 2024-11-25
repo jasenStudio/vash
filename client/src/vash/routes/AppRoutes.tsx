@@ -24,18 +24,17 @@ export const AppRoutes = () => {
         <>
           <Routes>
             <Route path="/*" element={<AuthRouter />} />
-
             <Route path="/*" element={<Navigate to="/sign-in" />} />
           </Routes>
         </>
       ) : (
         <>
-          <LayoutRoot>
-            <Routes>
+          <Routes>
+            <Route element={<LayoutRoot />}>
               <Route path="/accounts/*" element={<AccountRouter />} />
-              <Route path="/*" element={<Navigate to="/accounts/list" />} />
-            </Routes>
-          </LayoutRoot>
+              <Route path="/*" element={<Navigate to="/accounts" />} />
+            </Route>
+          </Routes>
         </>
       )}
     </>
