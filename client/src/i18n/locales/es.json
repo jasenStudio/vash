@@ -1,0 +1,25 @@
+{
+    "auth": {
+        "login": "Iniciar Sesión",
+        "register": "Crear Cuenta"
+    },
+    "common": {
+        "close": "Cancelar",
+        "saveChanges": "Guardar Cambios"
+    },
+    "configuration": {
+        "title": "Configuración",
+        "description": "Realiza cambios en tu configuración de tema y lenguaje aquí. Haz clic en guardar cuando termines.",
+        "selectTheme": "Selecciona un tema:",
+        "selectLanguage": "Selecciona un idioma:",
+        "messageConfirmation": "Configuración aplicada"
+    },
+    "theme": {
+        "dark": "Oscuro",
+        "light": "Claro"
+    },
+    "language": {
+        "es": "Español",
+        "en": "Ingles"
+    }
+}

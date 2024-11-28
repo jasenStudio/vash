@@ -1,0 +1,24 @@
+{
+    "auth": {
+        "login": "Sign In"
+    },
+    "common": {
+        "close": "Cancel",
+        "saveChanges": "Save Changes"
+    },
+    "configuration": {
+        "title": "Settings",
+        "description": "Make changes to your theme and language settings here. Click save when you're done.",
+        "selectLanguage": "Select a language:",
+        "selectTheme": "Select a theme:",
+        "messageConfirmation": "Settings Saved!"
+    },
+    "theme": {
+        "dark": "Dark",
+        "light": "Light"
+    },
+    "language": {
+        "es": "Spanish",
+        "en": "English"
+    }
+}

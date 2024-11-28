@@ -29,10 +29,13 @@ import { formLoginSchema } from "@/constants";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import { toast } from "sonner";
 
+import { useTranslation } from "react-i18next";
+
 const formSchema = formLoginSchema;
 
 export const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
+  const { t } = useTranslation();
   const login = useAuthStore((state) => state.login);
   const clearMessage = useAuthStore((state) => state.clearMessage);
 
@@ -43,9 +46,11 @@ export const LoginPage: FC = () => {
       password: "123456",
     },
   });
+
   const {
     formState: { isSubmitting },
   } = form;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const response = await login(values.username, values.password);
 
@@ -61,7 +66,10 @@ export const LoginPage: FC = () => {
     <>
       <div className="w-full sm:w-[450px]">
         <div className="sm:pl-10 mb-10 pt-container-auth">
-          <h2 className="text-4xl font-bold">Iniciar Sesión</h2>
+          {/* <h1>{t("welcome")}</h1>
+          <button onClick={() => changeLanguage("en")}>English</button>
+          <button onClick={() => changeLanguage("es")}>Español</button> */}
+          <h2 className="text-4xl font-bold">{t("auth.login")}</h2>
 
           <span>¿No tienes una cuenta?</span>
           <Link
@@ -146,8 +154,7 @@ export const LoginPage: FC = () => {
             <Button
               disabled={isSubmitting}
               type="submit"
-              className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
-              style={{ backgroundColor: "#09186f" }}
+              className="bg-button-primary  hover:bg-button-primary-foreground text-xl font-bold py-8 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <span className="animate-pulse">Iniciando...</span>

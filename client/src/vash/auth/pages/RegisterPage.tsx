@@ -239,8 +239,7 @@ export const RegisterPage = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
-              style={{ backgroundColor: "#09186f" }}
+              className="bg-button-primary hover:bg-button-primary-foreground  text-xl font-bold py-8 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <>
