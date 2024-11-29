@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 //* icons
 import { Sun, Moon, Settings } from "lucide-react";
@@ -31,7 +31,7 @@ import UsaFlag from "@/assets/usa.svg";
 import { useTheme, type Theme } from "@/vash/providers/theme-provider";
 import { useConfiguration } from "@/hooks/use-configuration";
 import { useTranslation } from "react-i18next";
-import i18next from "i18next";
+import { useCurrentLanguage } from "@/hooks/use-current-language";
 
 interface SettingsDialogProps {
   text?: string;
@@ -92,14 +92,9 @@ export const SettingDialogCustom = ({
   customTrigger,
 }: SettingsDialogProps) => {
   const { config, handleConfigChange, handleSave } = useConfiguration();
-  const { t } = useTranslation();
+  const { currentLanguage } = useCurrentLanguage();
   const { theme } = useTheme();
-
-  const currentLanguage = useMemo(() => {
-    return i18next.language !== "es" && i18next.language !== "en"
-      ? "es"
-      : i18next.language;
-  }, [i18next.language]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     handleConfigChange("theme", theme);

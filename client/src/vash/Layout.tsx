@@ -15,6 +15,7 @@ import {
   BreadcrumbsCustom,
   AppSidebar,
   FooterCustom,
+  FooterCustomMobile,
 } from "@/components/ui-custom";
 import {
   DropdownMenu,
@@ -116,7 +117,7 @@ export const LayoutRoot = () => {
             <Outlet />
           </div>
           <div className="absolute bottom-0 overflow-x-hidden">
-            <FooterCustom />
+            {isMobile ? <FooterCustomMobile /> : <FooterCustom />}
           </div>
         </div>
       </SidebarProvider>

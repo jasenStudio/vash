@@ -1,9 +1,22 @@
 {
     "auth": {
+        "confirmPassword": "Confirmar Contraseña",
+        "createAccount": "Crea Cuenta",
+        "creatingAccount": "Creando tu cuenta...",
+        "email": "Correo Electrónico",
+        "haveAnAccount": "¿Ya tienes una cuenta?",
+        "notHaveAccount": "¿No tienes una cuenta?",
         "login": "Iniciar Sesión",
-        "register": "Crear Cuenta"
+        "password": "Contraseña",
+        "readAndAgree": "He leído y acepto los ",
+        "register": "Crear Cuenta",
+        "username": "Usuario",
+        "termsAndConditions": "términos y condiciones",
+        "privacyPolicy": "la Política de Privacidad"
     },
     "common": {
+        "and": "y ",
+        "createProcess": "",
         "close": "Cancelar",
         "saveChanges": "Guardar Cambios"
     },
@@ -21,5 +34,10 @@
     "language": {
         "es": "Español",
         "en": "Ingles"
+    },
+    "footer": {
+        "allRightsReserved": "Todos los derechos reservados.",
+        "privacyPolicy": "Política de Privacidad",
+        "contact": "Contacto"
     }
 }

@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 //* shacdn/ui
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 //* icons
-import { Eye, EyeClosed, UserRound } from "lucide-react";
+import { Eye, EyeClosed, LogIn, UserRound } from "lucide-react";
 
 //* custom import
 import { formLoginSchema } from "@/constants";
@@ -66,17 +65,14 @@ export const LoginPage: FC = () => {
     <>
       <div className="w-full sm:w-[450px]">
         <div className="sm:pl-10 mb-10 pt-container-auth">
-          {/* <h1>{t("welcome")}</h1>
-          <button onClick={() => changeLanguage("en")}>English</button>
-          <button onClick={() => changeLanguage("es")}>Español</button> */}
           <h2 className="text-4xl font-bold">{t("auth.login")}</h2>
 
-          <span>¿No tienes una cuenta?</span>
+          <span>{t("auth.notHaveAccount")}</span>
           <Link
             className="ml-2 text-gray-700 dark:text-gray-400 font-semibold "
             to="/sign-up"
           >
-            Crear Cuenta
+            {t("auth.register")}
           </Link>
         </div>
 
@@ -90,7 +86,7 @@ export const LoginPage: FC = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Usuario</FormLabel>
+                  <FormLabel>{t("auth.username")}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Ej: johndoe-019 o johndoe@contosos.com"
@@ -116,7 +112,7 @@ export const LoginPage: FC = () => {
               name="password"
               render={({ field }) => (
                 <FormItem className="mb-1">
-                  <FormLabel id="password">Contraseña</FormLabel>
+                  <FormLabel id="password">{t("auth.password")}</FormLabel>
                   <FormControl>
                     <Input
                       type={password ? "password" : "text"}
@@ -151,17 +147,22 @@ export const LoginPage: FC = () => {
             />
 
             {/* button */}
-            <Button
+            <button
               disabled={isSubmitting}
               type="submit"
-              className="bg-button-primary  hover:bg-button-primary-foreground text-xl font-bold py-8 rounded-sm w-full dark:text-white"
+              role="button"
+              aria-label="Sign in"
+              className="bg-button-primary  hover:bg-button-primary-foreground text-xl font-bold py-4 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <span className="animate-pulse">Iniciando...</span>
               ) : (
-                "Iniciar sesión"
+                <span className="flex justify-center items-center">
+                  <LogIn className="mr-2" aria-hidden="true" />
+                  {t("auth.login")}
+                </span>
               )}
-            </Button>
+            </button>
           </form>
         </Form>
       </div>

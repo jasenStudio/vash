@@ -20,7 +20,9 @@ export class AuthRepository {
   ) {}
   async login(userAuthLogin: LoginUserDto): Promise<loginUserResponse> {
     const { user_name, password } = userAuthLogin;
-    const user = await this.__userService.getUserByEmailOrUserName(user_name);
+    const user = await this.__userService.getUserByEmailOrUserName(
+      user_name.toLowerCase(),
+    );
 
     if (!user) {
       throw new NotFoundException(
@@ -59,7 +61,12 @@ export class AuthRepository {
   async register(
     userAuthPayload: CreateAuthUserDto,
   ): Promise<registerUserResponse> {
-    const user = await this.__userService.createUser(userAuthPayload);
+    const { email, user_name } = userAuthPayload;
+    const user = await this.__userService.createUser({
+      email: email.toLowerCase(),
+      user_name: user_name.toLowerCase(),
+      ...userAuthPayload,
+    });
 
     const token = this.JwtHelper.generateToken({
       id: user.id,
