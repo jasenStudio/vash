@@ -4,7 +4,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeClosed, Mail, UserRound } from "lucide-react";
+import { Eye, EyeClosed, Mail, UserPlus, UserRound } from "lucide-react";
 
 import { formRegisterSchema } from "@/constants/formSchemas/formRegisteSchema";
 import { useState } from "react";
@@ -22,6 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const formSchema = formRegisterSchema;
 
@@ -30,6 +30,7 @@ export const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState(true);
   const startRegister = useAuthStore((state) => state.register);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,8 +47,13 @@ export const RegisterPage = () => {
   } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { confirmPassword, termsAndConditions, ...user } = values;
-    const response = await startRegister(user);
+    const { confirmPassword, termsAndConditions, email, user_name, ...user } =
+      values;
+    const response = await startRegister({
+      email: email.toLowerCase(),
+      user_name: user_name.toLowerCase(),
+      ...user,
+    });
 
     if (!response) return;
 
@@ -62,14 +68,14 @@ export const RegisterPage = () => {
       <div className="w-full sm:w-[750px]">
         <div className="pl-10 mb-8 sm:mb-8 lg:mb-8 self-start pt-container-auth">
           <h2 className="text-4xl sm:text-3xl lg:text-4xl font-bold">
-            Crear Cuenta
+            {t("auth.register")}
           </h2>
-          <span> ¿Ya tienes una cuenta?</span>
+          <span> {t("auth.haveAnAccount")} </span>
           <Link
             className="ml-2 text-gray-700 dark:text-gray-400 font-semibold "
             to="/sign-in"
           >
-            Iniciar sesión
+            {t("auth.login")}
           </Link>
         </div>
 
@@ -84,14 +90,14 @@ export const RegisterPage = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Correo Electrónico</FormLabel>
+                  <FormLabel>{t("auth.email")}</FormLabel>
                   <FormControl>
                     <Input
                       iconLeft
                       icon={
                         <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       }
-                      placeholder="xxxxx@gmail.com"
+                      placeholder="Ej: xxxxx@gmail.com"
                       {...field}
                       className="border-slate-400 py-7 rounded-sm"
                     />
@@ -107,14 +113,14 @@ export const RegisterPage = () => {
               name="user_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Usuario</FormLabel>
+                  <FormLabel>{t("auth.username")}</FormLabel>
                   <FormControl>
                     <Input
                       iconLeft
                       icon={
                         <UserRound className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       }
-                      placeholder="EJ:jhon-doe"
+                      placeholder="Ej: johndoe"
                       {...field}
                       className="border-slate-400 py-7 rounded-sm"
                     />
@@ -130,11 +136,11 @@ export const RegisterPage = () => {
               name="password"
               render={({ field }) => (
                 <FormItem className="mb-1">
-                  <FormLabel id="password">Contraseña</FormLabel>
+                  <FormLabel id="password">{t("auth.password")}</FormLabel>
                   <FormControl>
                     <Input
                       type={password ? "password" : "text"}
-                      placeholder="xxxxxxxxxxx"
+                      placeholder="Ej: Xxxxxxx."
                       iconLeft
                       icon={
                         !password ? (
@@ -172,12 +178,12 @@ export const RegisterPage = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel id="confirmPassword">
-                    Confirmar Contraseña
+                    {t("auth.confirmPassword")}
                   </FormLabel>
                   <FormControl>
                     <Input
                       type={confirmPassword ? "password" : "text"}
-                      placeholder="xxxxxxxxxxx"
+                      placeholder="Ej: Xxxxxxx."
                       iconLeft
                       icon={
                         !confirmPassword ? (
@@ -185,14 +191,12 @@ export const RegisterPage = () => {
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                             onClick={() => {
                               setConfirmPassword(true);
-                              console.log("aqui");
                             }}
                           />
                         ) : (
                           <EyeClosed
                             onClick={() => {
                               setConfirmPassword(false);
-                              console.log("aqui");
                             }}
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400  "
                           />
@@ -222,13 +226,13 @@ export const RegisterPage = () => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>
-                      He leído y acepto los{" "}
-                      <span className="dark:text-gray-400 underline font-bold">
-                        términos y condiciones
+                      {t("auth.readAndAgree")}
+                      <span className="dark:text-gray-100 underline font-bold">
+                        {t("auth.termsAndConditions")}
                       </span>{" "}
-                      y la{" "}
-                      <span className="dark:text-gray-400 underline font-bold">
-                        política de privacidad
+                      {t("common.and")}
+                      <span className="dark:text-gray-100 underline font-bold">
+                        {t("auth.privacyPolicy")}
                       </span>
                     </FormLabel>
                   </div>
@@ -236,20 +240,28 @@ export const RegisterPage = () => {
               )}
             />
 
-            <Button
+            <button
               type="submit"
               disabled={isSubmitting}
-              className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
-              style={{ backgroundColor: "#09186f" }}
+              role="button"
+              aria-label="Create Account"
+              className="bg-button-primary hover:bg-button-primary-foreground  text-xl font-bold py-4 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <>
-                  <span className="animate-pulse ">Creando...</span>
+                  <span className="animate-pulse ">
+                    {t("auth.creatingAccount")}
+                  </span>
                 </>
               ) : (
-                "Crea Cuenta"
+                <>
+                  <span className="flex justify-center items-center">
+                    <UserPlus className="mr-2" aria-hidden="true" />
+                    {t("auth.createAccount")}
+                  </span>
+                </>
               )}
-            </Button>
+            </button>
           </form>
         </Form>
       </div>

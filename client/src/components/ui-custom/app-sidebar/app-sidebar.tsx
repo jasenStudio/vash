@@ -1,5 +1,15 @@
 import * as React from "react";
-import { ChevronRight, Eye } from "lucide-react";
+import { useState } from "react";
+import {
+  Blocks,
+  Calendar,
+  ChevronRight,
+  Eye,
+  MessageCircleQuestion,
+  Settings,
+  Settings2,
+  Trash2,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,12 +28,14 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../nav-user";
-import { useAuthStore } from "@/vash/store/auth/useAuthStore";
+import { Button } from "@/components/ui/button";
 
-import { ModeToggle } from "../../ui/mode-toggle";
-import { useIsMobile } from "@/hooks/use-mobile";
-// This is sample data.
+//* Store & Hook
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
+import { useTranslation } from "react-i18next";
+
+import { SettingDialogCustom, NavUser } from "@/components/ui-custom";
+
 const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
@@ -163,15 +175,47 @@ const data = {
       ],
     },
   ],
+  navSecondary: [
+    {
+      title: "Calendar",
+      url: "#",
+      icon: Calendar,
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings2,
+    },
+    {
+      title: "Templates",
+      url: "#",
+      icon: Blocks,
+    },
+    {
+      title: "Trash",
+      url: "#",
+      icon: Trash2,
+    },
+    {
+      title: "Help",
+      url: "#",
+      icon: MessageCircleQuestion,
+    },
+  ],
 };
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userStore = useAuthStore((state) => state.user);
-  const isMobile = useIsMobile();
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const { t } = useTranslation();
 
   const user = {
     avatar: "",
     name: userStore?.user_name || "johndoe",
     email: userStore?.email || "johndoe@gmail.com",
+  };
+
+  const toggleDialogVisibility = () => {
+    setIsDialogVisible((prev) => !prev);
   };
 
   return (
@@ -221,15 +265,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Collapsible>
         ))}
       </SidebarContent>
-      <SidebarFooter className="flex items-center">
-        <ModeToggle
-          buttonVariant="sidebar"
-          buttonClassName="my-5"
-          buttonSideBar={isMobile}
-          alignMenu="center"
-        />
+      <SidebarFooter className="flex flex-row items-center">
+        <Button
+          onClick={toggleDialogVisibility}
+          variant="ghost"
+          className="px-2 capitalize w-full hover:bg-sidebar-accent"
+        >
+          <Settings />
+          {t("configuration.title")}
+        </Button>
       </SidebarFooter>
       <SidebarRail />
+
+      {isDialogVisible && (
+        <SettingDialogCustom
+          open={isDialogVisible}
+          customTrigger
+          onOpenChange={toggleDialogVisibility}
+          className="px-2 capitalize w-full hover:bg-sidebar-accent"
+          text={t("configuration.title")}
+        />
+      )}
     </Sidebar>
   );
 }

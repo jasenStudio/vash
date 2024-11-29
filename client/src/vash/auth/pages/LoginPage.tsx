@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 //* shacdn/ui
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 //* icons
-import { Eye, EyeClosed, UserRound } from "lucide-react";
+import { Eye, EyeClosed, LogIn, UserRound } from "lucide-react";
 
 //* custom import
 import { formLoginSchema } from "@/constants";
@@ -29,10 +28,13 @@ import { formLoginSchema } from "@/constants";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import { toast } from "sonner";
 
+import { useTranslation } from "react-i18next";
+
 const formSchema = formLoginSchema;
 
 export const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
+  const { t } = useTranslation();
   const login = useAuthStore((state) => state.login);
   const clearMessage = useAuthStore((state) => state.clearMessage);
 
@@ -43,9 +45,11 @@ export const LoginPage: FC = () => {
       password: "123456",
     },
   });
+
   const {
     formState: { isSubmitting },
   } = form;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const response = await login(values.username, values.password);
 
@@ -61,14 +65,14 @@ export const LoginPage: FC = () => {
     <>
       <div className="w-full sm:w-[450px]">
         <div className="sm:pl-10 mb-10 pt-container-auth">
-          <h2 className="text-4xl font-bold">Iniciar Sesión</h2>
+          <h2 className="text-4xl font-bold">{t("auth.login")}</h2>
 
-          <span>¿No tienes una cuenta?</span>
+          <span>{t("auth.notHaveAccount")}</span>
           <Link
             className="ml-2 text-gray-700 dark:text-gray-400 font-semibold "
             to="/sign-up"
           >
-            Crear Cuenta
+            {t("auth.register")}
           </Link>
         </div>
 
@@ -82,7 +86,7 @@ export const LoginPage: FC = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Usuario</FormLabel>
+                  <FormLabel>{t("auth.username")}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Ej: johndoe-019 o johndoe@contosos.com"
@@ -108,7 +112,7 @@ export const LoginPage: FC = () => {
               name="password"
               render={({ field }) => (
                 <FormItem className="mb-1">
-                  <FormLabel id="password">Contraseña</FormLabel>
+                  <FormLabel id="password">{t("auth.password")}</FormLabel>
                   <FormControl>
                     <Input
                       type={password ? "password" : "text"}
@@ -143,18 +147,22 @@ export const LoginPage: FC = () => {
             />
 
             {/* button */}
-            <Button
+            <button
               disabled={isSubmitting}
               type="submit"
-              className="text-xl font-bold py-8 rounded-sm w-full dark:text-white"
-              style={{ backgroundColor: "#09186f" }}
+              role="button"
+              aria-label="Sign in"
+              className="bg-button-primary  hover:bg-button-primary-foreground text-xl font-bold py-4 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <span className="animate-pulse">Iniciando...</span>
               ) : (
-                "Iniciar sesión"
+                <span className="flex justify-center items-center">
+                  <LogIn className="mr-2" aria-hidden="true" />
+                  {t("auth.login")}
+                </span>
               )}
-            </Button>
+            </button>
           </form>
         </Form>
       </div>

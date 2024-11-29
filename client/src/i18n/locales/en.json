@@ -1,0 +1,42 @@
+{
+    "auth": {
+        "confirmPassword": "Confirm Password",
+        "createAccount": "Create Account",
+        "creatingAccount": "Creating your account...",
+        "email": "Email",
+        "haveAnAccount": "Do you already have an account?",
+        "notHaveAccount": "Don't have an account? ",
+        "login": "Sign In",
+        "password": "Password",
+        "privacyPolicy": "Privacy Policy",
+        "register": "Sign Up",
+        "readAndAgree": "I have read and agree to the ",
+        "username": "Username",
+        "termsAndConditions": "Terms of Service "
+    },
+    "common": {
+        "and": "and ",
+        "close": "Cancel",
+        "saveChanges": "Save Changes"
+    },
+    "configuration": {
+        "title": "Settings",
+        "description": "Make changes to your theme and language settings here. Click save when you're done.",
+        "selectLanguage": "Select a language:",
+        "selectTheme": "Select a theme:",
+        "messageConfirmation": "Settings Saved!"
+    },
+    "theme": {
+        "dark": "Dark",
+        "light": "Light"
+    },
+    "language": {
+        "es": "Spanish",
+        "en": "English"
+    },
+    "footer": {
+        "allRightsReserved": "All Rights Reserved",
+        "privacyPolicy": "Privacy Policy",
+        "contact": "Contact"
+    }
+}
