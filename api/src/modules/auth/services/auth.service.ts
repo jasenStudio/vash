@@ -8,21 +8,13 @@ import { loginUserResponse } from '../entities/auth-user.entity';
 export class AuthService {
   constructor(private readonly authRespository: AuthRepository) {}
   async login(userLoginPayload: LoginUserDto) {
-    const { user, token, ok, expiration } =
-      await this.authRespository.login(userLoginPayload);
-
-    return { ok, user, token, expiration };
+    const loginUser = await this.authRespository.login(userLoginPayload);
+    return loginUser;
   }
 
   async register(authUserPayload: CreateAuthUserDto) {
-    const { user, token, ok, expiration } =
-      await this.authRespository.register(authUserPayload);
-    return {
-      ok,
-      user: user,
-      token,
-      expiration,
-    };
+    const registerUser = await this.authRespository.register(authUserPayload);
+    return registerUser;
   }
 
   async renewToken(user: ReqUserToken) {

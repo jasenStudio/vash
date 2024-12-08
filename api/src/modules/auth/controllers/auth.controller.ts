@@ -16,6 +16,7 @@ import { Request } from 'express';
 @Controller('auth')
 export class AuthController {
   constructor(private __authService: AuthService) {}
+
   @ApiOperation({
     summary: 'Iniciar sesion con un usuario',
     description:
@@ -27,7 +28,7 @@ export class AuthController {
     type: LoginUserDto,
     description: 'Parametros para inicio de sesión',
   })
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   async login(@Body() payload: LoginUserDto) {
     return await this.__authService.login(payload);

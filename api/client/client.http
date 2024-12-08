@@ -1,45 +1,3 @@
-
-
-###* auth module
-
-###
-POST http://localhost:3000/api/auth/sign-in
-Content-Type: application/json
-
-{
- 
-    "password":"123456",
-    "user_name":"jsalgadoecheverria@gmail.com"
-}
-
-###
-POST http://localhost:3000/api/auth/sign-in
-Content-Type: application/json
-
-{
- 
-    "password":"123456",
-    "user_name":"johndoe-019@gmail.com"
-}
-
-###
-GET http://localhost:3000/api/auth/renew
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzA3NzU0MDUsImV4cCI6MTczMDc4MjYwNX0.P17ePJJ7kd8ABGUumMFOwlIPmirSSkaGskqNoqQphIs
-
-{}
-
-
-###
-POST http://localhost:3000/api/auth/sign-up
-Content-Type: application/json
-
-{
-    "email":"johndoe-020@gmail.com",
-    "password":"123456",
-    "user_name":"john-020"
-}
-
 ###*users module
 
 POST http://localhost:3000/api/users/new
@@ -59,15 +17,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImVtYWlsI
    
 }
 
-###
-POST http://localhost:3000/api/auth/sign-up
-Content-Type: application/json
 
-{
-    "email":"jsalgadoeche@gmail.com",
-    "password":"123456",
-    "user_name":"jorge99"
-}
 
 ###* module services
 GET http://localhost:3000/api/services
@@ -94,9 +44,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsI
 
 
 ###
-GET http://localhost:3000/api/subcription/7
+GET http://localhost:3000/api/subcription/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoianNhbGdhZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5MjY1NzYsImV4cCI6MTcyODkzMzc3Nn0.F_xX1t7DGDx9TeTje4HZ_7QPIcavUohR6DSrs3O2uDU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1MTQ1MzIsImV4cCI6MTczMzUyMTczMn0.zk6S92SFB-obX08HVwIylwP4IFmiC3-qm9SeyJDvEuM
 
 {}
 
@@ -114,9 +64,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsI
 }
 
 ###
-PUT http://localhost:3000/api/subcription/2/subcription-detail/2
+GET http://localhost:3000/api/subcription/1/subcription-detail/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3Mjg5NjM2NTAsImV4cCI6MTcyODk3MDg1MH0.ywuwYKNARGAbmX8Wp2jqRBH5_mAwDRFsbYbIjY1GMjc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1MTQ1MzIsImV4cCI6MTczMzUyMTczMn0.zk6S92SFB-obX08HVwIylwP4IFmiC3-qm9SeyJDvEuM
+
+{
+ 
+}
+
+###
+PUT http://localhost:3000/api/subcription/1/subcription-detail/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1MTQ1MzIsImV4cCI6MTczMzUyMTczMn0.zk6S92SFB-obX08HVwIylwP4IFmiC3-qm9SeyJDvEuM
 
 {
   "password":"12345"
@@ -169,3 +128,4 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsI
 {
 
 }
+

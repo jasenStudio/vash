@@ -1,0 +1,31 @@
+### #* Listar cuentas
+GET http://localhost:3000/api/accounts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1OTQzOTMsImV4cCI6MTczMzYwMTU5M30.oyYk8guGBjSzEy0yl_QSfwTlsRQjxbakDqUX9ct8_EE
+
+{}
+
+### #* Crear cuenta
+POST http://localhost:3000/api/accounts/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjE4NzMsImV4cCI6MTczMzYyOTA3M30.hrobzSoqzpwFKy2NxqulsMFUdO8MZ24-xoX9rL1QbsQ
+
+{
+    "account_email":"jorge@gmail.com"
+}
+
+### #* edit cuenta
+PUT http://localhost:3000/api/accounts/edit/3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjE4NzMsImV4cCI6MTczMzYyOTA3M30.hrobzSoqzpwFKy2NxqulsMFUdO8MZ24-xoX9rL1QbsQ
+
+{
+    "account_email":"jorge@gmail.com"
+}
+
+### #* deleted account
+DELETE  http://localhost:3000/api/accounts/3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
+
+{}

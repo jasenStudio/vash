@@ -1,14 +1,60 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { AccountCreateDto, AccountUpdateDto } from '../dto/account.dto';
 import { AccountService } from '../../account/services/account.service';
+import { ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/common/decorators/current-user/current-user';
+import { ParseIntPipe } from 'src/common/pipe/parse-int/parse-int.pipe';
+import { AccountOwnerGuard } from '../guards/account-owner.guard';
 
 @ApiTags('accounts')
 @Controller('accounts')
 export class AccountController {
   constructor(private __accountService: AccountService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Get()
-  async findAll() {
-    return await this.__accountService.findAllAccount();
+  async findAll(@CurrentUser() user) {
+    return await this.__accountService.findAllAccount(user);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('new')
+  async createAccount(
+    @CurrentUser() user,
+    @Body() accountPayload: AccountCreateDto,
+  ) {
+    return await this.__accountService.createAccount(user, accountPayload);
+  }
+
+  @UseGuards(AccountOwnerGuard)
+  @HttpCode(HttpStatus.OK)
+  @Put('edit/:id')
+  async updateAccount(
+    @CurrentUser() user,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() accountPayload: AccountUpdateDto,
+  ) {
+    return await this.__accountService.updateAccount(user, id, accountPayload);
+  }
+
+  @UseGuards(AccountOwnerGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  async deleteAccount(
+    @CurrentUser() user,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.__accountService.deleteAccount(user, id);
   }
 }
