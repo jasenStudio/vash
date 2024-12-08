@@ -12,11 +12,13 @@ import {
   registerUserResponse,
 } from '../entities/auth-user.entity';
 import * as bcrypt from 'bcrypt';
+import { ApiResponseService } from 'src/modules/global/api-response.service';
 @Injectable()
 export class AuthRepository {
   constructor(
     private readonly __userService: UserService,
     private JwtHelper: JwtHelper,
+    private readonly __apiResponse: ApiResponseService,
   ) {}
   async login(userAuthLogin: LoginUserDto): Promise<loginUserResponse> {
     const { user_name, password } = userAuthLogin;
@@ -25,9 +27,7 @@ export class AuthRepository {
     );
 
     if (!user) {
-      throw new NotFoundException(
-        `El usuario con el id ${user_name} no se encuentra`,
-      );
+      throw new NotFoundException(`El usuario ${user_name} no existe`);
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -50,12 +50,14 @@ export class AuthRepository {
       user_name: user.user_name,
     };
 
-    return {
-      ok: true,
-      user: user_response,
-      token: this.JwtHelper.generateToken(payload),
-      expiration: this.JwtHelper.expiresIn(7200),
-    };
+    const token = this.JwtHelper.generateToken(payload);
+    const expiration = this.JwtHelper.expiresIn(7200);
+
+    return this.__apiResponse.success(
+      { user: user_response },
+      'inicio de sesion exitoso',
+      { token, expiration },
+    );
   }
 
   async register(
@@ -82,21 +84,22 @@ export class AuthRepository {
       is_admin: user.is_admin,
       user_name: user.user_name,
     };
-
-    return {
-      ok: true,
-      user: user_response,
-      token,
-      expiration: this.JwtHelper.expiresIn(7200),
-    };
+    const expiration = this.JwtHelper.expiresIn(7200);
+    return this.__apiResponse.success(
+      { user: user_response },
+      'usuario registrado exitosamente',
+      { token, expiration },
+    );
   }
 
   async renew(payload: ReqUserToken) {
-    return {
-      ok: true,
-      user: payload,
-      token: await this.JwtHelper.generateToken(payload),
-      expiration: this.JwtHelper.expiresIn(7200),
-    };
+    const token = this.JwtHelper.generateToken(payload);
+    const expiration = this.JwtHelper.expiresIn(7200);
+
+    return this.__apiResponse.success(
+      { user: payload },
+      'token renovado con exito',
+      { token, expiration },
+    );
   }
 }

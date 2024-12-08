@@ -26,9 +26,9 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   msgError: undefined,
   login: async (user_name: string, password: string) => {
     try {
-      const { user, token } = await AuthService.login(user_name, password);
+      const { data, token } = await AuthService.login(user_name, password);
       set({
-        user: user,
+        user: data.user,
         status: "authenticated",
         token: token,
         msgError: undefined,
@@ -70,11 +70,11 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
         return;
       }
 
-      const data = await AuthService.checkStatusAuth();
+      const { data, token } = await AuthService.checkStatusAuth();
       set({
         status: "authenticated",
         user: data.user,
-        token: data.token,
+        token: token,
       });
     } catch (error) {
       set({

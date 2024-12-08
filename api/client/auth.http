@@ -1,0 +1,25 @@
+### #* Inicio de sesión
+POST http://localhost:3000/api/auth/sign-in
+Content-Type: application/json
+
+{
+    "password":"123456",
+    "user_name":"johndoe@gmail.com"
+}
+
+### #* registro de usuario
+POST http://localhost:3000/api/auth/sign-up
+Content-Type: application/json
+
+{
+    "email":"johndoe-020@gmail.com",
+    "password":"123456",
+    "user_name":"john-020"
+}
+
+### #*renovación de token
+GET http://localhost:3000/api/auth/renew
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1OTQyMTYsImV4cCI6MTczMzYwMTQxNn0.F2AgQXW5WdHWEWOs_HYKFyBJqByfCzrqJfo3n2zaEpk
+
+{}

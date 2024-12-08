@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
 const formSchema = formRegisterSchema;
-
+//TODO FEEDBACK USERNAME EXIST
 export const RegisterPage = () => {
   const [password, setPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState(true);
@@ -103,7 +103,7 @@ export const RegisterPage = () => {
                     />
                   </FormControl>
 
-                  <FormMessage />
+                  <FormMessage> </FormMessage>
                 </FormItem>
               )}
             />

@@ -34,7 +34,7 @@ const codeMessage = (exception) => {
     case 'P2002':
       statusCode = HttpStatus.BAD_REQUEST;
       field = exception.meta?.target;
-      message = `El campo ${field} ya está en uso`;
+      message = `El ${field} ya está en uso`;
       break;
     case 'P2025':
       statusCode = HttpStatus.BAD_REQUEST;
