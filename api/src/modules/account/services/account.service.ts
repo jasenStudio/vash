@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { AccountRepository } from '../repositories/account.repository';
 import { ReqUserToken } from 'src/modules/auth/dto/auth.dto';
-import { AccountCreateDto, AccountUpdateDto } from '../dto/account.dto';
+import {
+  AccountCreateDto,
+  AccountUpdateDto,
+  QueryListAccount,
+} from '../dto/account.dto';
 
 @Injectable()
 export class AccountService {
   constructor(private accountRepository: AccountRepository) {}
-  async findAllAccount(user: ReqUserToken) {
-    return this.accountRepository.findAll(user);
+  async findAllAccount(user: ReqUserToken, query: QueryListAccount) {
+    return this.accountRepository.findAll(user, query);
   }
 
   async createAccount(user: ReqUserToken, accountPayload: AccountCreateDto) {

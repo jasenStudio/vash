@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { method_type } from '../modules/subcription/dto/method-recovery.dto';
+import { accounts } from './data-seed';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +22,6 @@ async function main() {
   console.log('All tables cleared!');
 
   const hashedPassword1 = await bcrypt.hash('123456', 10);
-  const hashedPassword2 = await bcrypt.hash('123456', 10);
 
   // Crear usuarios
   const users = await prisma.user.createMany({
@@ -42,10 +42,7 @@ async function main() {
 
   // Crear cuentas relacionadas con usuarios
   await prisma.account.createMany({
-    data: [
-      { user_id: 1, account_email: 'johndoe@gmail.com' },
-      { user_id: 2, account_email: 'janedoe@gmail.com' },
-    ],
+    data: accounts,
   });
 
   await prisma.categories_service.createMany({

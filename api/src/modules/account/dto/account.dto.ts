@@ -1,6 +1,12 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
+export interface QueryListAccount {
+  page: string;
+  limit: string;
+  'search-term': string;
+}
+
 export class AccountCreateDto {
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'El correo electronico de la cuenta es requerido' })

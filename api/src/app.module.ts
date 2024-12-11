@@ -26,7 +26,7 @@ import { ValidateToken } from './common/middlewares/validateJwt.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       isGlobal: true,
       load: [config],
       validationSchema: Joi.object({

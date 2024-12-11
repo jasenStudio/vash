@@ -1,0 +1,34 @@
+# Ignorar la carpeta client, ya que no es necesaria
+client/
+
+# Ignorar dependencias locales, se instalan dentro del contenedor
+node_modules/
+
+# Ignorar carpetas y archivos de desarrollo y pruebas
+dist/
+test/
+
+# Ignorar archivos de configuración y entornos locales
+.env*
+!.env.prod
+
+# Ignorar archivos de herramientas de desarrollo
+.eslintrc.js
+.prettierrc
+.vscode/
+.idea/
+
+# Ignorar archivos de control de versiones
+.git/
+.gitignore
+
+# Ignorar logs y archivos temporales
+*.log
+*.tmp
+*.pid
+*.seed
+*.backup
+
+# Ignorar otros archivos innecesarios
+Dockerfile.*
+README.md
