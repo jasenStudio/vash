@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useTitle } from "@/hooks/use-title";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
-import { format, compareAsc } from "date-fns";
+import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { es } from "date-fns/locale";
-import { columns, Account } from "../components/datatable/columns";
+import { columns } from "../components/datatable/columns";
 import { DataTable } from "../components/datatable/data-table";
 import { useAccounts } from "../hooks/use-accounts";
 import { Account as AccountInterface } from "@/domain";

@@ -21,9 +21,9 @@ export type Account = {
 
 const myCustomFilterFn: FilterFn<Account> = (
   row: Row<Account>,
-  columnId: string,
-  filterValue: any,
-  addMeta: (meta: any) => void
+  filterValue: any
+  // columnId: string,
+  // addMeta: (meta: any) => void
 ) => {
   filterValue = filterValue.toLowerCase();
   const filterParts = filterValue.split(" ");

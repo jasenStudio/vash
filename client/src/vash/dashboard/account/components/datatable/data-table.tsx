@@ -74,21 +74,21 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [inputSelectPage, setInputSelectpage] = useState(false);
-  const [lastTap, setLastTap] = useState(0);
+  // const [lastTap, setLastTap] = useState(0);
 
   const isDeleteRecord = Object.keys(rowSelection).length > 0;
 
-  const handleTouchEnd = () => {
-    const currentTime = Date.now();
-    const tapGap = currentTime - lastTap;
+  // const handleTouchEnd = () => {
+  //   const currentTime = Date.now();
+  //   const tapGap = currentTime - lastTap;
 
-    if (tapGap < 300 && tapGap > 0) {
-      console.log("Doble toque detectado");
-      // Aquí va la lógica del doble toque
-    }
+  //   if (tapGap < 300 && tapGap > 0) {
+  //     console.log("Doble toque detectado");
+  //     // Aquí va la lógica del doble toque
+  //   }
 
-    setLastTap(currentTime);
-  };
+  //   setLastTap(currentTime);
+  // };
 
   const table = useReactTable({
     data,

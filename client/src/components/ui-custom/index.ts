@@ -1,4 +1,3 @@
-import { FooterCustomMobile } from "./footer/FooterCustomMobile";
 export { NavUser } from "./nav-user/nav-user";
 export { SettingDialogCustom } from "./setting-dialog/SettingDialogCustom";
 export { AppSidebar } from "./app-sidebar/app-sidebar";
