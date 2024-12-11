@@ -30,10 +30,7 @@ export function NavUser({
     if (!user.name) {
       return "VA";
     }
-    return (
-      user.name[0]!.toUpperCase() +
-      user.name[user.name.length / 2]!.toUpperCase()
-    );
+    return `${user.name}`.slice(0, 2).toUpperCase();
   };
 
   return (

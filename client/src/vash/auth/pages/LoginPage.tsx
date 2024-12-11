@@ -41,7 +41,7 @@ export const LoginPage: FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "jsalgadoecheverria@gmail.com",
+      username: "johndoe@gmail.com",
       password: "123456",
     },
   });

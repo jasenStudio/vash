@@ -1,14 +1,21 @@
 ### #* Listar cuentas
-GET http://localhost:3000/api/accounts
+GET http://localhost:3000/api/accounts?page=1&limit=5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM1OTQzOTMsImV4cCI6MTczMzYwMTU5M30.oyYk8guGBjSzEy0yl_QSfwTlsRQjxbakDqUX9ct8_EE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM4NDI5MDksImV4cCI6MTczMzg1MDEwOX0.GXOMPKk3z9UWs6TOxtmv0mMYsYOkIUHeWcfSJHUn100
+
+{}
+
+### #* Listar cuentas
+GET http://localhost:3000/api/accounts?page=1&limit=10&search-term=user1_7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM3MDI3NjQsImV4cCI6MTczMzcwOTk2NH0.lvso_cnlAbQTbh5ZQtcqzpexG0F1mZAQhMO0Fd1FBPE
 
 {}
 
 ### #* Crear cuenta
 POST http://localhost:3000/api/accounts/new
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjE4NzMsImV4cCI6MTczMzYyOTA3M30.hrobzSoqzpwFKy2NxqulsMFUdO8MZ24-xoX9rL1QbsQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
 
 {
     "account_email":"jorge@gmail.com"
@@ -24,7 +31,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 }
 
 ### #* deleted account
-DELETE  http://localhost:3000/api/accounts/3
+DELETE  http://localhost:3000/api/accounts/8
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
 

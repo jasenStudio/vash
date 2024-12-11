@@ -8,9 +8,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { AccountCreateDto, AccountUpdateDto } from '../dto/account.dto';
+import {
+  AccountCreateDto,
+  AccountUpdateDto,
+  QueryListAccount,
+} from '../dto/account.dto';
 import { AccountService } from '../../account/services/account.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user/current-user';
@@ -24,8 +29,9 @@ export class AccountController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  async findAll(@CurrentUser() user) {
-    return await this.__accountService.findAllAccount(user);
+  async findAll(@CurrentUser() user, @Query() query: QueryListAccount) {
+    console.log(query.page, query.limit, query['search-term']);
+    return await this.__accountService.findAllAccount(user, query);
   }
 
   @HttpCode(HttpStatus.OK)
