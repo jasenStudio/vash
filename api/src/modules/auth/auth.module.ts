@@ -11,7 +11,7 @@ import { JwtHelper } from 'src/common/helpers/helperJwt';
     UserModule,
     JwtModule.register({
       global: true,
-      secret: process.env.API_KEY_SECRET,
+      secret: `.env.${process.env.NODE_ENV || 'development'}`,
       signOptions: { expiresIn: '2h' },
     }),
   ],
