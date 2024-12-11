@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 
 //*Providers
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./vash/providers/theme-provider";
+import { ThemeProvider, TanStackProvider } from "./vash/providers";
 
 //* Imports utils and styles
 import "@/i18n/i18n";
@@ -14,10 +14,12 @@ import { VashApp } from "@/vash/VashApp";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <VashApp />
-      </ThemeProvider>
-    </BrowserRouter>
+    <TanStackProvider>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <VashApp />
+        </ThemeProvider>
+      </BrowserRouter>
+    </TanStackProvider>
   </React.StrictMode>
 );
