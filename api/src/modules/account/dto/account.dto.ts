@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 export interface QueryListAccount {
   page: string;
   limit: string;
-  'search-term': string;
+  search: string;
 }
 
 export class AccountCreateDto {

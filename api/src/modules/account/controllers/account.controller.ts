@@ -30,7 +30,7 @@ export class AccountController {
   @HttpCode(HttpStatus.OK)
   @Get()
   async findAll(@CurrentUser() user, @Query() query: QueryListAccount) {
-    console.log(query.page, query.limit, query['search-term']);
+    console.log(query.page, query.limit, query['search']);
     return await this.__accountService.findAllAccount(user, query);
   }
 

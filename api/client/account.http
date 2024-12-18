@@ -1,14 +1,14 @@
 ### #* Listar cuentas
 GET http://localhost:3000/api/accounts?page=1&limit=5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM4NDI5MDksImV4cCI6MTczMzg1MDEwOX0.GXOMPKk3z9UWs6TOxtmv0mMYsYOkIUHeWcfSJHUn100
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQzMTk0NDksImV4cCI6MTczNDMyNjY0OX0.L46eOdLbJFvYY1Q4D9WVugHN5HwXjTRr0dGfAq_GhuY
 
 {}
 
 ### #* Listar cuentas
-GET http://localhost:3000/api/accounts?page=1&limit=10&search-term=user1_7
+GET http://localhost:3000/api/accounts?page=1&limit=10&search=john
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM3MDI3NjQsImV4cCI6MTczMzcwOTk2NH0.lvso_cnlAbQTbh5ZQtcqzpexG0F1mZAQhMO0Fd1FBPE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQzMTk0NDksImV4cCI6MTczNDMyNjY0OX0.L46eOdLbJFvYY1Q4D9WVugHN5HwXjTRr0dGfAq_GhuY
 
 {}
 

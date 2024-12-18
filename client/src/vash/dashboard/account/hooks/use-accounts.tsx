@@ -1,26 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { useEffect, useState } from "react";
 
 interface Props {
   limit: number;
+  search?: string;
 }
 
-export const useAccounts = ({ limit }: Props) => {
+export const useAccounts = ({ limit, search = "" }: Props) => {
   const [page, setPage] = useState(1);
-
+  const queryClient = useQueryClient();
   const accountsQuery = useQuery({
-    queryKey: ["accounts", { page, limit }],
-    queryFn: () => AccountService.index(page, limit),
+    queryKey: ["accounts", { page, limit, search }],
+    queryFn: () => AccountService.index(page, limit, search),
     staleTime: 1000 * 60 * 60,
+    placeholderData: (previousData, previousQuery) => previousData,
   });
+
   const { data } = accountsQuery;
   const accounts = data?.data.accounts ?? [];
   const totalPages = data?.meta.totalPages ?? 1;
 
   useEffect(() => {
     setPage(1);
-  }, [limit]);
+  }, [limit, search]);
 
   const nextPage = () => {
     if (page < totalPages) {
@@ -49,5 +52,6 @@ export const useAccounts = ({ limit }: Props) => {
     prevPage,
     nextPage,
     SelectPage,
+    setPage,
   };
 };

@@ -21,9 +21,9 @@ export type Account = {
 
 const myCustomFilterFn: FilterFn<Account> = (
   row: Row<Account>,
-  filterValue: any
-  // columnId: string,
-  // addMeta: (meta: any) => void
+  columnId: string,
+  filterValue: any,
+  addMeta: (meta: any) => void
 ) => {
   filterValue = filterValue.toLowerCase();
   const filterParts = filterValue.split(" ");
@@ -32,6 +32,20 @@ const myCustomFilterFn: FilterFn<Account> = (
     `${row.original.account_email} ${row.original.status}`.toLowerCase();
 
   return filterParts.every((part: string) => rowValues.includes(part));
+
+  // if (row.original.email.includes(filterValue)) {
+  //   return true;
+  // }
+
+  // if (row.original.clientName.includes(filterValue)) {
+  //   return true;
+  // }
+
+  // if (row.original.status.includes(filterValue)) {
+  //   return true;
+  // }
+
+  // return false;
 };
 
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -51,6 +65,12 @@ export const columns: ColumnDef<Account>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        style={{
+          margin: "10px 0" /* Espacio entre la selección y la tabla */,
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -64,12 +84,19 @@ export const columns: ColumnDef<Account>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        style={{
+          margin: "10px 0" /* Espacio entre la selección y la tabla */,
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
       />
     ),
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
+    id: "account_email",
     accessorKey: "account_email",
     filterFn: myCustomFilterFn,
     header: ({ column }) => {
@@ -85,20 +112,18 @@ export const columns: ColumnDef<Account>[] = [
     },
   },
   {
+    id: "status",
     accessorKey: "status",
     header: "status",
+    filterFn: myCustomFilterFn,
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
 
-      const statusHuman: Record<string, () => string> = {
-        true: () => "Active",
-        false: () => "Inactive",
-      };
-      const resultado = statusHuman[status]();
-      return <div className="text-right font-medium">{resultado}</div>;
+      return <div className="text-right font-medium">{status}</div>;
     },
   },
   {
+    id: "created_at",
     accessorKey: "created_at",
     header: "created_at",
   },

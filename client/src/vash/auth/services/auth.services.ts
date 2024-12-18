@@ -4,6 +4,7 @@ import { AxiosError } from "axios";
 import { vashApi } from "@/api/vashApi";
 import { AuthResponse } from "@/infrastructure/interfaces/auth.responses";
 import { User } from "../../../domain/entities/user";
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 
 export class AuthService {
   static login = async (user_name: string, password: string) => {
@@ -35,8 +36,16 @@ export class AuthService {
       }
       return data;
     } catch (error) {
+      //* TODO HAbilitar salida por token invalido
+      // const logout = useAuthStore.getState().logout;
+
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
+
+        if (error.response!.data.message.include("Token invalido")) {
+          useAuthStore.getState().logout;
+        }
+
         throw new Error(error.response?.data.message);
       }
       throw new Error("UnAuthorizard");
@@ -50,6 +59,8 @@ export class AuthService {
       });
       return data;
     } catch (error) {
+      const token = useAuthStore.getState().token;
+
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
         throw new Error(error.response?.data.message);

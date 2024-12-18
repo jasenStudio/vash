@@ -1,7 +1,11 @@
 import { useSidebar } from "@/components/ui/sidebar";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 const currentYear = new Date().getFullYear();
-export const FooterCustom = () => {
+interface Props {
+  className: string;
+}
+export const FooterCustom: FC<Props> = React.memo(({ className }) => {
   const { state } = useSidebar();
   const { t } = useTranslation();
 
@@ -9,8 +13,8 @@ export const FooterCustom = () => {
     <footer
       className={`transition-all duration-300 ${
         state === "expanded" ? "ml-64 " : "ml-0 "
-      } fixed bottom-0 left-0 z-20 w-full p-2 px-4 bg-white  shadow md:flex md:items-center md:justify-between md:p-4 md:px-6
-       dark:bg-background dark:border-gray-600`}
+      } ${className} fixed bottom-0 left-0 z-20 w-full p-2 px-4 bg-white  shadow md:flex md:items-center md:justify-between md:p-4 md:px-6
+         dark:bg-background dark:border-gray-600`}
       style={{
         width: `calc(100% - ${state === "expanded" ? "16rem" : "0rem"})`,
       }}
@@ -21,20 +25,20 @@ export const FooterCustom = () => {
       </span>
       <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
         {/* <li>
-          <a href="#" className="hover:underline me-4 md:me-6">
-            About
-          </a>
-        </li> */}
+            <a href="#" className="hover:underline me-4 md:me-6">
+              About
+            </a>
+          </li> */}
         <li>
           <a href="#" className="hover:underline me-4 md:me-6">
             {t("footer.privacyPolicy")}
           </a>
         </li>
         {/* <li>
-          <a href="#" className="hover:underline me-4 md:me-6">
-            Licensing
-          </a>
-        </li> */}
+            <a href="#" className="hover:underline me-4 md:me-6">
+              Licensing
+            </a>
+          </li> */}
         <li>
           <a href="#" className="hover:underline">
             {t("footer.contact")}
@@ -100,4 +104,4 @@ export const FooterCustom = () => {
       </div>
     </footer>
   );
-};
+});

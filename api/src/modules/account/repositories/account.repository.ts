@@ -21,7 +21,7 @@ export class AccountRepository {
   ): Promise<AccountsResponse> {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
-    const search = query['search-term'] || '';
+    const search = query['search'] || '';
     const skip = (page - 1) * limit;
 
     const accounts = await this.prisma.account.findMany({

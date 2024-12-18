@@ -35,21 +35,22 @@ import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 import { useTranslation } from "react-i18next";
 
 import { SettingDialogCustom, NavUser } from "@/components/ui-custom";
+import { Link } from "react-router-dom";
 
 const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: "Getting Started",
-      url: "#",
+      title: "Accounts",
+      url: "/",
       items: [
         {
-          title: "Installation",
-          url: "#",
+          title: "Account List",
+          url: "/",
         },
         {
-          title: "Project Structure",
-          url: "#",
+          title: "Show List",
+          url: "/accounts/show",
         },
       ],
     },
@@ -254,7 +255,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                          <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

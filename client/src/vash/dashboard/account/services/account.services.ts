@@ -1,12 +1,16 @@
 import { vashApi } from "@/api/vashApi";
 import { AxiosError } from "axios";
 
+const sleep = async () => {
+  return new Promise((r) => setTimeout(r, 2000));
+};
 export class AccountService {
-  static index = async (page: number = 1, limit: number = 5) => {
+  static index = async (page: number = 1, limit: number = 5, search = "") => {
+    const URL = `/accounts?limit=${limit}&page=${page}&search=${search}`;
+
     try {
-      const { data } = await vashApi.get(
-        `/accounts?limit=${limit}&page=${page}`
-      );
+      await sleep();
+      const { data } = await vashApi.get(URL);
       console.log(data.data);
       return data;
     } catch (error) {

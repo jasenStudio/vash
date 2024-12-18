@@ -31,6 +31,7 @@ import "@/vash/styles/App.css";
 import flagColombia from "@/assets/colombia.svg";
 import flagUsa from "@/assets/usa.svg";
 import { useCurrentLanguage } from "@/hooks/use-current-language";
+import { useMemo } from "react";
 
 export const LayoutRoot = () => {
   const isMobile = useIsMobile();
@@ -38,6 +39,8 @@ export const LayoutRoot = () => {
   const logout = useAuthStore((state) => state.logout);
   const { currentLanguage } = useCurrentLanguage();
   const { t } = useTranslation();
+
+  const footerText = useMemo(() => t("configuration.selectLanguage"), [t]);
 
   return (
     <>
@@ -98,9 +101,7 @@ export const LayoutRoot = () => {
                       EN
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                  <span className="sr-only">
-                    {t("configuration.selectLanguage")}
-                  </span>
+                  <span className="sr-only">{footerText}</span>
                 </DropdownMenu>
 
                 <ToggleModeCustom />
@@ -113,11 +114,13 @@ export const LayoutRoot = () => {
               </div>
             )}
           </div>
+          {/* Contenido principal */}
           <div className="w-full py-8 px-4">
             <Outlet />
           </div>
           <div className="absolute bottom-0 overflow-x-hidden">
-            {isMobile ? <FooterCustomMobile /> : <FooterCustom />}
+            <FooterCustomMobile className={isMobile ? "block" : "hidden"} />
+            <FooterCustom className={!isMobile ? "block" : "hidden"} />
           </div>
         </div>
       </SidebarProvider>

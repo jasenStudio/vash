@@ -12,7 +12,6 @@ const vashApi = axios.create({
 
 //TODO: interceptops
 vashApi.interceptors.request.use((config) => {
-  //   const token = useAuthStore.getState().token;
   const token = useAuthStore.getState().token;
 
   if (token) {

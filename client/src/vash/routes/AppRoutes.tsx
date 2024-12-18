@@ -10,7 +10,7 @@ import { LayoutRoot } from "../Layout";
 export const AppRoutes = () => {
   const checkStatusAuth = useAuthStore((state) => state.checkStatusAuth);
   const current_status = useAuthStore((state) => state.status);
-  console.log(current_status);
+
   useEffect(() => {
     checkStatusAuth();
   }, []);
