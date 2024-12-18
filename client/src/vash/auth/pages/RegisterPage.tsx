@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next";
 
 const formSchema = formRegisterSchema;
 //TODO FEEDBACK USERNAME EXIST
-export const RegisterPage = () => {
+const RegisterPage = () => {
   const [password, setPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState(true);
   const startRegister = useAuthStore((state) => state.register);
@@ -268,3 +268,5 @@ export const RegisterPage = () => {
     </>
   );
 };
+
+export default RegisterPage;

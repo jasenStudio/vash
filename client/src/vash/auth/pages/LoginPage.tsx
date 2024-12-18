@@ -32,7 +32,7 @@ import { useTranslation } from "react-i18next";
 
 const formSchema = formLoginSchema;
 
-export const LoginPage: FC = () => {
+const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
   const { t } = useTranslation();
   const login = useAuthStore((state) => state.login);
@@ -169,3 +169,5 @@ export const LoginPage: FC = () => {
     </>
   );
 };
+
+export default LoginPage;

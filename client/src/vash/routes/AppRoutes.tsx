@@ -1,11 +1,13 @@
+import React, { Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { useEffect } from "react";
 import { useAuthStore } from "../store/auth/useAuthStore";
-
-import { AuthRouter } from "../auth/router/AuthRouter";
-import { AccountRouter } from "../dashboard/account/router/AccountRouter";
 import { LayoutRoot } from "../Layout";
+
+const AuthRouter = React.lazy(() => import("../auth/router/AuthRouter"));
+const AccountRouter = React.lazy(
+  () => import("../dashboard/account/router/AccountRouter")
+);
 
 export const AppRoutes = () => {
   const checkStatusAuth = useAuthStore((state) => state.checkStatusAuth);
@@ -19,24 +21,22 @@ export const AppRoutes = () => {
     return <h3>Cargando...</h3>;
   }
   return (
-    <>
-      {current_status === "unauthenticated" ? (
-        <>
-          <Routes>
+    <Suspense fallback={<div>Cargando...</div>}>
+      <Routes>
+        {current_status === "unauthenticated" ? (
+          <>
             <Route path="/*" element={<AuthRouter />} />
             <Route path="/*" element={<Navigate to="/sign-in" />} />
-          </Routes>
-        </>
-      ) : (
-        <>
-          <Routes>
+          </>
+        ) : (
+          <>
             <Route element={<LayoutRoot />}>
               <Route path="/accounts/*" element={<AccountRouter />} />
               <Route path="/*" element={<Navigate to="/accounts" />} />
             </Route>
-          </Routes>
-        </>
-      )}
-    </>
+          </>
+        )}
+      </Routes>
+    </Suspense>
   );
 };

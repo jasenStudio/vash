@@ -18,11 +18,13 @@ export class AuthService {
       }
       return data;
     } catch (error) {
+      //TODO REfactor error response
       if (error instanceof AxiosError) {
-        console.log(error.response?.data);
+        if (error.code === "ERR_NETWORK") {
+          throw new Error(`503 Service Unavailable - ${error.code} `);
+        }
         throw new Error(JSON.stringify(error.response?.data));
       }
-      // console.log(error);
       throw new Error("Unable to login");
     }
   };

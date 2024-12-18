@@ -36,7 +36,7 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
 
       return true;
     } catch (error) {
-      const ParseError = JSON.parse((error as Error).message);
+      const ParseError = error || JSON.parse((error as Error).message);
       set(() => ({
         status: "unauthenticated",
         token: undefined,

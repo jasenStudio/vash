@@ -1,42 +1,50 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { ListAccountPage } from "../pages/ListAccountPage";
+
 import { AccountLayout } from "../layout/AccountLayout";
-import { ShowAccountPage } from "../pages/ShowAccountPage";
 import { AnimatePresence } from "framer-motion";
 import { AnimatedComponent } from "@/components/ui-custom/AnimatedComponent";
-export const AccountRouter = () => {
+import React, { Suspense } from "react";
+
+//** Lazy component */
+const ListAccountPage = React.lazy(() => import("../pages/ListAccountPage"));
+const ShowAccountPage = React.lazy(() => import("../pages/ShowAccountPage"));
+
+const AccountRouter = () => {
   return (
     <>
       <AccountLayout>
         <AnimatePresence mode="wait">
-          <Routes>
-            <Route
-              path=""
-              element={
-                <AnimatedComponent
-                  key={"list-account"}
-                  transition={{ duration: 0.5 }}
-                >
-                  <ListAccountPage />
-                </AnimatedComponent>
-              }
-            />
-            <Route
-              path="show"
-              element={
-                <AnimatedComponent
-                  key={"show-account"}
-                  transition={{ duration: 0.5 }}
-                >
-                  <ShowAccountPage />
-                </AnimatedComponent>
-              }
-            />
+          <Suspense fallback={<div>Cargando....</div>}>
+            <Routes>
+              <Route
+                path=""
+                element={
+                  <AnimatedComponent
+                    key={"list-account"}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <ListAccountPage />
+                  </AnimatedComponent>
+                }
+              />
+              <Route
+                path="show"
+                element={
+                  <AnimatedComponent
+                    key={"show-account"}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <ShowAccountPage />
+                  </AnimatedComponent>
+                }
+              />
 
-            <Route path="/accounts/*" element={<Navigate to="/list" />} />
-          </Routes>
+              <Route path="/accounts/*" element={<Navigate to="/list" />} />
+            </Routes>
+          </Suspense>
         </AnimatePresence>
       </AccountLayout>
     </>
   );
 };
+export default AccountRouter;
