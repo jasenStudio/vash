@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { LoginPage } from "@/vash/auth/pages/LoginPage";
+import LoginPage from "@/vash/auth/pages/LoginPage";
 import { BrowserRouter } from "react-router-dom";
 
 describe("Login Page", () => {

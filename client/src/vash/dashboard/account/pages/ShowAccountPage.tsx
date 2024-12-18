@@ -3,7 +3,7 @@ import { useTitle } from "@/hooks/use-title";
 // import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export const ShowAccountPage = () => {
+const ShowAccountPage = () => {
   useTitle("Detalle pagina");
 
   return (
@@ -13,3 +13,5 @@ export const ShowAccountPage = () => {
     </div>
   );
 };
+
+export default ShowAccountPage;

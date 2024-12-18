@@ -7,7 +7,7 @@ import useAccounts from "../hooks/use-accounts";
 import { Account as AccountInterface } from "@/domain";
 import { useState } from "react";
 
-export const ListAccountPage = () => {
+const ListAccountPage = () => {
   useTitle("lista de cuentas");
   const [limitAccount, setlimitAccount] = useState<number>(5);
   const [search, setSearch] = useState<string>("");
@@ -56,3 +56,5 @@ export const ListAccountPage = () => {
     </div>
   );
 };
+
+export default ListAccountPage;
