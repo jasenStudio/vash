@@ -59,8 +59,6 @@ export class AuthService {
       });
       return data;
     } catch (error) {
-      const token = useAuthStore.getState().token;
-
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
         throw new Error(error.response?.data.message);
