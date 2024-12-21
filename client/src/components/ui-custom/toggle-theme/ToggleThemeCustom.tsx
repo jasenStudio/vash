@@ -1,7 +1,8 @@
+import { memo } from "react";
 import { useTheme } from "@/vash/providers/theme-provider";
 import "./ToggleThemeCustom.css";
 
-export const ToggleModeCustom = () => {
+export const ToggleModeCustom = memo(() => {
   const { setTheme, theme } = useTheme();
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -24,4 +25,4 @@ export const ToggleModeCustom = () => {
       </div>
     </div>
   );
-};
+});

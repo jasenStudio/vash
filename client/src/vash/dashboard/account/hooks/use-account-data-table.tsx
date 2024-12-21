@@ -1,7 +1,7 @@
 import {
   ColumnDef,
-  ColumnFiltersState,
   getCoreRowModel,
+  ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,

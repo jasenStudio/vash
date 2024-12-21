@@ -31,7 +31,7 @@ const ListAccountPage = () => {
       created_at: format(new Date(Date.parse(created_at)), "dd-MM-uuu", {
         locale: es,
       }),
-      status: `${status ? "Active" : "Inactive"}`,
+      status: `${status ? "true" : "false"}`,
       ...rest,
     };
   });

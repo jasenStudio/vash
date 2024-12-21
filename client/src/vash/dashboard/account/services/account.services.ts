@@ -21,4 +21,19 @@ export class AccountService {
       throw new Error("Upss no workings accounts");
     }
   };
+
+  static store = async (email_account: string) => {
+    const URL = "/accounts/new";
+
+    try {
+      const { data } = await vashApi.post(URL, { email_account });
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data);
+        throw new Error(JSON.stringify(error.response?.data));
+      }
+      throw new Error("Ops , you can't create account");
+    }
+  };
 }

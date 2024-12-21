@@ -72,6 +72,26 @@ export default {
           raw: "(orientation: landscape) and (min-width:640px)",
         },
       },
+      keyframes: {
+        shine: {
+          "0%": { backgroundPosition: "200% 0" },
+          "25%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
+        scaleIn: {
+          "0%": { transform: "scale(0)" },
+          "100%": { transform: "scale(1)" },
+        },
+        scaleOut: {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(0)" },
+        },
+      },
+      animation: {
+        shine: "shine 3s ease-out infinite",
+        scaleIn: "scaleIn 0.3s ease-out",
+        scaleOut: "scaleOut 0.3s ease-in",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

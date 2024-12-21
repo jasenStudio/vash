@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { useDialog } from "@/vash/store/ui/useDialog";
+
 export type Account = {
   id: string;
   account_email: string;
@@ -32,20 +34,6 @@ const myCustomFilterFn: FilterFn<Account> = (
     `${row.original.account_email} ${row.original.status}`.toLowerCase();
 
   return filterParts.every((part: string) => rowValues.includes(part));
-
-  // if (row.original.email.includes(filterValue)) {
-  //   return true;
-  // }
-
-  // if (row.original.clientName.includes(filterValue)) {
-  //   return true;
-  // }
-
-  // if (row.original.status.includes(filterValue)) {
-  //   return true;
-  // }
-
-  // return false;
 };
 
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -115,11 +103,10 @@ export const columns: ColumnDef<Account>[] = [
     id: "status",
     accessorKey: "status",
     header: "status",
-    filterFn: myCustomFilterFn,
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-
-      return <div className="text-right font-medium">{status}</div>;
+      const castStatus = status === "true" ? "Active" : "Inactive";
+      return <div className="text-right font-medium">{castStatus}</div>;
     },
   },
   {
@@ -130,28 +117,36 @@ export const columns: ColumnDef<Account>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const account = row.original;
+
+      const onOpen = useDialog((state) => state.onOpen);
+      const setData = useDialog((state) => state.setData);
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  onOpen("account", "update");
+                  setData(account);
+                }}
+              >
+                Editar cuenta
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View account</DropdownMenuItem>
+              <DropdownMenuItem>Delete ACCOUNT</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
     },
   },

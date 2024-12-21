@@ -34,12 +34,15 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { PaginationInput } from "..";
 
 import { useDebounce, useIsMobile } from "@/hooks";
-import { ArrowBigLeft, ArrowBigRight, Trash } from "lucide-react";
+import { ArrowBigLeft, ArrowBigRight, PlusCircle, Trash } from "lucide-react";
 
 import {
   useAccountDataTablemobile,
   useAccountDataTable,
 } from "@/vash/dashboard/account/hooks";
+
+import { useDialog } from "@/vash/store/ui/useDialog";
+import AccountDialog from "../accountdialog/AccountDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -83,11 +86,15 @@ export function DataTable<TData, TValue>({
   const debounce_term = useDebounce(filterInput, 400);
   const rows_generated = table.getRowModel().rows.length;
   const [messageInfo, setMessageInfo] = useState("");
+  const onOpen = useDialog((state) => state.onOpen);
+  const isOpen = useDialog((state) => state.isOpen);
   useAccountDataTablemobile({ isMobile, columns, setColumnVisibility });
 
   const handleAccountInput = (event: ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus("all");
     table.getColumn("status")?.setFilterValue(undefined);
+    console.log(table.getColumn("status")?.setFilterValue(undefined), "status");
+
     table.getColumn("account_email")?.setFilterValue(event.target.value);
     setFilterInput(event.target.value);
   };
@@ -134,19 +141,20 @@ export function DataTable<TData, TValue>({
           <Select
             value={currentStatus}
             onValueChange={(value) => {
-              console.log(value);
               if (value === "all") {
                 table.getColumn("status")?.setFilterValue(undefined);
                 setCurrentStatus("all");
                 return;
               }
-              setCurrentStatus(value);
+
               table.getColumn("status")?.setFilterValue(value);
+              setCurrentStatus(value);
+              console.log(value, "select");
               console.log(table.getColumn("status")?.setFilterValue(value));
             }}
           >
             <SelectTrigger
-              className={`${isMobile ? "w-full" : " w-[180px]"} ml-2`}
+              className={`${isMobile ? "w-full" : " w-[180px] ml-2"} `}
             >
               <SelectValue placeholder="Status - Active" />
             </SelectTrigger>
@@ -154,8 +162,8 @@ export function DataTable<TData, TValue>({
               <SelectGroup>
                 <SelectLabel>status</SelectLabel>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="true">Active</SelectItem>
+                <SelectItem value="false">Inactive</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -165,22 +173,21 @@ export function DataTable<TData, TValue>({
         <div className={`w-full ${isDeleteRecord && "my-2"}`}>
           {isDeleteRecord ? (
             <Button
-              className={`${isMobile ? "w-full" : ""}`}
+              disabled={!isDeleteRecord}
+              className={`${isMobile && "w-full"} ${
+                isDeleteRecord ? "animate-scaleIn" : "animate-scaleOut"
+              }`}
               variant="destructive"
               onClick={() => {
                 let ids: number[] = [];
                 table.getSelectedRowModel().rows.map((row) => {
-                  console.log((row.original as Account).account_email);
                   ids.push(+(row.original as Account).id);
                 });
-                console.log(rowSelection);
-                console.log(ids, "aqui");
-                console.log(ids[0]);
               }}
             >
-              <Trash />
               delete {rowsSelected > 1 ? "accounts" : "account"}
               <span>({rowsSelected})</span>
+              <Trash />
             </Button>
           ) : (
             <span></span>
@@ -190,6 +197,21 @@ export function DataTable<TData, TValue>({
         {/* columsVisible */}
         <div className="w-full my-2">
           {" "}
+          <Button
+            onClick={() => {
+              onOpen("account", "create");
+            }}
+            className={`bg-button-primary mr-2 text-white hover:bg-button-primary-foreground transition-all duration-300
+            ${
+              isMobile &&
+              "w-full mr-0 my-4 focus:ring-2  focus:ring-slate-400/90 focus:ring-offset-2"
+            } `}
+            effect="expandIcon"
+            icon={PlusCircle}
+            iconPlacement="right"
+          >
+            Create Account {isMobile && <PlusCircle className="ml-2" />}
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger
               asChild
@@ -199,7 +221,10 @@ export function DataTable<TData, TValue>({
                 Columns
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent
+              align="center"
+              className={`${isMobile && "min-w-[18rem]"}`}
+            >
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -209,7 +234,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
-                      className="capitalize"
+                      className={`capitalize `}
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => {
                         column.toggleVisibility(!!value);
@@ -357,6 +382,8 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       </div>
+
+      <AccountDialog />
     </>
   );
 }
