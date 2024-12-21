@@ -90,6 +90,7 @@ export class AccountRepository {
         id,
       },
       data: {
+        id: id,
         ...accountPayload,
         user_id: +user.id,
       },

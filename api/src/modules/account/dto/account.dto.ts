@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export interface QueryListAccount {
   page: string;
@@ -17,4 +17,11 @@ export class AccountCreateDto {
   readonly account_email: string;
 }
 
-export class AccountUpdateDto extends PartialType(AccountCreateDto) {}
+export class AccountUpdateDto extends PartialType(AccountCreateDto) {
+  @ApiProperty({ required: false })
+  @IsBoolean({
+    message: 'El status de la cuenta debe ser un valor valido booleano',
+  })
+  @IsOptional()
+  readonly status: boolean;
+}
