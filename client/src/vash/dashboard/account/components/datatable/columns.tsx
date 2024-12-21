@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { useDialog } from "@/vash/store/ui/useDialog";
+import { create } from "zustand";
 
 export type Account = {
   id: string;
@@ -112,7 +113,24 @@ export const columns: ColumnDef<Account>[] = [
   {
     id: "created_at",
     accessorKey: "created_at",
-    header: "created_at",
+    header: ({ column }) => {
+      return (
+        <div className="text-right">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            created_at
+            <SortedIcon isSorted={column.getIsSorted()} />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const date = row.getValue("created_at") as string;
+      return <div className="text-right p-4">{date}</div>;
+    },
+    enableSorting: true,
   },
   {
     id: "actions",

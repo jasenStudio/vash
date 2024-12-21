@@ -35,7 +35,7 @@ export class AccountRepository {
       skip,
       take: limit,
       orderBy: {
-        account_email: 'desc', // Ordenar por correo en orden descendente
+        created_at: 'desc', // Ordenar por correo en orden descendente
       },
     });
 

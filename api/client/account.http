@@ -1,7 +1,7 @@
 ### #* Listar cuentas
 GET http://localhost:3000/api/accounts?page=1&limit=5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQzMTk0NDksImV4cCI6MTczNDMyNjY0OX0.L46eOdLbJFvYY1Q4D9WVugHN5HwXjTRr0dGfAq_GhuY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQ3NDgxMjAsImV4cCI6MTczNDc1NTMyMH0.nzsbEn4uUGVQmMINTUGbEu65RF4kwMp_StuSL6p_h2U
 
 {}
 

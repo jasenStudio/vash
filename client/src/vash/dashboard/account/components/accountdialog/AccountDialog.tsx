@@ -35,8 +35,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Account } from "@/domain";
 import React from "react";
+import { useAccountMutation } from "../../hooks/use-account-mutation";
 
 const AccountDialog: FC = () => {
+  const accountCreateMutation = useAccountMutation();
   const isOpen = useDialog((state) => state.isOpen);
   const onClose = useDialog((state) => state.onClose);
   const dialogType = useDialog((state) => state.dialogType);
@@ -80,6 +82,8 @@ const AccountDialog: FC = () => {
     console.log(account);
     console.log(account?.id);
     console.log(values);
+
+    accountCreateMutation.mutate(values.account_email);
   }
 
   if (dialogType !== "account") return null;
@@ -138,7 +142,11 @@ const AccountDialog: FC = () => {
               />
             )}
 
-            <Button type="submit">Submit</Button>
+            <Button disabled={accountCreateMutation.isPending} type="submit">
+              {accountCreateMutation.isPending
+                ? "cargando..."
+                : "Crear account"}
+            </Button>
           </form>
         </Form>
       </DialogContent>
