@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed, Mail, UserPlus, UserRound } from "lucide-react";
 
-import { formRegisterSchema } from "@/constants/formSchemas/formRegisteSchema";
+import { formRegisterSchema } from "@/constants";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 

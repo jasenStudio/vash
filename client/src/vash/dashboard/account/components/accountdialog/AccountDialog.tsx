@@ -1,3 +1,6 @@
+import { FC } from "react";
+import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,66 +26,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { Input } from "@/components/ui/input";
 
-import { useDialog } from "@/vash/store/ui/useDialog";
-import { FC } from "react";
+import { useAccountMutation } from "@/vash/dashboard/account/hooks/use-account-mutation";
+import { formAccountSchema } from "@/constants";
+import { useAccountDialog } from "../../hooks";
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Account } from "@/domain";
-import React from "react";
-import { useAccountMutation } from "../../hooks/use-account-mutation";
-
+const formSchema = formAccountSchema;
 const AccountDialog: FC = () => {
   const accountCreateMutation = useAccountMutation();
-  const isOpen = useDialog((state) => state.isOpen);
-  const onClose = useDialog((state) => state.onClose);
-  const dialogType = useDialog((state) => state.dialogType);
-  const actionType = useDialog((state) => state.actionType);
-  const { data: account } = useDialog(
-    (state) => state.data as { data: Account }
-  );
+  const { t } = useTranslation();
 
-  const formSchema = z.object({
-    account_email: z
-      .string({
-        required_error: "El correo electrónico es requerido",
-      })
-      .email(),
-    status: z.string().default("true"),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      account_email: "",
-      status: "true",
-    },
-  });
-
-  React.useEffect(() => {
-    if (actionType === "update" && account) {
-      form.reset({
-        account_email: account.account_email,
-        status: String(account.status),
-      });
-    } else {
-      form.reset({
-        account_email: "",
-        status: "true",
-      });
-    }
-  }, [account, actionType, form]);
+  const { isOpen, account, onClose, dialogType, actionType, form } =
+    useAccountDialog({ formAccountSchema: formSchema });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(account);
     console.log(account?.id);
     console.log(values);
 
-    accountCreateMutation.mutate(values.account_email);
+    accountCreateMutation.mutate(values.account_email, {
+      onSuccess: () => form.reset(),
+    });
   }
 
   if (dialogType !== "account") return null;
@@ -110,7 +74,7 @@ const AccountDialog: FC = () => {
                   <FormControl>
                     <Input placeholder="Email" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage enableTranslation />
                 </FormItem>
               )}
             />
@@ -142,11 +106,20 @@ const AccountDialog: FC = () => {
               />
             )}
 
-            <Button disabled={accountCreateMutation.isPending} type="submit">
-              {accountCreateMutation.isPending
-                ? "cargando..."
-                : "Crear account"}
-            </Button>
+            <div className="flex justify-between">
+              <Button onClick={onClose} variant="ghost">
+                {t("common.close")}
+              </Button>
+              <Button
+                className="bg-button-primary text-white hover:bg-button-primary-foreground"
+                disabled={accountCreateMutation.isPending}
+                type="submit"
+              >
+                {accountCreateMutation.isPending
+                  ? "cargando..."
+                  : "Crear account"}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>

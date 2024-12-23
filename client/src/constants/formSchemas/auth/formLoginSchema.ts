@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { commonValidationMessage as commonVM } from "../";
+import { commonValidationMessage as commonVM } from "@/constants";
 
 export const formLoginSchema = z
   .object({

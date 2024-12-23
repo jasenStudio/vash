@@ -12,3 +12,9 @@ export interface AccountsResponse {
     limit: number;
   };
 }
+
+export interface AccountCreateResponse {
+  ok: boolean;
+  data: { account: Account };
+  message: string;
+}

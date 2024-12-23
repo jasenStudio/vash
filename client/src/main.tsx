@@ -14,12 +14,12 @@ import { VashApp } from "@/vash/VashApp";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <TanStackProvider>
-      <BrowserRouter>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <TanStackProvider>
+        <BrowserRouter>
           <VashApp />
-        </ThemeProvider>
-      </BrowserRouter>
-    </TanStackProvider>
+        </BrowserRouter>
+      </TanStackProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

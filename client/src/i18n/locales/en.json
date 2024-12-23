@@ -17,7 +17,8 @@
     "common": {
         "and": "and ",
         "close": "Cancel",
-        "saveChanges": "Save Changes"
+        "saveChanges": "Save Changes",
+        "save": "Save"
     },
     "configuration": {
         "title": "Settings",
@@ -38,5 +39,22 @@
         "allRightsReserved": "All Rights Reserved",
         "privacyPolicy": "Privacy Policy",
         "contact": "Contact"
+    },
+    "errors": {
+        "unexpected_error": "Unexpected error in the mutation",
+        "account_email_exists": "The account already exists"
+    },
+    "entities": {
+        "account": {
+            "create": "Create Account",
+            "update": "Update Account",
+            "delete": "Delete Account",
+            "success": "Account created successfully",
+            "updated": "Account updated successfully",
+            "deleted": "Account deleted successfully"
+        }
+    },
+    "validations": {
+        "email": "enter a valid email"
     }
 }

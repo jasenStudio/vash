@@ -1,6 +1,7 @@
 import { ColumnDef, SortDirection, Row, FilterFn } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon, MoreHorizontal } from "lucide-react";
-
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { useDialog } from "@/vash/store/ui/useDialog";
-import { create } from "zustand";
 
 export type Account = {
   id: string;
@@ -128,7 +128,13 @@ export const columns: ColumnDef<Account>[] = [
     },
     cell: ({ row }) => {
       const date = row.getValue("created_at") as string;
-      return <div className="text-right p-4">{date}</div>;
+      return (
+        <div className="text-right p-4">
+          {format(new Date(date), "dd-MM-uuu", {
+            locale: es,
+          })}
+        </div>
+      );
     },
     enableSorting: true,
   },

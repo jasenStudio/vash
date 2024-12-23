@@ -52,24 +52,21 @@ export const LayoutRoot = () => {
               <SidebarTriggerCustom />
 
               {/* title only for mobile */}
-              {isMobile && (
+              <span
+                className={`text-[18px] font-semibold capitalize block sm:hidden`}
+              >
+                {title}
+              </span>
+              {/* breadcumbs and title only for desktop and tablet or landscape */}
+              <div className="hidden sm:block">
+                <BreadcrumbsCustom />
                 <span className="text-[18px] font-semibold capitalize">
                   {title}
                 </span>
-              )}
-
-              {/* breadcumbs and title only for desktop and tablet or landscape */}
-              {!isMobile && (
-                <div>
-                  <BreadcrumbsCustom />
-                  <span className="text-[18px] font-semibold capitalize">
-                    {title}
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
             {/* Toggle and button Logout only for desktop and tablet or landscape */}
-            {!isMobile && (
+            <div className="hidden sm:flex">
               <div className="flex justify-center items-center mr-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="uppercase flex flew-row mx-6">
@@ -112,7 +109,7 @@ export const LayoutRoot = () => {
                   <LogOut className="inline-block mr-1" size={35} />
                 </button>
               </div>
-            )}
+            </div>
           </div>
           {/* Contenido principal */}
           <div className="w-full py-8 px-4">

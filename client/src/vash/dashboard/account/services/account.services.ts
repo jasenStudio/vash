@@ -1,4 +1,5 @@
 import { vashApi } from "@/api/vashApi";
+import { ErrorMapper } from "@/infrastructure/mapper/error.mapper";
 import { AxiosError } from "axios";
 
 const _sleep = async () => {
@@ -13,11 +14,12 @@ export class AccountService {
       console.log(data.data);
       return data;
     } catch (error) {
+      //* TODO : Implementar el error mapper
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
         throw new Error(JSON.stringify(error.response?.data));
       }
-      // console.log(error);
+
       throw new Error("Upss no workings accounts");
     }
   };
@@ -32,7 +34,9 @@ export class AccountService {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
-        throw new Error(JSON.stringify(error.response?.data));
+        throw {
+          ...ErrorMapper.errorToEntity(error.response?.data),
+        };
       }
       throw new Error("Ops , you can't create account");
     }

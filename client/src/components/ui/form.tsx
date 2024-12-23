@@ -12,6 +12,11 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
+
+interface FormMessageProps {
+  enableTranslation?: boolean;
+}
 
 const Form = FormProvider;
 
@@ -143,8 +148,9 @@ FormDescription.displayName = "FormDescription";
 
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
+  React.HTMLAttributes<HTMLParagraphElement> & FormMessageProps
+>(({ className, children, enableTranslation = false, ...props }, ref) => {
+  const { t } = useTranslation();
   const { error, formMessageId } = useFormField();
   const body = error ? String(error?.message) : children;
 
@@ -152,6 +158,8 @@ const FormMessage = React.forwardRef<
     return null;
   }
 
+  const message = enableTranslation ? t(`${body}`) : body;
+  console.log(message);
   return (
     <p
       ref={ref}
@@ -162,7 +170,7 @@ const FormMessage = React.forwardRef<
       )}
       {...props}
     >
-      {body}
+      {message}
     </p>
   );
 });

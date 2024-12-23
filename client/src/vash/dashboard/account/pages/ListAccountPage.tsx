@@ -28,9 +28,7 @@ const ListAccountPage = () => {
     const { account_email, created_at, status, ...rest } = account;
     return {
       account_email: account_email,
-      created_at: format(new Date(Date.parse(created_at)), "dd-MM-uuu", {
-        locale: es,
-      }),
+      created_at: String(created_at),
       status: `${status ? "true" : "false"}`,
       ...rest,
     };

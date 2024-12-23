@@ -3,6 +3,7 @@ import { AuthLayout } from "../layout/AuthLayout";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence, Variants } from "framer-motion";
 import { AnimatedComponent } from "@/components/ui-custom/AnimatedComponent";
+import LoaderCustom from "@/components/ui-custom/loader/LoaderCustom";
 
 const pageTransition: Variants = {
   initial: { opacity: 0, x: -30 },
@@ -17,7 +18,7 @@ const AuthRouter = () => {
   return (
     <AuthLayout>
       <AnimatePresence mode="wait">
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={<LoaderCustom />}>
           <Routes location={location} key={location.pathname}>
             <Route
               path="sign-in"

@@ -15,7 +15,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 ### #* Crear cuenta
 POST http://localhost:3000/api/accounts/new
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQ4MjUxMDgsImV4cCI6MTczNDgzMjMwOH0.5eDPWpSJYH4swO8w-9ZdcEZYDyx1VzpXLiML_ggvMVs
 
 {
     "account_email":"jorge@gmail.com"

@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   registerValidationMessage as registerVM,
   commonValidationMessage as commonVM,
-} from "../";
+} from "@/constants";
 
 export const formRegisterSchema = z
   .object({

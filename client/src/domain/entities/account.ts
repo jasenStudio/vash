@@ -1,6 +1,6 @@
 export interface Account {
   account_email: string;
-  created_at: string | Date;
+  created_at: string;
   id?: number;
   status?: boolean;
   updated_at: string;

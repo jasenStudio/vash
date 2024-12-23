@@ -1,4 +1,5 @@
 export const commonValidationMessage = {
+  email: { message: "validations.email" },
   required: (fieldname: string) => `El campo ${fieldname} es requerido.`,
   minLength: (length: number) => `Debe tener al menos ${length} caracteres.`,
   maxLength: (length: number) => `No debe exceder de ${length} caracteres.`,
@@ -6,7 +7,7 @@ export const commonValidationMessage = {
 
 export const registerValidationMessage = {
   email: {
-    message: "Ingresa un correo electronico valido",
+    message: "validations.email",
   },
   username: {
     message: "",

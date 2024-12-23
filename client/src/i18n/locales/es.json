@@ -18,7 +18,8 @@
         "and": "y ",
         "createProcess": "",
         "close": "Cancelar",
-        "saveChanges": "Guardar Cambios"
+        "saveChanges": "Guardar Cambios",
+        "save": "Guardar"
     },
     "configuration": {
         "title": "Configuración",
@@ -39,5 +40,22 @@
         "allRightsReserved": "Todos los derechos reservados.",
         "privacyPolicy": "Política de Privacidad",
         "contact": "Contacto"
+    },
+    "errors": {
+        "unexpected_error": "Error inesperado en la mutación",
+        "account_email_exists": "La cuenta ya existe"
+    },
+    "entities": {
+        "account": {
+            "create": "Crear Cuenta",
+            "update": "Actualizar Cuenta",
+            "delete": "Eliminar Cuenta",
+            "success": "Cuenta creada con éxito",
+            "updated": "Cuenta actualizada con éxito",
+            "deleted": "Cuenta eliminada con éxito"
+        }
+    },
+    "validations": {
+        "email": "ingresa un correo electrónico válido"
     }
 }
