@@ -1,7 +1,13 @@
 import { vashApi } from "@/api/vashApi";
+import { Account } from "@/domain";
+
 import { ErrorMapper } from "@/infrastructure/mapper/error.mapper";
 import { AxiosError } from "axios";
 
+export interface Props {
+  id: number;
+  payload: Omit<Partial<Account>, "id">;
+}
 const _sleep = async () => {
   return new Promise((r) => setTimeout(r, 4000));
 };
@@ -10,6 +16,7 @@ export class AccountService {
     const URL = `/accounts?limit=${limit}&page=${page}&search=${search}`;
 
     try {
+      await _sleep();
       const { data } = await vashApi.get(URL);
       console.log(data.data);
       return data;
@@ -28,17 +35,21 @@ export class AccountService {
     const URL = "/accounts/new";
 
     try {
-      await _sleep();
       const { data } = await vashApi.post(URL, { account_email });
       return data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error.response?.data);
-        throw {
-          ...ErrorMapper.errorToEntity(error.response?.data),
-        };
-      }
-      throw new Error("Ops , you can't create account");
+      ErrorMapper.handleError(error, "Ops , you can't create account");
+    }
+  };
+
+  static update = async ({ id, payload }: Props) => {
+    const URL = `/accounts/edit/${id}`;
+
+    try {
+      const { data } = await vashApi.put(URL, payload);
+      return data;
+    } catch (error) {
+      ErrorMapper.handleError(error, "Ops , you can't update account");
     }
   };
 }

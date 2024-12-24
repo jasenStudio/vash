@@ -13,7 +13,6 @@ export const useAccountMutation = () => {
 
   const mutation = useMutation({
     mutationFn: AccountService.store,
-
     onMutate: async (newAccount) => {
       console.log("Mutación optimista iniciada");
 
@@ -58,7 +57,6 @@ export const useAccountMutation = () => {
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
         (old: AccountsResponse) => {
-          console.log(old, "old");
           if (!old) return context.previousData;
 
           const accounts = old.data.accounts.map((cacheAccount) => {
@@ -78,6 +76,7 @@ export const useAccountMutation = () => {
       toast.success(t("entities.account.success"), { duration: 5000 });
     },
     onError: (error, _variables, context) => {
+      //TODO mejorar manipulacion
       if (error instanceof Error) {
         const error_account_exist = "El account_email ya está en uso";
         const { message } = error;
@@ -114,56 +113,56 @@ export const useAccountMutation = () => {
   });
 
   return mutation;
-
-  //* funcional  */
-  //   onMutate: async (newAccount) => {
-  //     console.log("Mutación optimista iniciada");
-
-  //     await queryClient.cancelQueries({
-  //       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-  //     });
-
-  //     const previousData = queryClient.getQueryData<AccountsResponse>([
-  //       "accounts",
-  //       { page: 1, limit: 5, search: "" },
-  //     ]);
-
-  //     const optimisticAccount: Partial<Account> = {
-  //       id: Math.random(),
-  //       account_email: newAccount,
-  //       created_at: new Date().toISOString(), // Fecha válida
-  //     };
-
-  //     queryClient.setQueryData(
-  //       ["accounts", { page: 1, limit: 5, search: "" }],
-  //       (old: AccountsResponse) => {
-  //         if (!old) return previousData;
-  //         return {
-  //           ...old,
-  //           data: {
-  //             accounts: [optimisticAccount, ...old.data.accounts],
-  //           },
-  //         };
-  //       }
-  //     );
-
-  //     return { previousData };
-  //   },
-  //   onError: (error, newAccount, context) => {
-  //     console.error("Error en la mutación", error);
-  //     if (context?.previousData) {
-  //       queryClient.setQueryData(
-  //         ["accounts", { page: 1, limit: 5, search: "" }],
-  //         context.previousData
-  //       );
-  //     }
-  //   },
-  //   onSettled: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-  //     });
-  //   },
-  // });
-
-  // return mutation;
 };
+
+//* funcional  */
+//   onMutate: async (newAccount) => {
+//     console.log("Mutación optimista iniciada");
+
+//     await queryClient.cancelQueries({
+//       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
+//     });
+
+//     const previousData = queryClient.getQueryData<AccountsResponse>([
+//       "accounts",
+//       { page: 1, limit: 5, search: "" },
+//     ]);
+
+//     const optimisticAccount: Partial<Account> = {
+//       id: Math.random(),
+//       account_email: newAccount,
+//       created_at: new Date().toISOString(), // Fecha válida
+//     };
+
+//     queryClient.setQueryData(
+//       ["accounts", { page: 1, limit: 5, search: "" }],
+//       (old: AccountsResponse) => {
+//         if (!old) return previousData;
+//         return {
+//           ...old,
+//           data: {
+//             accounts: [optimisticAccount, ...old.data.accounts],
+//           },
+//         };
+//       }
+//     );
+
+//     return { previousData };
+//   },
+//   onError: (error, newAccount, context) => {
+//     console.error("Error en la mutación", error);
+//     if (context?.previousData) {
+//       queryClient.setQueryData(
+//         ["accounts", { page: 1, limit: 5, search: "" }],
+//         context.previousData
+//       );
+//     }
+//   },
+//   onSettled: () => {
+//     queryClient.invalidateQueries({
+//       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
+//     });
+//   },
+// });
+
+// return mutation;

@@ -1,7 +1,8 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { Menu, PanelsTopLeft } from "lucide-react";
+import { memo } from "react";
 
-export const SidebarTriggerCustom = () => {
+export const SidebarTriggerCustom = memo(() => {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -10,4 +11,4 @@ export const SidebarTriggerCustom = () => {
       <PanelsTopLeft size={30} className="hidden sm:block" />
     </button>
   );
-};
+});

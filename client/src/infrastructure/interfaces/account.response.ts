@@ -18,3 +18,5 @@ export interface AccountCreateResponse {
   data: { account: Account };
   message: string;
 }
+
+export interface AccountUpdateResponse extends Partial<AccountCreateResponse> {}

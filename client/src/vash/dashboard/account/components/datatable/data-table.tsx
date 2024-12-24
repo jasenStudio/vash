@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 
@@ -85,39 +85,53 @@ export function DataTable<TData, TValue>({
   const isDeleteRecord = Object.keys(rowSelection).length > 0;
   const rowsSelected = table.getFilteredSelectedRowModel().rows.length;
   const debounce_term = useDebounce(filterInput, 400);
-  const rows_generated = table.getRowModel().rows.length;
+  const rows_generated = table.getRowModel().rows;
   const [messageInfo, setMessageInfo] = useState("");
   const onOpen = useDialog((state) => state.onOpen);
-  const isOpen = useDialog((state) => state.isOpen);
   useAccountDataTablemobile({ isMobile, columns, setColumnVisibility });
 
-  const handleAccountInput = (event: ChangeEvent<HTMLInputElement>) => {
-    setCurrentStatus("all");
-    table.getColumn("status")?.setFilterValue(undefined);
-    console.log(table.getColumn("status")?.setFilterValue(undefined), "status");
-
-    table.getColumn("account_email")?.setFilterValue(event.target.value);
-    setFilterInput(event.target.value);
-  };
+  const handleAccountInput = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setCurrentStatus("all");
+      table.getColumn("status")?.setFilterValue(undefined);
+      table.getColumn("account_email")?.setFilterValue(event.target.value);
+      setFilterInput(event.target.value);
+    },
+    [table]
+  );
 
   useEffect(() => {
     onSearch && onSearch(debounce_term);
   }, [debounce_term]);
 
+  // useEffect(() => {
+  //   if (accountsQuery!.isFetching) {
+  //     setMessageInfo("Searching...");
+  //   } else {
+  //     const handler = setTimeout(() => {
+  //       if (rows_generated === 0) {
+  //         setMessageInfo("No results");
+  //       }
+  //     }, 1000);
+
+  //     return () => clearTimeout(handler);
+  //   }
+  //   return () => setMessageInfo("");
+  // }, [rows_generated, debounce_term, accountsQuery?.isFetching]);
+
   useEffect(() => {
+    let waiting = true;
     if (accountsQuery!.isFetching) {
       setMessageInfo("Searching...");
+      waiting = false;
+    } else if (!waiting && rows_generated.length === 0) {
+      console.log(rows_generated.length, "rows_generated");
+      console.log("aqui");
+      setMessageInfo("No results");
     } else {
-      const handler = setTimeout(() => {
-        if (rows_generated === 0) {
-          setMessageInfo("No results");
-        }
-      }, 1000);
-
-      return () => clearTimeout(handler);
+      setMessageInfo("");
     }
-    return () => setMessageInfo("");
-  }, [rows_generated, debounce_term, accountsQuery?.isFetching]);
+  }, [accountsQuery!.isFetching, rows_generated, debounce_term]);
 
   return (
     <>

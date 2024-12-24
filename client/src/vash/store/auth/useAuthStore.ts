@@ -18,6 +18,10 @@ interface Actions {
   clearMessage: () => void;
   logout: () => void;
 }
+const clearAuthStorage = () => {
+  localStorage.removeItem("auth-token");
+  localStorage.removeItem("auth-token-expiration");
+};
 
 const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   status: "checking",
@@ -83,8 +87,7 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
         user: undefined,
         msgError: "Token invalido",
       });
-      localStorage.removeItem("auth-token");
-      localStorage.removeItem("auth-token-expiration");
+      clearAuthStorage();
     }
   },
 
@@ -113,8 +116,7 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
     set(() => ({ msgError: undefined }));
   },
   logout: () => {
-    localStorage.removeItem("auth-token");
-    localStorage.removeItem("auth-token-expiration");
+    clearAuthStorage();
     set(() => ({
       status: "unauthenticated",
       token: undefined,

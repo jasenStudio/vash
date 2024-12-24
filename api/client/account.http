@@ -22,12 +22,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 }
 
 ### #* edit cuenta
-PUT http://localhost:3000/api/accounts/edit/3
+PUT http://localhost:3000/api/accounts/edit/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjE4NzMsImV4cCI6MTczMzYyOTA3M30.hrobzSoqzpwFKy2NxqulsMFUdO8MZ24-xoX9rL1QbsQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQ5MTg4MTgsImV4cCI6MTczNDkyNjAxOH0.lEyzHIq8MtnLXLwXujPrx1xSVZUbTB1loOMHBq6Og9U
 
 {
-    "account_email":"jorge@gmail.com"
+    "account_email":"johndoe@gmail.com",
+    "status": true
 }
 
 ### #* deleted account

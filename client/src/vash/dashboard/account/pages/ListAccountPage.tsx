@@ -1,11 +1,9 @@
 import { useTitle } from "@/hooks/use-title";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { columns } from "../components/datatable/columns";
 import { DataTable } from "../components/datatable/data-table";
 import useAccounts from "../hooks/use-accounts";
 import { Account as AccountInterface } from "@/domain";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const ListAccountPage = () => {
   useTitle("lista de cuentas");
@@ -24,15 +22,17 @@ const ListAccountPage = () => {
     search,
   });
 
-  const accountsMap = accounts.map((account: AccountInterface) => {
-    const { account_email, created_at, status, ...rest } = account;
-    return {
-      account_email: account_email,
-      created_at: String(created_at),
-      status: `${status ? "true" : "false"}`,
-      ...rest,
-    };
-  });
+  const accountsMap = useMemo(() => {
+    return accounts.map((account: AccountInterface) => {
+      const { account_email, created_at, status, ...rest } = account;
+      return {
+        account_email,
+        created_at: String(created_at),
+        status: `${status ? "true" : "false"}`,
+        ...rest,
+      };
+    });
+  }, [accounts]);
 
   return (
     <div>

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
@@ -31,10 +31,12 @@ import { Input } from "@/components/ui/input";
 import { useAccountMutation } from "@/vash/dashboard/account/hooks/use-account-mutation";
 import { formAccountSchema } from "@/constants";
 import { useAccountDialog } from "../../hooks";
+import { useAccountUpdateMutation } from "@/vash/dashboard/account/hooks/use-account-update-mutation";
 
 const formSchema = formAccountSchema;
 const AccountDialog: FC = () => {
   const accountCreateMutation = useAccountMutation();
+  const accountUpdateMutation = useAccountUpdateMutation();
   const { t } = useTranslation();
 
   const { isOpen, account, onClose, dialogType, actionType, form } =
@@ -45,9 +47,21 @@ const AccountDialog: FC = () => {
     console.log(account?.id);
     console.log(values);
 
-    accountCreateMutation.mutate(values.account_email, {
-      onSuccess: () => form.reset(),
-    });
+    const { status, ...rest } = values;
+    const castingStatus = status === "true" ? true : false;
+
+    console.log(castingStatus);
+    actionType === "update"
+      ? accountUpdateMutation.mutate({
+          id: account!.id!,
+          payload: {
+            status: castingStatus,
+            ...rest,
+          },
+        })
+      : accountCreateMutation.mutate(values.account_email, {
+          onSuccess: () => form.reset(),
+        });
   }
 
   if (dialogType !== "account") return null;

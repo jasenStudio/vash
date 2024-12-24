@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { useEffect, useState } from "react";
+import { usePagination } from "@/vash/store/ui/usePagination";
 
 interface Props {
   limit: number;
@@ -8,6 +9,11 @@ interface Props {
 }
 
 const useAccounts = ({ limit, search = "" }: Props) => {
+  const {
+    setPage: setPageStore,
+    setLimit,
+    setSearch,
+  } = usePagination((state) => state);
   const [page, setPage] = useState(1);
 
   const accountsQuery = useQuery({
@@ -23,12 +29,14 @@ const useAccounts = ({ limit, search = "" }: Props) => {
 
   useEffect(() => {
     setPage(1);
+    setPageStore(page);
+    setLimit(limit);
+    setSearch(search);
   }, [limit, search]);
 
   const nextPage = () => {
     if (page < totalPages) {
       setPage((prevPage) => prevPage + 1);
-      return;
     }
   };
 
