@@ -43,7 +43,7 @@ import {
 } from "@/vash/dashboard/account/hooks";
 
 import { useDialog } from "@/vash/store/ui/useDialog";
-import AccountDialog from "../accountdialog/AccountDialog";
+import { FormAccountDialog } from "../accountdialog/FormAccountDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -398,7 +398,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <AccountDialog />
+      <FormAccountDialog />
     </>
   );
 }

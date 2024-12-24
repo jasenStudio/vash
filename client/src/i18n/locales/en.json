@@ -51,7 +51,8 @@
             "delete": "Delete Account",
             "success": "Account created successfully",
             "updated": "Account updated successfully",
-            "deleted": "Account deleted successfully"
+            "deleted": "Account deleted successfully",
+            "updated_error": "An error occurred while updating the account"
         }
     },
     "validations": {

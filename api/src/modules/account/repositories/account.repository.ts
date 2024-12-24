@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/services/prisma.service';
 import { ReqUserToken } from 'src/modules/auth/dto/auth.dto';
 import {
   AccountCreateDto,
+  AccountIdsDto,
   AccountUpdateDto,
   QueryListAccount,
 } from '../dto/account.dto';
@@ -113,6 +114,27 @@ export class AccountRepository {
     return this.__apiResponseService.success(
       { account: account },
       'Account deleted successfully',
+    );
+  }
+
+  async deleteMany(user: ReqUserToken, accountsPayload: AccountIdsDto) {
+    const { accountIds } = accountsPayload;
+    console.log(
+      '🚀 ~ AccountRepository ~ deleteMany ~ accountIds:',
+      accountIds,
+    );
+    const accounts = await this.prisma.account.deleteMany({
+      where: {
+        id: {
+          in: accountIds,
+        },
+        user_id: +user.id,
+      },
+    });
+
+    return this.__apiResponseService.success(
+      { accounts: accounts },
+      'Accounts deleted successfully',
     );
   }
 }

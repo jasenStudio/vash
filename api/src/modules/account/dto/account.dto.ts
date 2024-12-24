@@ -25,3 +25,9 @@ export class AccountUpdateDto extends PartialType(AccountCreateDto) {
   @IsOptional()
   readonly status: boolean;
 }
+
+export class AccountIdsDto {
+  @ApiProperty({ required: true })
+  @IsNotEmpty({ message: 'Los IDs de las cuentas son requeridos' })
+  readonly accountIds: number[];
+}

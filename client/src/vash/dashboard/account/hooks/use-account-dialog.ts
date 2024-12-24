@@ -41,7 +41,7 @@ export const useAccountDialog = ({ formAccountSchema }: Props) => {
         status: "true",
       });
     }
-  }, [account, actionType, form]);
+  }, [actionType]);
 
   return {
     onClose,

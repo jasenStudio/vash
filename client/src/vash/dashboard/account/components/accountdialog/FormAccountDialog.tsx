@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { boolean, z } from "zod";
-import { useTranslation } from "react-i18next";
+import { FC, memo } from "react";
+import { z } from "zod";
+
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -32,15 +31,20 @@ import { useAccountMutation } from "@/vash/dashboard/account/hooks/use-account-m
 import { formAccountSchema } from "@/constants";
 import { useAccountDialog } from "../../hooks";
 import { useAccountUpdateMutation } from "@/vash/dashboard/account/hooks/use-account-update-mutation";
+import { ButtonDialog, ButtonDialogCancel } from "..";
 
 const formSchema = formAccountSchema;
-const AccountDialog: FC = () => {
+export const FormAccountDialog: FC = memo(() => {
   const accountCreateMutation = useAccountMutation();
   const accountUpdateMutation = useAccountUpdateMutation();
-  const { t } = useTranslation();
 
   const { isOpen, account, onClose, dialogType, actionType, form } =
     useAccountDialog({ formAccountSchema: formSchema });
+
+  const isUpdate =
+    actionType === "update"
+      ? accountUpdateMutation.isPending
+      : accountCreateMutation.isPending;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(account);
@@ -56,6 +60,7 @@ const AccountDialog: FC = () => {
           id: account!.id!,
           payload: {
             status: castingStatus,
+            created_at: account!.created_at,
             ...rest,
           },
         })
@@ -70,11 +75,7 @@ const AccountDialog: FC = () => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[22rem]">
         <DialogHeader>
-          <DialogTitle>{actionType}</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
+          <DialogTitle>{actionType} account</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -121,24 +122,12 @@ const AccountDialog: FC = () => {
             )}
 
             <div className="flex justify-between">
-              <Button onClick={onClose} variant="ghost">
-                {t("common.close")}
-              </Button>
-              <Button
-                className="bg-button-primary text-white hover:bg-button-primary-foreground"
-                disabled={accountCreateMutation.isPending}
-                type="submit"
-              >
-                {accountCreateMutation.isPending
-                  ? "cargando..."
-                  : "Crear account"}
-              </Button>
+              <ButtonDialogCancel onClose={onClose} />
+              <ButtonDialog isPending={isUpdate} actionType={actionType!} />
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AccountDialog;
+});

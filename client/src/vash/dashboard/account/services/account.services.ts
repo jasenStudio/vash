@@ -8,15 +8,14 @@ export interface Props {
   id: number;
   payload: Omit<Partial<Account>, "id">;
 }
-const _sleep = async () => {
-  return new Promise((r) => setTimeout(r, 4000));
-};
+// const _sleep = async () => {
+//   return new Promise((r) => setTimeout(r, 4000));
+// };
 export class AccountService {
   static index = async (page: number = 1, limit: number = 5, search = "") => {
     const URL = `/accounts?limit=${limit}&page=${page}&search=${search}`;
 
     try {
-      await _sleep();
       const { data } = await vashApi.get(URL);
       console.log(data.data);
       return data;
@@ -44,12 +43,13 @@ export class AccountService {
 
   static update = async ({ id, payload }: Props) => {
     const URL = `/accounts/edit/${id}`;
-
+    const { created_at, ...rest } = payload;
+    console.log(payload);
     try {
-      const { data } = await vashApi.put(URL, payload);
+      const { data } = await vashApi.put(URL, rest);
       return data;
     } catch (error) {
-      ErrorMapper.handleError(error, "Ops , you can't update account");
+      throw ErrorMapper.handleError(error, "Ops , you can't update account");
     }
   };
 }

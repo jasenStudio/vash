@@ -28,7 +28,7 @@ model Account {
   status        Boolean        @default(true)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
-  user          User           @relation(fields: [user_id], references: [id])
+  user          User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
   Subscription  Subscription[]
 
   @@map("accounts")
@@ -52,7 +52,7 @@ model Service {
   status                 Boolean            @default(true)
   created_at             DateTime           @default(now())
   updated_at             DateTime           @updatedAt
-  categories_services    Categories_service @relation(fields: [categories_services_id], references: [id])
+  categories_services    Categories_service @relation(fields: [categories_services_id], references: [id], onDelete: Cascade)
   subcription            Subscription[]
 
   @@map("services")
@@ -66,8 +66,8 @@ model Subscription {
   status                 Boolean              @default(true)
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
-  accounts               Account              @relation(fields: [account_id], references: [id])
-  services               Service              @relation(fields: [services_id], references: [id])
+  accounts               Account              @relation(fields: [account_id], references: [id], onDelete: Cascade)
+  services               Service              @relation(fields: [services_id], references: [id], onDelete: Cascade)
   Subscription_detail    Subscription_detail?
 
   @@map("subscriptions")

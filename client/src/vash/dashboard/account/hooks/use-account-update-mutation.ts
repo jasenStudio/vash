@@ -7,6 +7,7 @@ import {
 import { toast } from "sonner";
 import { Account } from "@/domain";
 import { usePagination } from "@/vash/store/ui/usePagination";
+import { t } from "i18next";
 
 export const useAccountUpdateMutation = () => {
   const { page, limit, search } = usePagination();
@@ -18,6 +19,7 @@ export const useAccountUpdateMutation = () => {
       console.log("🚀 ~ page:", page);
       console.log("🚀 ~ search:", search);
       console.log("🚀 ~ limit:", limit);
+      console.log(Date.parse(account!.created_at!), "account.created_at");
       const previousData = queryClient.getQueryData<AccountsResponse>([
         "accounts",
         { page, limit, search },
@@ -25,8 +27,8 @@ export const useAccountUpdateMutation = () => {
 
       const optimisticAccount: Partial<Account> = {
         id: id,
+        created_at: account.created_at,
         ...account,
-        created_at: String(new Date()),
       };
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
@@ -72,9 +74,10 @@ export const useAccountUpdateMutation = () => {
           };
         }
       );
-      toast.success("entities.account.updated", { duration: 5000 });
+      toast.success(t("entities.account.updated"), { duration: 5000 });
     },
     onError: (_error, _variables, context) => {
+      console.log(_error.message, "error");
       queryClient.removeQueries({
         queryKey: ["account", context?.optimisticAccount.id],
       });
@@ -92,7 +95,7 @@ export const useAccountUpdateMutation = () => {
         }
       );
 
-      toast.error("errors.unexpected_error", { duration: 5000 });
+      toast.error(t("entities.account.updated_error"), { duration: 5000 });
     },
   });
 

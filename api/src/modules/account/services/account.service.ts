@@ -3,6 +3,7 @@ import { AccountRepository } from '../repositories/account.repository';
 import { ReqUserToken } from 'src/modules/auth/dto/auth.dto';
 import {
   AccountCreateDto,
+  AccountIdsDto,
   AccountUpdateDto,
   QueryListAccount,
 } from '../dto/account.dto';
@@ -28,5 +29,9 @@ export class AccountService {
 
   async deleteAccount(user: ReqUserToken, id: number) {
     return this.accountRepository.delete(user, id);
+  }
+
+  async deleteAccounts(user: ReqUserToken, accountsPayload: AccountIdsDto) {
+    return this.accountRepository.deleteMany(user, accountsPayload);
   }
 }

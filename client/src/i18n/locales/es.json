@@ -52,7 +52,8 @@
             "delete": "Eliminar Cuenta",
             "success": "Cuenta creada con éxito",
             "updated": "Cuenta actualizada con éxito",
-            "deleted": "Cuenta eliminada con éxito"
+            "deleted": "Cuenta eliminada con éxito",
+            "updated_error": "Hubo un error al actualizar la cuenta"
         }
     },
     "validations": {
