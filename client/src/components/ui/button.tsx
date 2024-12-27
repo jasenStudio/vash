@@ -53,12 +53,12 @@ const buttonVariants = cva(
   }
 );
 
-interface IconProps {
+export interface IconProps {
   icon: React.ElementType;
   iconPlacement: "left" | "right";
 }
 
-interface IconRefProps {
+export interface IconRefProps {
   icon?: never;
   iconPlacement?: undefined;
 }

@@ -4,7 +4,6 @@ import { z } from "zod";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -28,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useAccountMutation } from "@/vash/dashboard/account/hooks/use-account-mutation";
-import { formAccountSchema } from "@/constants";
+import { formAccountSchema } from "@/constants/formSchemas";
 import { useAccountDialog } from "../../hooks";
 import { useAccountUpdateMutation } from "@/vash/dashboard/account/hooks/use-account-update-mutation";
 import { ButtonDialog, ButtonDialogCancel } from "..";

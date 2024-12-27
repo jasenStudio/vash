@@ -1,6 +1,5 @@
-import { ChangeEvent, FC, memo, useRef } from "react";
+import { ChangeEvent, FC, memo } from "react";
 import { Input } from "@/components/ui/input";
-import { Eye } from "lucide-react";
 
 interface InputFilterProps {
   value: string;

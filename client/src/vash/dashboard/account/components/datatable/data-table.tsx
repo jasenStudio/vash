@@ -3,16 +3,6 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import {
   Table,
   TableBody,
   TableCell,
@@ -33,7 +23,7 @@ import { Account } from "./columns";
 import { UseQueryResult } from "@tanstack/react-query";
 
 import { useDebounce, useIsMobile } from "@/hooks";
-import { ArrowBigLeft, ArrowBigRight, PlusCircle, Trash } from "lucide-react";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 
 import {
   useAccountDataTablemobile,

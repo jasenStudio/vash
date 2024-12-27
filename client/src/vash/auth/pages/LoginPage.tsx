@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed, LogIn, UserRound } from "lucide-react";
 
 //* custom import
-import { formLoginSchema } from "@/constants";
+import { formLoginSchema } from "@/constants/formSchemas";
 
 //* store
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";

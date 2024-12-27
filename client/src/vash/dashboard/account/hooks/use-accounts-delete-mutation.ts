@@ -60,7 +60,7 @@ export const useAccountsDeleteMutation = () => {
 
       return { previousData, queryKey };
     },
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(context.queryKey, context.previousData);
       }

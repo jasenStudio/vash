@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { commonValidationMessage as commonVM } from "@/constants";
+import { commonValidationMessage as commonVM } from "@/constants/validationsMessages";
 
 export const formAccountSchema = z.object({
   account_email: z
