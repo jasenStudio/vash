@@ -16,7 +16,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <TanStackProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_relativeSplatPath: true,
+          }}
+        >
           <VashApp />
         </BrowserRouter>
       </TanStackProvider>

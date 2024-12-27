@@ -118,15 +118,12 @@ export class AccountRepository {
   }
 
   async deleteMany(user: ReqUserToken, accountsPayload: AccountIdsDto) {
-    const { accountIds } = accountsPayload;
-    console.log(
-      '🚀 ~ AccountRepository ~ deleteMany ~ accountIds:',
-      accountIds,
-    );
+    const { ids } = accountsPayload;
+    console.log('🚀 ~ AccountRepository ~ deleteMany ~ accountIds:', ids);
     const accounts = await this.prisma.account.deleteMany({
       where: {
         id: {
-          in: accountIds,
+          in: ids,
         },
         user_id: +user.id,
       },

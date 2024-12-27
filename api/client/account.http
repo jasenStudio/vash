@@ -1,7 +1,7 @@
 ### #* Listar cuentas
 GET http://localhost:3000/api/accounts?page=1&limit=5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUwNTUzNjcsImV4cCI6MTczNTA2MjU2N30.UXVac6GoEF4V8fWrBPb758lxPYV7za7M66_-IUMbqec
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUyNTEyNTQsImV4cCI6MTczNTI1ODQ1NH0.eFrL9t9cKzpviuRKDkxea5tEQTTApng9q4xn1n3RSTM
 
 {}
 
@@ -32,17 +32,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 }
 
 ### #* deleted account
-DELETE  http://localhost:3000/api/accounts/5
+DELETE  http://localhost:3000/api/accounts/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUwNTQxMjEsImV4cCI6MTczNTA2MTMyMX0.Rpc4ulr9-EBq4YdktRShw1nPJdkrbFYLdFrZvYxWxOk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUxNzI0ODgsImV4cCI6MTczNTE3OTY4OH0.pQrlD7yOZVXXfvaEiwFtLwxRmA-nOnyhXz__VTsF7Rg
 
 {}
 
 ### #* deleted accounts
-DELETE  http://localhost:3000/api/accounts
+POST  http://localhost:3000/api/accounts/batch-delete
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUwNTQ1MDMsImV4cCI6MTczNTA2MTcwM30.OMtPuHP6dKr6z1IB5gFFSQ8wWcfod-_yhyIfFjidRms
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUyMjIzMDgsImV4cCI6MTczNTIyOTUwOH0.ghtp9VOq4zzheW-a4cS58Tw7Q4jT2B2ucSslYR00Ol0
 
 {
-    "accountIds": [1,3,5,7]
+    "ids": [1,3,5,7]
 }

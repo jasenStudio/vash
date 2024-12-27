@@ -15,11 +15,6 @@ export const useAccountUpdateMutation = () => {
   const mutation = useMutation({
     mutationFn: AccountService.update,
     onMutate: async ({ id, payload: account }) => {
-      console.log("Mutacion optismita inciada");
-      console.log("🚀 ~ page:", page);
-      console.log("🚀 ~ search:", search);
-      console.log("🚀 ~ limit:", limit);
-      console.log(Date.parse(account!.created_at!), "account.created_at");
       const previousData = queryClient.getQueryData<AccountsResponse>([
         "accounts",
         { page, limit, search },
@@ -30,42 +25,25 @@ export const useAccountUpdateMutation = () => {
         created_at: account.created_at,
         ...account,
       };
-      queryClient.setQueryData(
-        ["accounts", { page: 1, limit: 5, search: "" }],
-        (old: AccountsResponse) => {
-          if (!old) return previousData;
-          return {
-            ...old,
-            data: {
-              accounts: [optimisticAccount, ...old.data.accounts],
-            },
-          };
-        }
-      );
-      return { optimisticAccount, previousData };
-    },
-    onSuccess: (
-      accountResponse: AccountUpdateResponse,
-      _variables,
-      context
-    ) => {
-      const { account } = accountResponse.data!;
-      queryClient.removeQueries({
-        queryKey: ["account", context?.optimisticAccount.id],
-      });
 
       queryClient.setQueryData(
         ["accounts", { page, limit, search }],
         (old: AccountsResponse) => {
-          console.log(old, "old");
-          if (!old) return context.previousData;
+          if (!old) return previousData;
 
-          const accounts = old.data.accounts.map((cacheAccount) => {
-            return cacheAccount.id === context.optimisticAccount.id
-              ? account
-              : cacheAccount;
-          });
-          console.log(accounts, "accounts");
+          const accounts = old.data.accounts.map((cacheAccount) =>
+            cacheAccount.id === optimisticAccount.id
+              ? optimisticAccount
+              : cacheAccount
+          );
+
+          const accountExists = old.data.accounts.some(
+            (cacheAccount) => cacheAccount.id === optimisticAccount.id
+          );
+          if (!accountExists) {
+            accounts.push(optimisticAccount);
+          }
+
           return {
             ...old,
             data: {
@@ -74,6 +52,47 @@ export const useAccountUpdateMutation = () => {
           };
         }
       );
+
+      return { optimisticAccount, previousData };
+    },
+    onSuccess: (
+      accountResponse: AccountUpdateResponse,
+      _variables,
+      context
+    ) => {
+      const { account } = accountResponse.data!;
+
+      console.log(account, "account");
+      console.log(context?.optimisticAccount, "optimisticAccount");
+
+      queryClient.setQueryData(
+        ["accounts", { page, limit, search }],
+        (old: AccountsResponse) => {
+          console.log({ old }, "Cached data before update");
+          if (!old) return context.previousData;
+
+          const accounts = old.data.accounts.map((cacheAccount) => {
+            console.log(cacheAccount.id, context.optimisticAccount.id, "ids");
+            console.log(
+              cacheAccount.id === context.optimisticAccount.id,
+              "comparacion"
+            );
+            return cacheAccount.id === context.optimisticAccount.id
+              ? account
+              : cacheAccount;
+          });
+
+          return {
+            ...old,
+            data: {
+              accounts,
+            },
+          };
+        }
+      );
+      queryClient.removeQueries({
+        queryKey: ["account", context?.optimisticAccount.id],
+      });
       toast.success(t("entities.account.updated"), { duration: 5000 });
     },
     onError: (_error, _variables, context) => {

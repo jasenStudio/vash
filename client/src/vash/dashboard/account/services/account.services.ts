@@ -52,4 +52,29 @@ export class AccountService {
       throw ErrorMapper.handleError(error, "Ops , you can't update account");
     }
   };
+
+  static delete = async (id: number) => {
+    const URL = `/accounts/${id}`;
+    try {
+      const { data } = await vashApi.delete(URL);
+      return data;
+    } catch (error) {
+      throw ErrorMapper.handleError(error, "Ops , you can't delete account");
+    }
+  };
+
+  // TODO ARREGLAR LA RUTA API
+  static deleteAccountsBatch = async (ids: number[]) => {
+    const URL = `/accounts/batch-delete`;
+    try {
+      const { data } = await vashApi.post(URL, { ids });
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw ErrorMapper.handleError(
+        error,
+        "Ops , you can't delete many account"
+      );
+    }
+  };
 }

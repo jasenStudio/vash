@@ -67,12 +67,13 @@ export class AccountController {
   }
 
   @UseGuards(AccountsOwnerGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete()
+  @HttpCode(HttpStatus.OK)
+  @Post('batch-delete')
   async deleteAccounts(
     @CurrentUser() user,
     @Body() accountsPayload: AccountIdsDto,
   ) {
+    console.log(accountsPayload);
     return await this.__accountService.deleteAccounts(user, accountsPayload);
   }
 }

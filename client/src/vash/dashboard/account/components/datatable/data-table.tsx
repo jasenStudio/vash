@@ -28,11 +28,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 import { Account } from "./columns";
 import { UseQueryResult } from "@tanstack/react-query";
-import { PaginationInput } from "..";
 
 import { useDebounce, useIsMobile } from "@/hooks";
 import { ArrowBigLeft, ArrowBigRight, PlusCircle, Trash } from "lucide-react";
@@ -42,8 +40,19 @@ import {
   useAccountDataTable,
 } from "@/vash/dashboard/account/hooks";
 
+import {
+  SelectStatusFilter,
+  PaginationInput,
+  InputAccountEmailFilter,
+  FormAccountDialog,
+  ButtonDeleteAccount,
+  ButtonCreateAccount,
+} from "..";
+
 import { useDialog } from "@/vash/store/ui/useDialog";
-import { FormAccountDialog } from "../accountdialog/FormAccountDialog";
+
+import { AlertDialogAccount } from "../AlertDialogAccount/AlertDialogAccount";
+import { PaginationLimitControl } from "./PaginationComponents/PaginationLimitControls/PaginationLimitControl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -83,12 +92,21 @@ export function DataTable<TData, TValue>({
   });
   const isMobile = useIsMobile();
   const isDeleteRecord = Object.keys(rowSelection).length > 0;
-  const rowsSelected = table.getFilteredSelectedRowModel().rows.length;
   const debounce_term = useDebounce(filterInput, 400);
+  const rowsSelected = table.getFilteredSelectedRowModel().rows.length;
+  const rowsFiltered = table.getFilteredRowModel().rows.length;
   const rows_generated = table.getRowModel().rows;
   const [messageInfo, setMessageInfo] = useState("");
   const onOpen = useDialog((state) => state.onOpen);
+  const isOpen = useDialog((state) => state.isOpen);
+  const typeComponent = useDialog((state) => state.typeComponent);
+  const setData = useDialog((state) => state.setData);
+
   useAccountDataTablemobile({ isMobile, columns, setColumnVisibility });
+
+  const inputEmail = table
+    .getColumn("account_email")
+    ?.getFilterValue() as string;
 
   const handleAccountInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -100,33 +118,33 @@ export function DataTable<TData, TValue>({
     [table]
   );
 
+  const handleStatusSelect = useCallback((value: string) => {
+    if (value === "all") {
+      table.getColumn("status")?.setFilterValue(undefined);
+      setCurrentStatus("all");
+      return;
+    }
+    table.getColumn("status")?.setFilterValue(value);
+    setCurrentStatus(value);
+  }, []);
+
+  const handleDeleteButton = useCallback(() => {
+    let ids: number[] = [];
+    table.getSelectedRowModel().rows.map((row) => {
+      ids.push(+(row.original as Account).id);
+    });
+    setData(ids);
+    onOpen("alert", "account", "delete");
+  }, [setData, onOpen]);
+
   useEffect(() => {
     onSearch && onSearch(debounce_term);
   }, [debounce_term]);
 
-  // useEffect(() => {
-  //   if (accountsQuery!.isFetching) {
-  //     setMessageInfo("Searching...");
-  //   } else {
-  //     const handler = setTimeout(() => {
-  //       if (rows_generated === 0) {
-  //         setMessageInfo("No results");
-  //       }
-  //     }, 1000);
-
-  //     return () => clearTimeout(handler);
-  //   }
-  //   return () => setMessageInfo("");
-  // }, [rows_generated, debounce_term, accountsQuery?.isFetching]);
-
   useEffect(() => {
-    let waiting = true;
     if (accountsQuery!.isFetching) {
       setMessageInfo("Searching...");
-      waiting = false;
-    } else if (!waiting && rows_generated.length === 0) {
-      console.log(rows_generated.length, "rows_generated");
-      console.log("aqui");
+    } else if (rows_generated.length === 0) {
       setMessageInfo("No results");
     } else {
       setMessageInfo("");
@@ -136,74 +154,26 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="flex flex-col sm:grid sm:grid-cols-4 items-center py-4 justify-between">
-        {/* account_email */}
-        <div className="w-full my-2">
-          {" "}
-          <Input
-            placeholder="Filter emails..."
-            value={
-              (table.getColumn("account_email")?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={handleAccountInput}
-            className="max-w-sm"
-          />
-        </div>
+        {/**  filters account_email status */}
 
-        {/* status */}
-        <div className="w-full my-2">
-          {" "}
-          <Select
-            value={currentStatus}
-            onValueChange={(value) => {
-              if (value === "all") {
-                table.getColumn("status")?.setFilterValue(undefined);
-                setCurrentStatus("all");
-                return;
-              }
+        <InputAccountEmailFilter
+          value={inputEmail}
+          onChangeFilter={handleAccountInput}
+        />
 
-              table.getColumn("status")?.setFilterValue(value);
-              setCurrentStatus(value);
-              console.log(value, "select");
-              console.log(table.getColumn("status")?.setFilterValue(value));
-            }}
-          >
-            <SelectTrigger
-              className={`${isMobile ? "w-full" : " w-[180px] ml-2"} `}
-            >
-              <SelectValue placeholder="Status - Active" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>status</SelectLabel>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectStatusFilter
+          status={currentStatus}
+          onStatusSelectChange={handleStatusSelect}
+        />
 
         {/* deleteButton */}
         <div className={`w-full ${isDeleteRecord && "my-2"}`}>
           {isDeleteRecord ? (
-            <Button
-              disabled={!isDeleteRecord}
-              className={`${isMobile && "w-full"} ${
-                isDeleteRecord ? "animate-scaleIn" : "animate-scaleOut"
-              }`}
-              variant="destructive"
-              onClick={() => {
-                let ids: number[] = [];
-                table.getSelectedRowModel().rows.map((row) => {
-                  ids.push(+(row.original as Account).id);
-                });
-              }}
-            >
-              delete {rowsSelected > 1 ? "accounts" : "account"}
-              <span>({rowsSelected})</span>
-              <Trash />
-            </Button>
+            <ButtonDeleteAccount
+              isDeleteRecord={isDeleteRecord}
+              onHandleDelete={handleDeleteButton}
+              rowsSelected={rowsSelected}
+            />
           ) : (
             <span></span>
           )}
@@ -212,21 +182,7 @@ export function DataTable<TData, TValue>({
         {/* columsVisible */}
         <div className="w-full my-2">
           {" "}
-          <Button
-            onClick={() => {
-              onOpen("account", "create");
-            }}
-            className={`bg-button-primary mr-2 text-white hover:bg-button-primary-foreground transition-all duration-300
-            ${
-              isMobile &&
-              "w-full mr-0 my-4 focus:ring-2  focus:ring-slate-400/90 focus:ring-offset-2"
-            } `}
-            effect="expandIcon"
-            icon={PlusCircle}
-            iconPlacement="right"
-          >
-            Create Account {isMobile && <PlusCircle className="ml-2" />}
-          </Button>
+          <ButtonCreateAccount onOpen={onOpen} />
           <DropdownMenu>
             <DropdownMenuTrigger
               asChild
@@ -329,32 +285,14 @@ export function DataTable<TData, TValue>({
         {/* paginationTable */}
         <div className="w-full grid grid-cols-1 place-content-center place-items-center sm:grid-cols-1 md:grid-cols-2">
           <div className="w-full flex flex-row justify-between items-center px-2">
-            <div className="flex-1 text-sm text-muted-foreground my-5">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-
-            <Select
-              value={`${limitAccount}`}
-              onValueChange={(value) => {
-                table.setPageSize(+value);
-                onLimitAccount(+value);
-              }}
-            >
-              <SelectTrigger className="w-[180px] m-2">
-                <SelectValue placeholder={`${limitAccount}`} />
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Rows per page</SelectLabel>
-                    {sizePages.map((size) => (
-                      <SelectItem value={`${size}`} key={size}>
-                        {size}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </SelectTrigger>
-            </Select>
+            <PaginationLimitControl
+              rowsSelected={rowsSelected}
+              rowsFiltered={rowsFiltered}
+              sizePages={sizePages}
+              limitedAccount={limitAccount}
+              onLimitAccount={onLimitAccount}
+              onPageSize={table.setPageSize}
+            />
           </div>
 
           <div className="w-full flex flex-col sm:flex-row justify-center items-center px-2">
@@ -399,6 +337,8 @@ export function DataTable<TData, TValue>({
       </div>
 
       <FormAccountDialog />
+
+      {isOpen && typeComponent === "alert" && <AlertDialogAccount />}
     </>
   );
 }

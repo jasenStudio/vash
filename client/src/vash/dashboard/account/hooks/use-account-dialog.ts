@@ -16,6 +16,7 @@ export const useAccountDialog = ({ formAccountSchema }: Props) => {
   const onClose = useDialog((state) => state.onClose);
   const dialogType = useDialog((state) => state.dialogType);
   const actionType = useDialog((state) => state.actionType);
+  const typeComponent = useDialog((state) => state.typeComponent);
 
   const form = useForm<z.infer<typeof formAccountSchema>>({
     resolver: zodResolver(formAccountSchema),
@@ -25,9 +26,11 @@ export const useAccountDialog = ({ formAccountSchema }: Props) => {
     },
   });
 
-  const { data: account } = useDialog(
-    (state) => state.data as { data: Account }
-  );
+  // const { data: account } = useDialog(
+  //   (state) => state.data as { data: Account }
+  // );
+
+  const account: Partial<Account> = useDialog((state) => state.data);
 
   useEffect(() => {
     if (actionType === "update" && account) {
@@ -50,5 +53,6 @@ export const useAccountDialog = ({ formAccountSchema }: Props) => {
     actionType,
     account,
     form,
+    typeComponent,
   };
 };

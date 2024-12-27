@@ -103,12 +103,25 @@ export const columns: ColumnDef<Account>[] = [
   {
     id: "status",
     accessorKey: "status",
-    header: "status",
+    header: ({ column }) => {
+      return (
+        <div className="text-right">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            status
+            <SortedIcon isSorted={column.getIsSorted()} />
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const castStatus = status === "true" ? "Active" : "Inactive";
-      return <div className="text-right font-medium">{castStatus}</div>;
+      return <div className="text-right font-medium p-4">{castStatus}</div>;
     },
+    enableSorting: true,
   },
   {
     id: "created_at",
@@ -158,8 +171,9 @@ export const columns: ColumnDef<Account>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => {
-                  onOpen("account", "update");
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  onOpen("dialog", "account", "update");
                   setData(account);
                 }}
               >
@@ -167,7 +181,16 @@ export const columns: ColumnDef<Account>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View account</DropdownMenuItem>
-              <DropdownMenuItem>Delete ACCOUNT</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  console.log(account.id);
+                  onOpen("alert", "account", "delete");
+                  setData(account.id);
+                }}
+              >
+                Delete ACCOUNT
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </>

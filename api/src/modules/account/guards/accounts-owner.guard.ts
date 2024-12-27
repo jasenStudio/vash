@@ -14,8 +14,9 @@ export class AccountsOwnerGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const accountIds = request.body.accountIds;
+    const accountIds = request.body.ids;
 
+    console.log(accountIds);
     if (!Array.isArray(accountIds)) {
       throw new ForbiddenException('Invalid account IDs');
     }

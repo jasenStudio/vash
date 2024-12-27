@@ -53,7 +53,9 @@ export const useAccountMutation = () => {
       queryClient.removeQueries({
         queryKey: ["account", context?.optimisticAccount.id],
       });
+      const allQueries = queryClient.getQueryCache().findAll();
 
+      console.log(allQueries);
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
         (old: AccountsResponse) => {
@@ -69,6 +71,11 @@ export const useAccountMutation = () => {
             ...old,
             data: {
               accounts,
+            },
+            meta: {
+              ...old.meta,
+              total: old.meta.total + 1,
+              totalPages: Math.ceil((old.meta.total + 1) / old.meta.limit),
             },
           };
         }

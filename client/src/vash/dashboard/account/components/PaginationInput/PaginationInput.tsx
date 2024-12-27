@@ -55,7 +55,10 @@ export const PaginationInput: React.FC<PageInputProps> = ({
         className="w-16 text-center border-white"
       />
 
-      <Button className="my-5 mx-2" onClick={onSetPage}>
+      <Button
+        className="my-5 mx-2 bg-button-primary text-white hover:bg-button-primary-foreground"
+        onClick={onSetPage}
+      >
         Go to page
       </Button>
     </>

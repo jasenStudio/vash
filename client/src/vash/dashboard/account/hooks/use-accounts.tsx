@@ -34,6 +34,12 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     setSearch(search);
   }, [limit, search]);
 
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [totalPages]);
+
   const nextPage = () => {
     if (page < totalPages) {
       setPage((prevPage) => prevPage + 1);

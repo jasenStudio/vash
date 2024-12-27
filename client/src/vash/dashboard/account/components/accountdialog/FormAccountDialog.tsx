@@ -38,8 +38,15 @@ export const FormAccountDialog: FC = memo(() => {
   const accountCreateMutation = useAccountMutation();
   const accountUpdateMutation = useAccountUpdateMutation();
 
-  const { isOpen, account, onClose, dialogType, actionType, form } =
-    useAccountDialog({ formAccountSchema: formSchema });
+  const {
+    isOpen,
+    account,
+    onClose,
+    dialogType,
+    actionType,
+    form,
+    typeComponent,
+  } = useAccountDialog({ formAccountSchema: formSchema });
 
   const isUpdate =
     actionType === "update"
@@ -69,7 +76,7 @@ export const FormAccountDialog: FC = memo(() => {
         });
   }
 
-  if (dialogType !== "account") return null;
+  if (typeComponent !== "dialog" && dialogType !== "account") return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
