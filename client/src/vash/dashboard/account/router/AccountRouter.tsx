@@ -4,6 +4,7 @@ import { AccountLayout } from "../layout/AccountLayout";
 import { AnimatePresence } from "framer-motion";
 import { AnimatedComponent } from "@/components/ui-custom/AnimatedComponent";
 import React, { Suspense } from "react";
+import LoaderCustom from "@/components/ui-custom/loader/LoaderCustom";
 
 //** Lazy component */
 const ListAccountPage = React.lazy(() => import("../pages/ListAccountPage"));
@@ -14,7 +15,7 @@ const AccountRouter = () => {
     <>
       <AccountLayout>
         <AnimatePresence mode="wait">
-          <Suspense fallback={<div>Cargando....</div>}>
+          <Suspense fallback={<LoaderCustom />}>
             <Routes>
               <Route
                 path=""

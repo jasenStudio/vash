@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   AccountCreateDto,
+  AccountIdsDto,
   AccountUpdateDto,
   QueryListAccount,
 } from '../dto/account.dto';
@@ -21,6 +22,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user/current-user';
 import { ParseIntPipe } from 'src/common/pipe/parse-int/parse-int.pipe';
 import { AccountOwnerGuard } from '../guards/account-owner.guard';
+import { AccountsOwnerGuard } from '../guards/accounts-owner.guard';
 
 @ApiTags('accounts')
 @Controller('accounts')
@@ -62,5 +64,16 @@ export class AccountController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return await this.__accountService.deleteAccount(user, id);
+  }
+
+  @UseGuards(AccountsOwnerGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('batch-delete')
+  async deleteAccounts(
+    @CurrentUser() user,
+    @Body() accountsPayload: AccountIdsDto,
+  ) {
+    console.log(accountsPayload);
+    return await this.__accountService.deleteAccounts(user, accountsPayload);
   }
 }

@@ -12,7 +12,7 @@ export const useAccountDataTablemobile = <TData, TValue>({
   columns,
   setColumnVisibility,
 }: Props<TData, TValue>) => {
-  const mobileVisibleColumns = ["account_email", "status", "actions"];
+  const mobileVisibleColumns = ["account_email", "actions", "select"];
   const desktopVisibleColumns = columns.map((col) => col.id);
 
   useEffect(() => {

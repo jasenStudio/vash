@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BreadcrumbList,
@@ -7,7 +7,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export const BreadcrumbsCustom = () => {
+export const BreadcrumbsCustom = memo(() => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter(Boolean);
 
@@ -59,4 +59,4 @@ export const BreadcrumbsCustom = () => {
       }, [])}
     </BreadcrumbList>
   );
-};
+});

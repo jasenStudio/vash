@@ -5,10 +5,11 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   iconLeft?: boolean;
   icon?: React.ReactNode;
+  actions?: "clear" | "focus";
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, iconLeft, icon, ...props }, _ref) => {
+  ({ className, type, iconLeft, icon, actions, ...props }, _ref) => {
     const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     const handleIconClick = () => {
@@ -16,12 +17,21 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         inputRef.current.focus();
       }
     };
+
+    const handleClear = () => {
+      if (inputRef && typeof inputRef !== "function" && inputRef.current) {
+        inputRef.current.value = "";
+      }
+    };
+
     return (
       <div className="relative flex items-center">
         {icon && iconLeft && (
           <span
             className="absolute right-0 text-gray-400 cursor-pointer"
-            onClick={handleIconClick}
+            onClick={() =>
+              actions === "clear" ? handleClear() : handleIconClick()
+            }
           >
             {icon}
           </span>

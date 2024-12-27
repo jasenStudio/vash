@@ -1,7 +1,7 @@
 ### #* Listar cuentas
 GET http://localhost:3000/api/accounts?page=1&limit=5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQzMTk0NDksImV4cCI6MTczNDMyNjY0OX0.L46eOdLbJFvYY1Q4D9WVugHN5HwXjTRr0dGfAq_GhuY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUyNTEyNTQsImV4cCI6MTczNTI1ODQ1NH0.eFrL9t9cKzpviuRKDkxea5tEQTTApng9q4xn1n3RSTM
 
 {}
 
@@ -15,24 +15,34 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 ### #* Crear cuenta
 POST http://localhost:3000/api/accounts/new
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQ4MjUxMDgsImV4cCI6MTczNDgzMjMwOH0.5eDPWpSJYH4swO8w-9ZdcEZYDyx1VzpXLiML_ggvMVs
 
 {
     "account_email":"jorge@gmail.com"
 }
 
 ### #* edit cuenta
-PUT http://localhost:3000/api/accounts/edit/3
+PUT http://localhost:3000/api/accounts/edit/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjE4NzMsImV4cCI6MTczMzYyOTA3M30.hrobzSoqzpwFKy2NxqulsMFUdO8MZ24-xoX9rL1QbsQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUwNTUzNjcsImV4cCI6MTczNTA2MjU2N30.UXVac6GoEF4V8fWrBPb758lxPYV7za7M66_-IUMbqec
 
 {
-    "account_email":"jorge@gmail.com"
+    "account_email":"johndoe@gmail.com",
+    "status": true
 }
 
 ### #* deleted account
-DELETE  http://localhost:3000/api/accounts/8
+DELETE  http://localhost:3000/api/accounts/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzM2MjczOTMsImV4cCI6MTczMzYzNDU5M30.WhXh9-_RLyaWowhTvx93QeeaGZkMoAfby4S4FWzhKQI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUxNzI0ODgsImV4cCI6MTczNTE3OTY4OH0.pQrlD7yOZVXXfvaEiwFtLwxRmA-nOnyhXz__VTsF7Rg
 
 {}
+
+### #* deleted accounts
+POST  http://localhost:3000/api/accounts/batch-delete
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUyMjIzMDgsImV4cCI6MTczNTIyOTUwOH0.ghtp9VOq4zzheW-a4cS58Tw7Q4jT2B2ucSslYR00Ol0
+
+{
+    "ids": [1,3,5,7]
+}

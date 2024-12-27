@@ -1,21 +1,22 @@
 import { Outlet } from "react-router-dom";
-import { Globe, LogOut } from "lucide-react";
+import { Globe } from "lucide-react";
 
 //* Hooks & Store
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUiTitleStore } from "./store/ui/useUititleStore";
-import { useAuthStore } from "./store/auth/useAuthStore";
+
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
 //* Components & Custom Components
 import {
-  SidebarTriggerCustom,
-  ToggleModeCustom,
-  BreadcrumbsCustom,
   AppSidebar,
+  BreadcrumbsCustom,
+  ButtonLogoutCustom,
   FooterCustom,
   FooterCustomMobile,
+  SidebarTriggerCustom,
+  ToggleModeCustom,
 } from "@/components/ui-custom";
 import {
   DropdownMenu,
@@ -31,17 +32,14 @@ import "@/vash/styles/App.css";
 import flagColombia from "@/assets/colombia.svg";
 import flagUsa from "@/assets/usa.svg";
 import { useCurrentLanguage } from "@/hooks/use-current-language";
-import { useMemo } from "react";
 
 export const LayoutRoot = () => {
   const isMobile = useIsMobile();
   const title = useUiTitleStore((state) => state.title);
-  const logout = useAuthStore((state) => state.logout);
   const { currentLanguage } = useCurrentLanguage();
   const { t } = useTranslation();
 
-  const footerText = useMemo(() => t("configuration.selectLanguage"), [t]);
-
+  const footerText = t("configuration.selectLanguage");
   return (
     <>
       <SidebarProvider>
@@ -52,24 +50,21 @@ export const LayoutRoot = () => {
               <SidebarTriggerCustom />
 
               {/* title only for mobile */}
-              {isMobile && (
+              <span
+                className={`text-[18px] font-semibold capitalize block sm:hidden`}
+              >
+                {title}
+              </span>
+              {/* breadcumbs and title only for desktop and tablet or landscape */}
+              <div className="hidden sm:block">
+                <BreadcrumbsCustom />
                 <span className="text-[18px] font-semibold capitalize">
                   {title}
                 </span>
-              )}
-
-              {/* breadcumbs and title only for desktop and tablet or landscape */}
-              {!isMobile && (
-                <div>
-                  <BreadcrumbsCustom />
-                  <span className="text-[18px] font-semibold capitalize">
-                    {title}
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
             {/* Toggle and button Logout only for desktop and tablet or landscape */}
-            {!isMobile && (
+            <div className="hidden sm:flex">
               <div className="flex justify-center items-center mr-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="uppercase flex flew-row mx-6">
@@ -105,22 +100,20 @@ export const LayoutRoot = () => {
                 </DropdownMenu>
 
                 <ToggleModeCustom />
-                <button
-                  className="font-semibold rounded-[5px] mx-5"
-                  onClick={logout}
-                >
-                  <LogOut className="inline-block mr-1" size={35} />
-                </button>
+                <ButtonLogoutCustom />
               </div>
-            )}
+            </div>
           </div>
           {/* Contenido principal */}
           <div className="w-full py-8 px-4">
             <Outlet />
           </div>
           <div className="absolute bottom-0 overflow-x-hidden">
-            <FooterCustomMobile className={isMobile ? "block" : "hidden"} />
-            <FooterCustom className={!isMobile ? "block" : "hidden"} />
+            {isMobile ? (
+              <FooterCustomMobile className="block sm:hidden" />
+            ) : (
+              <FooterCustom className="hidden sm:block" />
+            )}
           </div>
         </div>
       </SidebarProvider>

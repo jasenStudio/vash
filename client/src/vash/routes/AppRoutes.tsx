@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { useAuthStore } from "../store/auth/useAuthStore";
 import { LayoutRoot } from "../Layout";
+import LoaderCustom from "@/components/ui-custom/loader/LoaderCustom";
 
 const AuthRouter = React.lazy(() => import("../auth/router/AuthRouter"));
 const AccountRouter = React.lazy(
@@ -18,10 +19,10 @@ export const AppRoutes = () => {
   }, []);
 
   if (current_status === "checking") {
-    return <h3>Cargando...</h3>;
+    return <LoaderCustom />;
   }
   return (
-    <Suspense fallback={<div>Cargando...</div>}>
+    <Suspense fallback={<LoaderCustom />}>
       <Routes>
         {current_status === "unauthenticated" ? (
           <>

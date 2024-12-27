@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { usePagination } from "@/vash/store/ui/usePagination";
 import React, { useEffect, useState } from "react";
 
 interface PageInputProps {
@@ -15,8 +16,11 @@ export const PaginationInput: React.FC<PageInputProps> = ({
 }) => {
   const [localPage, setLocalPage] = useState<number | undefined>(currentPage);
 
+  const { setPage: setPageStore } = usePagination((state) => state);
+
   useEffect(() => {
     setLocalPage(currentPage);
+    setPageStore(currentPage);
   }, [currentPage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +55,10 @@ export const PaginationInput: React.FC<PageInputProps> = ({
         className="w-16 text-center border-white"
       />
 
-      <Button className="my-5 mx-2" onClick={onSetPage}>
+      <Button
+        className="my-5 mx-2 bg-button-primary text-white hover:bg-button-primary-foreground"
+        onClick={onSetPage}
+      >
         Go to page
       </Button>
     </>

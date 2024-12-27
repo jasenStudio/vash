@@ -3,5 +3,6 @@ export {
   commonValidationMessage,
 } from "./validationsMessages/validationsMessages";
 
-export { formRegisterSchema } from "./formSchemas/formRegisteSchema";
-export { formLoginSchema } from "./formSchemas/formLoginSchema";
+export { formRegisterSchema } from "./formSchemas/auth/formRegisteSchema";
+export { formLoginSchema } from "./formSchemas/auth/formLoginSchema";
+export { formAccountSchema } from "./formSchemas/account/formAccountSchema";
