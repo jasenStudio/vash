@@ -9,7 +9,7 @@ export const VashApp = () => {
   return (
     <>
       <AppRoutes />
-      <Toaster theme={memoizedTheme} richColors position="top-center" />
+      <Toaster theme={theme} richColors position="top-center" />
     </>
   );
 };

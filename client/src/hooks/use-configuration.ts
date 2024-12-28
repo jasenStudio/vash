@@ -25,6 +25,7 @@ export const useConfiguration = () => {
 
   const handleSave = () => {
     setTheme(config.theme);
+
     i18next.changeLanguage(config.language);
     toast.success(t("configuration.messageConfirmation"));
   };

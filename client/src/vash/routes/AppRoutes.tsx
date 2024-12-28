@@ -27,13 +27,13 @@ export const AppRoutes = () => {
         {current_status === "unauthenticated" ? (
           <>
             <Route path="/*" element={<AuthRouter />} />
-            <Route path="/*" element={<Navigate to="/sign-in" />} />
+            <Route path="*" element={<Navigate to="/sign-in" />} />
           </>
         ) : (
           <>
             <Route element={<LayoutRoot />}>
               <Route path="/accounts/*" element={<AccountRouter />} />
-              <Route path="/*" element={<Navigate to="/accounts" />} />
+              <Route path="*" element={<Navigate to="/accounts" />} />
             </Route>
           </>
         )}

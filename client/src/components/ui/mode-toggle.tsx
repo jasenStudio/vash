@@ -47,7 +47,11 @@ export function ModeToggle({
       </DropdownMenuTrigger>
       <DropdownMenuContent align={alignMenu}>
         {theme === "dark" ? (
-          <DropdownMenuItem onClick={() => setTheme("light")}>
+          <DropdownMenuItem
+            onClick={() => {
+              setTheme("light");
+            }}
+          >
             Claro
           </DropdownMenuItem>
         ) : (
