@@ -14,18 +14,7 @@
         color: #f8fafc;
       }
     </style>
-    <script>
-      (function () {
-        const storedTheme = localStorage.getItem("vite-ui-theme");
-        const theme = storedTheme || "dark";
-
-        if (theme === "dark") {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      })();
-    </script>
+    <script src="theme-script.min.js" type="module"></script>
   </head>
   <body>
     <div id="root"></div>
