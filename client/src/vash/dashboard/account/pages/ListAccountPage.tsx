@@ -2,8 +2,9 @@ import { useTitle } from "@/hooks/use-title";
 import { columns } from "../components/datatable/columns";
 import { DataTable } from "../components/datatable/data-table";
 import useAccounts from "../hooks/use-accounts";
-import { Account as AccountInterface } from "@/domain";
+
 import { useMemo, useState } from "react";
+import { Account } from "@/domain";
 
 const ListAccountPage = () => {
   useTitle("lista de cuentas");
@@ -23,7 +24,7 @@ const ListAccountPage = () => {
   });
 
   const accountsMap = useMemo(() => {
-    return accounts.map((account: AccountInterface) => {
+    return accounts.map((account: Account) => {
       const { account_email, created_at, status, ...rest } = account;
       return {
         account_email,

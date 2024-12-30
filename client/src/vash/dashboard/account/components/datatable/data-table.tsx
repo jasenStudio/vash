@@ -43,6 +43,7 @@ import { useDialog } from "@/vash/store/ui/useDialog";
 
 import { AlertDialogAccount } from "../AlertDialogAccount/AlertDialogAccount";
 import { PaginationLimitControl } from "./PaginationComponents/PaginationLimitControls/PaginationLimitControl";
+import { Hourglass } from "react-loader-spinner";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -236,8 +237,23 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {accountsQuery!.isPending ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  Loading...
+                <TableCell
+                  // colSpan={columns.length}
+                  colSpan={columns.length}
+                  className="text-center "
+                >
+                  <div className="w-full  flex justify-center items-center">
+                    {" "}
+                    <Hourglass
+                      visible={true}
+                      height="30"
+                      width="30"
+                      ariaLabel="hourglass-loading"
+                      wrapperStyle={{}}
+                      wrapperClass="my-2"
+                      colors={["#306cce", "#72a1ed"]}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ) : accountsQuery!.isError ? (
@@ -251,7 +267,10 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  className="transition-all ease-in-out duration-300"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

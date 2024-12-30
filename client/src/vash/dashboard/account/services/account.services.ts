@@ -8,13 +8,13 @@ export interface Props {
   id: number;
   payload: Omit<Partial<Account>, "id">;
 }
-// const _sleep = async () => {
-//   return new Promise((r) => setTimeout(r, 4000));
-// };
+const _sleep = async () => {
+  return new Promise((r) => setTimeout(r, 8000));
+};
 export class AccountService {
   static index = async (page: number = 1, limit: number = 5, search = "") => {
     const URL = `/accounts?limit=${limit}&page=${page}&search=${search}`;
-
+    await _sleep();
     try {
       const { data } = await vashApi.get(URL);
       console.log(data.data);

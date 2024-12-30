@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import { z } from "zod";
-
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +31,7 @@ import { formAccountSchema } from "@/constants/formSchemas";
 import { useAccountDialog } from "../../hooks";
 import { useAccountUpdateMutation } from "@/vash/dashboard/account/hooks/use-account-update-mutation";
 import { ButtonDialog, ButtonDialogCancel } from "..";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 const formSchema = formAccountSchema;
 export const FormAccountDialog: FC = memo(() => {
@@ -83,6 +84,10 @@ export const FormAccountDialog: FC = memo(() => {
         <DialogHeader>
           <DialogTitle>{actionType} account</DialogTitle>
         </DialogHeader>
+
+        <DialogDescription hidden>
+          Dialog for create or update account
+        </DialogDescription>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

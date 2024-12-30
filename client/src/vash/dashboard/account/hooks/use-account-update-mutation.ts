@@ -6,13 +6,16 @@ import {
 } from "@/infrastructure/interfaces/account.response";
 import { toast } from "sonner";
 import { Account } from "@/domain";
-import { usePagination } from "@/vash/store/ui/usePagination";
+import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
+
 import { t } from "i18next";
 
 export const useAccountUpdateMutation = () => {
-  const { page, limit, search } = usePagination();
+  const { page, limit, search } = usePaginationStore();
+
   const queryClient = useQueryClient();
   const mutation = useMutation({
+    mutationKey: ["account", "update"],
     mutationFn: AccountService.update,
     onMutate: async ({ id, payload: account }) => {
       const previousData = queryClient.getQueryData<AccountsResponse>([
@@ -62,9 +65,6 @@ export const useAccountUpdateMutation = () => {
     ) => {
       const { account } = accountResponse.data!;
 
-      console.log(account, "account");
-      console.log(context?.optimisticAccount, "optimisticAccount");
-
       queryClient.setQueryData(
         ["accounts", { page, limit, search }],
         (old: AccountsResponse) => {
@@ -72,11 +72,6 @@ export const useAccountUpdateMutation = () => {
           if (!old) return context.previousData;
 
           const accounts = old.data.accounts.map((cacheAccount) => {
-            console.log(cacheAccount.id, context.optimisticAccount.id, "ids");
-            console.log(
-              cacheAccount.id === context.optimisticAccount.id,
-              "comparacion"
-            );
             return cacheAccount.id === context.optimisticAccount.id
               ? account
               : cacheAccount;
@@ -93,6 +88,8 @@ export const useAccountUpdateMutation = () => {
       queryClient.removeQueries({
         queryKey: ["account", context?.optimisticAccount.id],
       });
+
+      queryClient.getQueryData(["accounts", { page, limit, search }]);
       toast.success(t("entities.account.updated"), { duration: 5000 });
     },
     onError: (_error, _variables, context) => {

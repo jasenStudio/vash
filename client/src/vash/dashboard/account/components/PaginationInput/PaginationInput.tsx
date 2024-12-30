@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { usePagination } from "@/vash/store/ui/usePagination";
+import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
 import React, { useEffect, useState } from "react";
 
 interface PageInputProps {
@@ -16,7 +16,7 @@ export const PaginationInput: React.FC<PageInputProps> = ({
 }) => {
   const [localPage, setLocalPage] = useState<number | undefined>(currentPage);
 
-  const { setPage: setPageStore } = usePagination((state) => state);
+  const { setPage: setPageStore } = usePaginationStore((state) => state);
 
   useEffect(() => {
     setLocalPage(currentPage);

@@ -121,7 +121,6 @@ export const columns: ColumnDef<Account>[] = [
       const castStatus = status === "true" ? "Active" : "Inactive";
       return <div className="text-right font-medium p-4">{castStatus}</div>;
     },
-    enableSorting: true,
   },
   {
     id: "created_at",

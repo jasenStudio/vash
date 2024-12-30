@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
-import { usePagination } from "@/vash/store/ui/usePagination";
+import { usePaginationStore } from "@/vash/store";
 import { AccountsResponse } from "@/infrastructure/interfaces/account.response";
 import { toast } from "sonner";
 
 export const useAccountDeleteMutation = () => {
-  const { page, limit, search } = usePagination();
+  const { page, limit, search } = usePaginationStore();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: AccountService.delete,
