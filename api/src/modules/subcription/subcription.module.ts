@@ -9,6 +9,8 @@ import {
   MethodsRecoveryController,
   SubcriptionController,
 } from './controllers';
+import { HelperEncryptData } from 'src/common/helpers/helperEncrypteData';
+import { cryptoHelper } from 'src/common/helpers/helperCrypto';
 
 @Module({
   imports: [PrismaModule],
@@ -17,6 +19,8 @@ import {
     SubcriptionRepository,
     MethodRecoveryRepository,
     MethodsRecoveryService,
+    HelperEncryptData,
+    cryptoHelper,
   ],
   controllers: [SubcriptionController, MethodsRecoveryController],
   exports: [

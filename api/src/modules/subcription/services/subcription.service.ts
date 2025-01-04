@@ -11,18 +11,33 @@ import { ReqUserToken } from '../../auth/dto/auth.dto';
 export class SubcriptionService {
   constructor(private subcriptionRepository: SubcriptionRepository) {}
 
-  async createSubcription(subcriptionPayload: CreateSubcriptionDto) {
+  async createSubcription(
+    derivedMasterKey: Buffer,
+    subcriptionPayload: CreateSubcriptionDto,
+  ) {
     return await this.subcriptionRepository.createSubcriptionAndDetail(
+      derivedMasterKey,
       subcriptionPayload,
     );
   }
 
-  async findAllSubcriptions(user: ReqUserToken) {
-    return await this.subcriptionRepository.allSubcriptions(user);
+  async findAllSubcriptions(derivedMasterKey: Buffer, user: ReqUserToken) {
+    return await this.subcriptionRepository.allSubcriptions(
+      derivedMasterKey,
+      user,
+    );
   }
 
-  async findSubcriptionById(user: ReqUserToken, id: number) {
-    return await this.subcriptionRepository.findSubcriptionById(user, id);
+  async findSubcriptionById(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
+    id: number,
+  ) {
+    return await this.subcriptionRepository.findSubcriptionById(
+      deriveMasterKey,
+      user,
+      id,
+    );
   }
 
   async updateSubcription(
@@ -38,12 +53,14 @@ export class SubcriptionService {
   }
 
   async updateSubcriptionDetail(
+    deriveMasterKey: Buffer,
     user: ReqUserToken,
     id: number,
     subcription_detail_id: number,
     subcription_detail_payload: UpdateSubcriptionDetailDto,
   ) {
     return await this.subcriptionRepository.updateSubcriptionDetail(
+      deriveMasterKey,
       user,
       id,
       subcription_detail_id,

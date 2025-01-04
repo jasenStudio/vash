@@ -14,10 +14,14 @@ export class MethodsRecoveryService {
   }
 
   async createMethodRecovery(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
     sub_detail_id: number,
     methodPayload: CreateMethodRecoveryDto,
   ) {
     return await this.methodResository.createMethodRecovery(
+      deriveMasterKey,
+      user,
       sub_detail_id,
       methodPayload,
     );

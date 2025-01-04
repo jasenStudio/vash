@@ -6,6 +6,7 @@ import {
   Post,
   Get,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { CreateAuthUserDto, LoginUserDto } from '../dto/auth.dto';

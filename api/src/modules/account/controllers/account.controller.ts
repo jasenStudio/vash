@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -23,6 +24,7 @@ import { CurrentUser } from 'src/common/decorators/current-user/current-user';
 import { ParseIntPipe } from 'src/common/pipe/parse-int/parse-int.pipe';
 import { AccountOwnerGuard } from '../guards/account-owner.guard';
 import { AccountsOwnerGuard } from '../guards/accounts-owner.guard';
+import { Request } from 'express';
 
 @ApiTags('accounts')
 @Controller('accounts')
@@ -31,7 +33,11 @@ export class AccountController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  async findAll(@CurrentUser() user, @Query() query: QueryListAccount) {
+  async findAll(
+    @CurrentUser() user,
+    @Req() request: Request,
+    @Query() query: QueryListAccount,
+  ) {
     console.log(query.page, query.limit, query['search']);
     return await this.__accountService.findAllAccount(user, query);
   }

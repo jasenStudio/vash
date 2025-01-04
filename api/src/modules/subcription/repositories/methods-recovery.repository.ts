@@ -6,6 +6,7 @@ import {
   UpdateSubcriptionDto,
 } from '../dto/subcription.dto';
 import { ReqUserToken } from '../../auth/dto/auth.dto';
+import { HelperEncryptData } from '../../../common/helpers/helperEncrypteData';
 import {
   CreateMethodRecoveryDto,
   UpdateMethodRecoveryDto,
@@ -19,14 +20,17 @@ type methods =
 
 @Injectable()
 export class MethodRecoveryRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private helperEncryptData: HelperEncryptData,
+  ) {}
 
   async allMethodRecovery(user: ReqUserToken, subscription_detail_id: number) {
     const methods = await this.prisma.recovery_methods.findMany({
       where: {
         subscription_detail_id: subscription_detail_id,
-        subcription_detail: {
-          subcription: { accounts: { user_id: +user.id } },
+        subscription_detail: {
+          subscription: { accounts: { user_id: +user.id } },
         },
       },
     });
@@ -45,16 +49,62 @@ export class MethodRecoveryRepository {
   }
 
   async createMethodRecovery(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
     sub_detail_id: number,
     methodRecoveryPayload: CreateMethodRecoveryDto,
   ) {
-    const methodRecovery = await this.prisma.recovery_methods.create({
-      data: { ...methodRecoveryPayload, subscription_detail_id: sub_detail_id },
+    const subscription_detail_db_exists =
+      await this.prisma.subscription_detail.findUnique({
+        where: {
+          id: sub_detail_id,
+          subscription: {
+            accounts: {
+              user_id: +user.id,
+            },
+          },
+        },
+      });
+
+    if (!subscription_detail_db_exists)
+      return {
+        message: 'intentado crear un metodo de recuparacion sin permiso',
+      };
+
+    const { method_type, method_value } = methodRecoveryPayload;
+    const { encryptedData, iv, tag } =
+      this.helperEncryptData.encryptDataRecoveryMethod(
+        method_value,
+        deriveMasterKey,
+      );
+
+    console.log(sub_detail_id, 'id detalle subscripcion');
+    console.log(encryptedData, 'recovery_methods - encryptedData');
+
+    const prismaTx = await this.prisma.$transaction(async (tx) => {
+      const method_recovery_db = await this.prisma.recovery_methods.create({
+        data: {
+          subscription_detail_id: subscription_detail_db_exists.id,
+          method_value: encryptedData,
+          method_type: method_type,
+        },
+      });
+      const encrypted_data = await this.prisma.encryptedField.create({
+        data: {
+          record_id: method_recovery_db.id,
+          field_name: 'method_type',
+          table_name: 'recovery_methods',
+          iv: 'iv',
+          tag: 'tag',
+        },
+      });
+
+      return { method_recovery: method_recovery_db };
     });
 
     return {
       ok: true,
-      methodRecovery,
+      methodRecovery: prismaTx.method_recovery,
     };
   }
 
@@ -68,12 +118,12 @@ export class MethodRecoveryRepository {
       where: {
         id: method_id,
         subscription_detail_id: sub_detail_id,
-        subcription_detail: {
-          subcription: { accounts: { user_id: +user.id } },
+        subscription_detail: {
+          subscription: { accounts: { user_id: +user.id } },
         },
       },
       include: {
-        subcription_detail: true,
+        subscription_detail: true,
       },
     });
 
@@ -97,8 +147,8 @@ export class MethodRecoveryRepository {
       where: {
         id: method_id,
         subscription_detail_id: sub_detail_id,
-        subcription_detail: {
-          subcription: { accounts: { user_id: +user.id } },
+        subscription_detail: {
+          subscription: { accounts: { user_id: +user.id } },
         },
       },
     });
