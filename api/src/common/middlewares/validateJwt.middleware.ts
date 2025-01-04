@@ -18,6 +18,7 @@ export class ValidateToken implements NestMiddleware {
     try {
       const payload = await this.JwtHelper.verifyToken(token);
       req['user'] = payload;
+      req['derivedKey'] = payload.derivedKey;
     } catch (error) {
       throw new ForbiddenException('Token invalido');
     }

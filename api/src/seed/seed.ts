@@ -73,7 +73,7 @@ async function main() {
 
       subcription_detail = await prisma.subscription_detail.create({
         data: {
-          subcription_id: subcription.id,
+          subscription_id: subcription.id,
         },
       });
       const subcriptions_detaitls = await prisma.subscription_detail.findMany();

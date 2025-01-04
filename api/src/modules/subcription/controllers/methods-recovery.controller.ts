@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ParseIntPipe } from '../../../common/pipe/parse-int/parse-int.pipe';
@@ -15,6 +16,7 @@ import {
   CreateMethodRecoveryDto,
   UpdateMethodRecoveryDto,
 } from '../dto/method-recovery.dto';
+import { Request } from 'express';
 
 @ApiTags('methods-recovery')
 @Controller('subcriptions-details/')
@@ -33,11 +35,16 @@ export class MethodsRecoveryController {
 
   @Post(':sub_detail_id/methods-recovery/new')
   async createMethod(
+    @Req() req: Request,
+    @CurrentUser() user,
     @Param('sub_detail_id', ParseIntPipe) sub_detail_id,
     @Body() payload: CreateMethodRecoveryDto,
   ) {
     console.log(sub_detail_id);
+    const deriveMasterKey = Buffer.from(req['derivedKey'].data);
     return await this.__recoveryService.createMethodRecovery(
+      deriveMasterKey,
+      user,
       sub_detail_id,
       payload,
     );

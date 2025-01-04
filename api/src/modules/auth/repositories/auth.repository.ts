@@ -13,12 +13,15 @@ import {
 } from '../entities/auth-user.entity';
 import * as bcrypt from 'bcrypt';
 import { ApiResponseService } from 'src/modules/global/api-response.service';
+import * as crypto from 'node:crypto';
+import { cryptoHelper } from 'src/common/helpers/helperCrypto';
 @Injectable()
 export class AuthRepository {
   constructor(
     private readonly __userService: UserService,
     private JwtHelper: JwtHelper,
     private readonly __apiResponse: ApiResponseService,
+    private cryptoHelper: cryptoHelper,
   ) {}
   async login(userAuthLogin: LoginUserDto): Promise<loginUserResponse> {
     const { user_name, password } = userAuthLogin;
@@ -35,11 +38,16 @@ export class AuthRepository {
       throw new UnauthorizedException('Credenciales invalidas');
     }
 
+    const derivedKey = this.cryptoHelper.deriveMasterKey(password, user.id);
+
+    console.log(derivedKey);
+
     const payload = {
       id: user.id,
       email: user.email,
       is_admin: user.is_admin,
       status: user.status,
+      derivedKey: derivedKey,
     };
 
     const user_response: auth_user = {

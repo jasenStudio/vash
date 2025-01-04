@@ -6,97 +6,230 @@ import {
   UpdateSubcriptionDto,
 } from '../dto/subcription.dto';
 import { ReqUserToken } from '../../auth/dto/auth.dto';
-import { isArray } from 'class-validator';
+
+import { HelperEncryptData } from '../../../common/helpers/helperEncrypteData';
+import { ApiResponseService } from 'src/modules/global/api-response.service';
 
 @Injectable()
 export class SubcriptionRepository {
-  constructor(private readonly prisma: PrismaService) {}
-  async createSubcriptionAndDetail(subcriptionPayload: CreateSubcriptionDto) {
-    const { subcriptionDetail: subcriptionDetailPayload, ...rest } =
+  constructor(
+    private readonly prisma: PrismaService,
+    private HelperEncryptData: HelperEncryptData,
+    private ApiResponseService: ApiResponseService,
+  ) {}
+
+  async createSubcriptionAndDetail(
+    derivedMasterKey: Buffer,
+    subcriptionPayload: CreateSubcriptionDto,
+  ) {
+    const { subscriptionDetail: subcriptionDetailPayload, ...rest } =
       subcriptionPayload;
 
-    const prismaTx = await this.prisma.$transaction(async (tx) => {
-      let subcription: any;
-      let subcription_detail: any;
+    const subscriptionData = rest;
 
-      subcription = await this.prisma.subscription.create({
-        data: rest,
+    const prismaTx = await this.prisma.$transaction(async (tx) => {
+      let subscription: any;
+      let subscription_detail: any;
+
+      subscription = await this.prisma.subscription.create({
+        data: subscriptionData,
+        select: {
+          id: true,
+          user_name_subscription: true,
+          services_id: true,
+          account_id: true,
+          status: true,
+        },
       });
-      console.log(subcription);
-      subcription_detail = await this.prisma.subscription_detail.create({
+
+      const { password, ...details } = subcriptionDetailPayload;
+
+      const { encryptedData, encryptedFields } =
+        this.HelperEncryptData.encryptDataSubcriptionDetail(
+          { password },
+          derivedMasterKey,
+        );
+
+      console.log(encryptedData, 'aqio');
+
+      subscription_detail = await this.prisma.subscription_detail.create({
         data: {
-          subcription_id: subcription.id,
-          ...subcriptionDetailPayload,
+          subscription_id: subscription.id,
+          password: this.validate_data(encryptedData.password),
+          ...details,
+          EncryptedField:
+            encryptedFields.length > 0
+              ? { create: encryptedFields }
+              : undefined,
+        },
+        select: {
+          id: true,
+          password: true,
+          connect_google: true,
+          connect_github: true,
+          connect_microsoft: true,
+          other_connect: true,
+          comment: true,
+          status: true,
+          updated_at: true,
         },
       });
 
       return {
-        subcription,
-        subcription_detail,
+        subcription: subscription,
+        subcription_detail: subscription_detail,
       };
     });
 
-    return {
-      ok: true,
-      subcription: {
-        ...prismaTx.subcription,
-        subcription_detail: prismaTx.subcription_detail,
+    return this.ApiResponseService.success(
+      {
+        subscription: {
+          ...prismaTx.subcription,
+          subcription_detail: prismaTx.subcription_detail,
+        },
       },
-      msg: 'subcripción creada correctamente.',
-    };
+      'subcription created sucessfully.',
+    );
   }
 
-  async allSubcriptions(user: ReqUserToken) {
-    const subcriptions = await this.prisma.subscription.findMany({
+  async allSubcriptions(derivedMasterKey: Buffer, user: ReqUserToken) {
+    console.log(derivedMasterKey, 'derivedMasterKey');
+    const subscriptions = await this.prisma.subscription.findMany({
+      select: {
+        id: true,
+        user_name_subscription: true,
+        services_id: true,
+        account_id: true,
+        status: true,
+        subscription_detail: {
+          select: {
+            id: true,
+            password: true,
+            connect_google: true,
+            connect_github: true,
+            connect_microsoft: true,
+            other_connect: true,
+            comment: true,
+            status: true,
+            updated_at: true,
+            EncryptedField: {
+              select: {
+                field_name: true,
+                iv: true,
+                tag: true,
+              },
+            },
+          },
+        },
+      },
       where: {
         accounts: {
           user_id: Number(user.id),
         },
       },
-      include: {
-        Subscription_detail: true,
-      },
     });
 
-    if (subcriptions.length == 0) {
+    subscriptions.map((sub) => {
+      if (sub.subscription_detail.EncryptedField.length > 0) {
+        sub.subscription_detail.password = this.HelperEncryptData.decryptData(
+          {
+            data: sub.subscription_detail.password,
+            iv: sub.subscription_detail.EncryptedField[0].iv,
+            tag: sub.subscription_detail.EncryptedField[0].tag,
+          },
+          Buffer.from(derivedMasterKey),
+        );
+      }
+    });
+
+    if (subscriptions.length == 0) {
       return {
         ok: false,
         msg: 'No hay subcripciones creadas con este usuario',
       };
     }
 
-    return {
-      ok: true,
-      subcriptions,
-    };
+    return this.ApiResponseService.success(
+      { subscriptions },
+      'Subscription list loaded successfully.',
+    );
   }
 
-  async findSubcriptionById(user: ReqUserToken, subcription_id: number) {
-    const subcription = await this.prisma.subscription.findFirstOrThrow({
+  async findSubcriptionById(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
+    subscription_id: number,
+  ) {
+    const subscription = await this.prisma.subscription.findFirst({
       where: {
-        id: subcription_id,
+        id: subscription_id,
         accounts: {
           user_id: Number(user.id),
         },
       },
-      include: {
-        Subscription_detail: true,
-        accounts: { select: { user_id: true } },
+      select: {
+        id: true,
+        user_name_subscription: true,
+        services_id: true,
+        account_id: true,
+        status: true,
+        subscription_detail: {
+          select: {
+            id: true,
+            password: true,
+            connect_google: true,
+            connect_github: true,
+            connect_microsoft: true,
+            other_connect: true,
+            comment: true,
+            status: true,
+            updated_at: true,
+            EncryptedField: {
+              select: {
+                field_name: true,
+                iv: true,
+                tag: true,
+              },
+            },
+          },
+        },
+        accounts: {
+          select: {
+            user_id: true,
+          },
+        },
       },
     });
 
-    this.validate_permissions_subcriptions(
-      +user.id,
-      subcription,
-      'El usuario no tiene permiso visualizar este subcripción o la subcripcion es inexistente',
+    const { accounts, ...rest } = subscription;
+
+    if (
+      subscription.subscription_detail.password &&
+      subscription.subscription_detail.EncryptedField.length > 0
+    ) {
+      subscription.subscription_detail.password =
+        this.HelperEncryptData.decryptData(
+          {
+            data: subscription.subscription_detail.password,
+            iv: subscription.subscription_detail.EncryptedField[0].iv,
+            tag: subscription.subscription_detail.EncryptedField[0].tag,
+          },
+          deriveMasterKey,
+        );
+    }
+
+    const { subscription_detail, ...subscription_db } = rest;
+    const { EncryptedField, ...subscription_detail_db } = subscription_detail;
+
+    return this.ApiResponseService.success(
+      {
+        subscription: {
+          ...subscription_db,
+          subscription_detail: subscription_detail_db,
+        },
+      },
+      'Subscription load successfully',
     );
-
-    const { accounts, ...rest } = subcription;
-
-    return {
-      ok: true,
-      subcription: rest,
-    };
   }
 
   async updateSubcriptionById(
@@ -104,103 +237,140 @@ export class SubcriptionRepository {
     subcription_id: number,
     subcriptionPayload: UpdateSubcriptionDto,
   ) {
-    const subcription = await this.prisma.subscription.findFirstOrThrow({
-      where: { id: subcription_id },
-      include: { accounts: { select: { user_id: true } } },
-    });
-
-    this.validate_permissions_subcriptions(
-      +user.id,
-      subcription,
-      'El usuario no tiene permiso para actualizar',
-    );
-
     const updateSubcription = await this.prisma.subscription.update({
-      where: { id: subcription_id },
+      where: { id: subcription_id, accounts: { user_id: Number(user.id) } },
       data: subcriptionPayload,
     });
 
-    return {
-      ok: true,
-      subcription: updateSubcription,
-    };
+    return this.ApiResponseService.success(
+      { subscription: updateSubcription },
+      'Subscription updated successfully',
+    );
   }
 
   async updateSubcriptionDetail(
+    deriveMasterKey: Buffer,
     user: ReqUserToken,
-    id: number,
+    subscription_id: number,
     subscription_detail_id: number,
     subscription_detail_payload: UpdateSubcriptionDetailDto,
   ) {
-    const subscriptionDetail =
-      await this.prisma.subscription_detail.findFirstOrThrow({
-        where: { id: subscription_detail_id },
-        include: {
-          subcription: {
-            include: {
-              accounts: true, // Incluye todas las cuentas relacionadas con la suscripción
+    const { password, ...details } = subscription_detail_payload;
+
+    const { encryptedData, encryptedFields } =
+      this.HelperEncryptData.encryptDataSubcriptionDetail(
+        { password },
+        deriveMasterKey,
+      );
+
+    const prismaTx = await this.prisma.$transaction(async (tx) => {
+      let subscription_detail_db: any;
+
+      subscription_detail_db = await this.prisma.subscription_detail.update({
+        where: {
+          subscription_id: subscription_id,
+          id: subscription_detail_id,
+          subscription: {
+            accounts: {
+              user_id: Number(user.id),
+            },
+          },
+        },
+        data: {
+          password: this.validate_data(encryptedData.password),
+          ...details,
+        },
+        select: {
+          id: true,
+          password: true,
+          subscription_id: true,
+          connect_github: true,
+          connect_google: true,
+          connect_microsoft: true,
+          other_connect: true,
+          comment: true,
+          status: true,
+          updated_at: true,
+          EncryptedField: {
+            where: {
+              record_id: +subscription_detail_id,
             },
           },
         },
       });
 
-    //*TODO RESOLVE ACCOUNTS SELECT
-    const userHasAccess = subscriptionDetail.subcription;
+      const encryptedFieldExists = await this.prisma.encryptedField.findFirst({
+        where: {
+          record_id: +subscription_detail_db.id,
+          table_name: 'subscription_details',
+          field_name: 'password',
+        },
+      });
 
-    this.validate_permissions_subcriptions(
-      +user.id,
-      userHasAccess,
-      'El usuario no tiene permiso para actualizar el detalle de subcripcion',
-    );
+      if (
+        encryptedFieldExists &&
+        this.validate_data(encryptedData.password) === null
+      ) {
+        await this.prisma.encryptedField.delete({
+          where: {
+            id: encryptedFieldExists.id,
+          },
+        });
+      }
 
-    if (id !== subscriptionDetail.subcription_id) {
-      throw new UnauthorizedException(
-        'El usuario no puede actualizar sin permiso o inexistente',
-      );
-    }
+      if (subscription_detail_db.password !== null) {
+        if (encryptedFieldExists) {
+          await this.prisma.encryptedField.update({
+            where: {
+              id: encryptedFieldExists.id,
+            },
+            data: {
+              iv: encryptedFields[0].iv,
+              tag: encryptedFields[0].tag,
+            },
+          });
+        } else {
+          await this.prisma.encryptedField.create({
+            data: {
+              iv: encryptedFields[0].iv,
+              tag: encryptedFields[0].tag,
+              record_id: +subscription_detail_db.id,
+              field_name: 'password',
+              table_name: 'subscription_details',
+            },
+          });
+        }
+      }
 
-    const subscription_detail = await this.prisma.subscription_detail.update({
-      where: {
-        id: subscription_detail_id,
-      },
-      data: {
-        subcription_id: id,
-        ...subscription_detail_payload,
-      },
+      const { EncryptedField, _password, ...subscription_detail } =
+        subscription_detail_db;
+
+      return {
+        subscription_detail: {
+          ...subscription_detail,
+          password: this.validate_data(password),
+        },
+      };
     });
 
-    return {
-      ok: true,
-      subscription_detail,
-    };
+    return this.ApiResponseService.success(
+      { subscription_detail: prismaTx.subscription_detail },
+      'Subscription detail updated successfully',
+    );
   }
 
   async deleteSubcription(user: ReqUserToken, subcription_id: number) {
-    const { ok, subcription } = await this.findSubcriptionById(
-      user,
-      subcription_id,
+    const deleteSubcription = await this.prisma.subscription.delete({
+      where: { id: subcription_id, accounts: { user_id: Number(user.id) } },
+    });
+
+    return this.ApiResponseService.success(
+      { subscription: deleteSubcription },
+      'Subscription deleted successfully',
     );
-
-    if (ok) {
-      const deleteSubcription = await this.prisma.subscription.delete({
-        where: { id: subcription.id },
-      });
-
-      return {
-        ok: true,
-        subcription: deleteSubcription,
-        msg: 'La subcription fue eliminada correctamente',
-      };
-    }
   }
 
-  private validate_permissions_subcriptions(
-    user_id: number,
-    data: any,
-    message: string,
-  ) {
-    if (user_id !== data.accounts.user_id) {
-      throw new UnauthorizedException(message);
-    }
+  private validate_data(data: string): string | null {
+    return data ? data : null;
   }
 }

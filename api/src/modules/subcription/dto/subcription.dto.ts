@@ -7,18 +7,8 @@ export class CreateSubcriptionDetailDto {
   readonly subscription_id: number;
 
   @IsOptional()
-  @MinLength(4, {
-    message: 'La contraseña deberia tener al menos 4 caracteres',
-  })
   @ApiProperty()
   readonly password: string;
-
-  @IsOptional()
-  @MinLength(6, {
-    message: 'La pregunta secreta deberia tener al menos 6 caracteres',
-  })
-  @ApiProperty()
-  readonly secret_question: string;
 
   @IsOptional()
   @MinLength(3, {
@@ -56,7 +46,7 @@ export class CreateSubcriptionDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  subcriptionDetail: Record<string, CreateSubcriptionDetailDto>;
+  subscriptionDetail: Record<string, CreateSubcriptionDetailDto>;
 }
 
 export class UpdateSubcriptionDto extends PartialType(CreateSubcriptionDto) {}
