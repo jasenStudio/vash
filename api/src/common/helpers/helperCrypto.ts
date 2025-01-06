@@ -36,8 +36,6 @@ export class cryptoHelper {
   }
 
   decryptData(encryptedData: EncryptedData, masterKey: Buffer) {
-    console.log(encryptedData, 'encryptedData');
-    console.log(masterKey, 'masterKey');
     const decipher = crypto.createDecipheriv(
       'aes-256-gcm',
       masterKey,

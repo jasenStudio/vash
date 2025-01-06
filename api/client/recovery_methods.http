@@ -1,5 +1,7 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM1OTYyNDI5LCJleHAiOjE3MzU5Njk2Mjl9.rp1GdEcDZGk3kNg3hKefWgonSfc2RsKfv1yA94d8Ozg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM2MTMwMzY4LCJleHAiOjE3MzYxMzc1Njh9.utR46wpiljYV3qXufl07A_PkfDF9nylyRxqC3YbtaFw
 
+
+###* Metodos de recuperaciones
 
 ###* Crear los metodos de recuperación basado en los detalles de la subscripción
 POST http://localhost:3000/api/subcriptions-details/41/methods-recovery/new
@@ -7,6 +9,35 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "method_type":"email_recovery",
-  "method_value":"pepito019@gmail.com"
+  "method_type":"phone_recovery",
+  "method_value":"3008174613"
+}
+
+
+###* Todos los metodos de recuperacion asociados a la subscripción
+GET http://localhost:3000/api/subcriptions-details/41/methods-recovery
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* actualizar metodo recuperacion
+
+PUT http://localhost:3000/api/subcriptions-details/41/methods-recovery/42/edit
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+"method_type": "email_recovery",
+    "method_value": "pepito11@gmail.com"
+}
+
+
+###
+DELETE http://localhost:3000/api/subcriptions-details/41/methods-recovery/46
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
 }

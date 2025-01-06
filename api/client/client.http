@@ -121,7 +121,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsI
 
 
 ###
-DELETE http://localhost:3000/api/subcriptions-details/1/methods-recovery/6
+DELETE http://localhost:3000/api/subcriptions-details/40/methods-recovery/6
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoianNhbGdhZG9lY2hldmVycmlhQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MjkwNDQ5NzYsImV4cCI6MTcyOTA1MjE3Nn0.xi-WnYIQoB7DQaz5MIfcbxAn-us7BD_AGGYwl05bMAA
 

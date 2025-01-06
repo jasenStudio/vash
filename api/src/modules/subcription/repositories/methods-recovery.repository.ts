@@ -7,6 +7,7 @@ import {
 } from '../dto/subcription.dto';
 import { ReqUserToken } from '../../auth/dto/auth.dto';
 import { HelperEncryptData } from '../../../common/helpers/helperEncrypteData';
+import { ApiResponseService } from '../../global/api-response.service';
 import {
   CreateMethodRecoveryDto,
   UpdateMethodRecoveryDto,
@@ -23,9 +24,14 @@ export class MethodRecoveryRepository {
   constructor(
     private readonly prisma: PrismaService,
     private helperEncryptData: HelperEncryptData,
+    private apiResponseService: ApiResponseService,
   ) {}
 
-  async allMethodRecovery(user: ReqUserToken, subscription_detail_id: number) {
+  async allMethodRecovery(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
+    subscription_detail_id: number,
+  ) {
     const methods = await this.prisma.recovery_methods.findMany({
       where: {
         subscription_detail_id: subscription_detail_id,
@@ -33,19 +39,43 @@ export class MethodRecoveryRepository {
           subscription: { accounts: { user_id: +user.id } },
         },
       },
+      include: {
+        EncryptedField: {
+          select: {
+            id: true,
+            table_name: true,
+            record_id: true,
+            record_recovery_id: true,
+            field_name: true,
+            iv: true,
+            tag: true,
+          },
+        },
+      },
     });
 
-    if (methods.length === 0) {
-      return {
-        ok: false,
-        msg: 'La subcripcion no tiene metodos de recuperación',
+    const methods_recovery_decrypted = methods.map((method) => {
+      const decrypted = {
+        ...method,
+        method_value: this.helperEncryptData.decryptData(
+          {
+            data: method.method_value,
+            iv: method.EncryptedField[0].iv,
+            tag: method.EncryptedField[0].tag,
+          },
+          deriveMasterKey,
+        ),
       };
-    }
 
-    return {
-      ok: true,
-      methods,
-    };
+      const { EncryptedField, ...method_recovery } = decrypted;
+
+      return method_recovery;
+    });
+
+    return this.apiResponseService.success(
+      { methods_recovery: methods_recovery_decrypted },
+      'Recovery methods loaded successfully',
+    );
   }
 
   async createMethodRecovery(
@@ -54,23 +84,6 @@ export class MethodRecoveryRepository {
     sub_detail_id: number,
     methodRecoveryPayload: CreateMethodRecoveryDto,
   ) {
-    const subscription_detail_db_exists =
-      await this.prisma.subscription_detail.findUnique({
-        where: {
-          id: sub_detail_id,
-          subscription: {
-            accounts: {
-              user_id: +user.id,
-            },
-          },
-        },
-      });
-
-    if (!subscription_detail_db_exists)
-      return {
-        message: 'intentado crear un metodo de recuparacion sin permiso',
-      };
-
     const { method_type, method_value } = methodRecoveryPayload;
     const { encryptedData, iv, tag } =
       this.helperEncryptData.encryptDataRecoveryMethod(
@@ -78,64 +91,119 @@ export class MethodRecoveryRepository {
         deriveMasterKey,
       );
 
-    console.log(sub_detail_id, 'id detalle subscripcion');
-    console.log(encryptedData, 'recovery_methods - encryptedData');
-
     const prismaTx = await this.prisma.$transaction(async (tx) => {
       const method_recovery_db = await this.prisma.recovery_methods.create({
         data: {
-          subscription_detail_id: subscription_detail_db_exists.id,
+          subscription_detail_id: sub_detail_id,
           method_value: encryptedData,
           method_type: method_type,
         },
       });
-      const encrypted_data = await this.prisma.encryptedField.create({
+
+      await this.prisma.encryptedField.create({
         data: {
-          record_id: method_recovery_db.id,
+          record_recovery_id: method_recovery_db.id,
           field_name: 'method_type',
           table_name: 'recovery_methods',
-          iv: 'iv',
-          tag: 'tag',
+          iv: iv,
+          tag: tag,
         },
       });
 
       return { method_recovery: method_recovery_db };
     });
 
-    return {
-      ok: true,
-      methodRecovery: prismaTx.method_recovery,
-    };
+    const { method_value: method_value_encrypted, ...rest } =
+      prismaTx.method_recovery;
+
+    return this.apiResponseService.success(
+      {
+        method_recovery: { method_value: method_value, ...rest },
+      },
+      'The recovery method was successfully created',
+    );
   }
 
   async updateMethodById(
+    deriveMasterKey: Buffer,
     user: ReqUserToken,
     sub_detail_id: number,
     method_id: number,
     methodRecoveryPayload: UpdateMethodRecoveryDto,
   ) {
-    const method = await this.prisma.recovery_methods.findFirstOrThrow({
-      where: {
-        id: method_id,
-        subscription_detail_id: sub_detail_id,
-        subscription_detail: {
-          subscription: { accounts: { user_id: +user.id } },
+    const { method_value, method_type, ...payload } = methodRecoveryPayload;
+
+    const { encryptedData, iv, tag } =
+      this.helperEncryptData.encryptDataRecoveryMethod(
+        method_value,
+        deriveMasterKey,
+      );
+
+    const prismaTx = await this.prisma.$transaction(async (tx) => {
+      let method_recovery_db: any;
+
+      method_recovery_db = await this.prisma.recovery_methods.update({
+        where: {
+          id: method_id,
+          subscription_detail_id: sub_detail_id,
+          subscription_detail: {
+            subscription: { accounts: { user_id: +user.id } },
+          },
         },
-      },
-      include: {
-        subscription_detail: true,
-      },
+        data: {
+          method_value: encryptedData,
+          method_type: method_type,
+          ...payload,
+        },
+      });
+
+      const encryptedFieldExists = await this.prisma.encryptedField.findFirst({
+        where: {
+          record_recovery_id: +method_recovery_db.id,
+          table_name: 'recovery_methods',
+          field_name: 'method_type',
+        },
+      });
+
+      if (encryptedFieldExists) {
+        await this.prisma.encryptedField.update({
+          where: {
+            id: encryptedFieldExists.id,
+          },
+          data: {
+            table_name: 'recovery_methods',
+            field_name: 'method_type',
+            iv: iv,
+            tag: tag,
+          },
+        });
+      } else {
+        await this.prisma.encryptedField.create({
+          data: {
+            field_name: 'method_type',
+            iv: iv,
+            record_recovery_id: +method_recovery_db.id,
+            table_name: 'recovery_methods',
+            tag: tag,
+          },
+        });
+      }
+
+      const { method_value: method_value_db, ...rest_method_recovery } =
+        method_recovery_db;
+
+      return {
+        method_recovery: {
+          method_value: method_value,
+          ...rest_method_recovery,
+        },
+      };
     });
 
-    const updateMethodsRecovery = await this.prisma.recovery_methods.update({
-      where: { id: method.id },
-      data: methodRecoveryPayload,
-    });
-
-    return {
-      ok: true,
-      method: updateMethodsRecovery,
-    };
+    return this.apiResponseService.success(
+      { method_recovery: prismaTx.method_recovery },
+      'The recovery method was successfully updated.',
+    );
   }
 
   async deleteMethodRecovery(
@@ -143,7 +211,7 @@ export class MethodRecoveryRepository {
     sub_detail_id: number,
     method_id: number,
   ) {
-    const method = await this.prisma.recovery_methods.findFirstOrThrow({
+    const deleteRecoveryMethod = await this.prisma.recovery_methods.delete({
       where: {
         id: method_id,
         subscription_detail_id: sub_detail_id,
@@ -153,24 +221,13 @@ export class MethodRecoveryRepository {
       },
     });
 
-    const deleteRecoveryMethod = await this.prisma.recovery_methods.delete({
-      where: { id: method.id },
-    });
-
-    return {
-      ok: true,
-      method: deleteRecoveryMethod,
-      msg: 'El metodo de recuperacion fue eliminado exitosamente',
-    };
+    return this.apiResponseService.success(
+      { method_recovery: deleteRecoveryMethod },
+      'the recovery method was deleted successfully',
+    );
   }
 
-  private validate_permissions_subcriptions(
-    user_id: number,
-    data: any,
-    message: string,
-  ) {
-    if (user_id !== data.accounts.user_id) {
-      throw new UnauthorizedException(message);
-    }
+  private validate_data(data: string): string | null {
+    return data ? data : null;
   }
 }

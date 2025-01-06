@@ -9,8 +9,16 @@ import {
 @Injectable()
 export class MethodsRecoveryService {
   constructor(private readonly methodResository: MethodRecoveryRepository) {}
-  async findAllMethodsRecovery(user: ReqUserToken, sub_detail_id: number) {
-    return await this.methodResository.allMethodRecovery(user, sub_detail_id);
+  async findAllMethodsRecovery(
+    deriveMasterKey: Buffer,
+    user: ReqUserToken,
+    sub_detail_id: number,
+  ) {
+    return await this.methodResository.allMethodRecovery(
+      deriveMasterKey,
+      user,
+      sub_detail_id,
+    );
   }
 
   async createMethodRecovery(
@@ -28,12 +36,14 @@ export class MethodsRecoveryService {
   }
 
   async updateMethodRecovery(
+    deriveMasterKey: Buffer,
     user: ReqUserToken,
     sub_detail_id: number,
     method_id: number,
     methodRecoveryPayload: UpdateMethodRecoveryDto,
   ) {
     return await this.methodResository.updateMethodById(
+      deriveMasterKey,
       user,
       sub_detail_id,
       method_id,
