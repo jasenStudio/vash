@@ -93,15 +93,17 @@ model Subscription_detail {
 }
 
 model EncryptedField {
-  id                 Int                 @id @default(autoincrement())
+  id                 Int                  @id @default(autoincrement())
   table_name         String
-  record_id          Int
+  record_id          Int?
   field_name         String
   iv                 String
   tag                String
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @updatedAt
-  subscriptionDetail Subscription_detail @relation(fields: [record_id], references: [id], onDelete: Cascade)
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  record_recovery_id Int?
+  subscriptionDetail Subscription_detail? @relation(fields: [record_id], references: [id], onDelete: Cascade)
+  recovery_methods   Recovery_methods?    @relation(fields: [record_recovery_id], references: [id], onDelete: Cascade)
 
   @@map("encrypted_fields")
 }
@@ -114,6 +116,7 @@ model Recovery_methods {
   status                 Boolean             @default(true)
   created_at             DateTime            @default(now())
   updated_at             DateTime            @updatedAt
+  EncryptedField         EncryptedField[]
   subscription_detail    Subscription_detail @relation(fields: [subscription_detail_id], references: [id], onDelete: Cascade)
 
   @@map("recovery_methods")
