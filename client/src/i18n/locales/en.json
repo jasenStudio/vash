@@ -18,7 +18,10 @@
         "and": "and ",
         "close": "Cancel",
         "saveChanges": "Save Changes",
-        "save": "Save"
+        "save": "Save",
+        "active": "Active",
+        "inactive": "Inactive",
+        "ViewDetails": "View Details"
     },
     "configuration": {
         "title": "Settings",
@@ -53,6 +56,12 @@
             "updated": "Account updated successfully",
             "deleted": "Account deleted successfully",
             "updated_error": "An error occurred while updating the account"
+        },
+        "subscriptions": {
+            "subscriptions": "subscriptions",
+            "create": "Create Subscription",
+            "update": "Update subscription",
+            "delete": "Delete subscription"
         }
     },
     "validations": {

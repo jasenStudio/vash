@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/services/prisma.service';
 import {
   CreateSubcriptionDto,
+  QueryListSubscription,
   UpdateSubcriptionDetailDto,
   UpdateSubcriptionDto,
 } from '../dto/subcription.dto';
@@ -92,8 +93,18 @@ export class SubcriptionRepository {
     );
   }
 
-  async allSubcriptions(derivedMasterKey: Buffer, user: ReqUserToken) {
-    console.log(derivedMasterKey, 'derivedMasterKey');
+  async allSubcriptions(
+    derivedMasterKey: Buffer,
+    user: ReqUserToken,
+    query: QueryListSubscription,
+  ) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const search = query['search'] || '';
+    const skip = (page - 1) * limit;
+
+    console.log(search.trim());
+
     const subscriptions = await this.prisma.subscription.findMany({
       select: {
         id: true,
@@ -101,57 +112,106 @@ export class SubcriptionRepository {
         services_id: true,
         account_id: true,
         status: true,
-        subscription_detail: {
+        accounts: {
           select: {
-            id: true,
-            password: true,
-            connect_google: true,
-            connect_github: true,
-            connect_microsoft: true,
-            other_connect: true,
-            comment: true,
-            status: true,
-            updated_at: true,
-            EncryptedField: {
-              select: {
-                field_name: true,
-                iv: true,
-                tag: true,
-              },
-            },
+            account_email: true,
           },
         },
+        services: {
+          select: {
+            name: true,
+          },
+        },
+        // subscription_detail: {
+        //   select: {
+        //     id: true,
+        //     password: true,
+        //     connect_google: true,
+        //     connect_github: true,
+        //     connect_microsoft: true,
+        //     other_connect: true,
+        //     comment: true,
+        //     status: true,
+        //     updated_at: true,
+        //     EncryptedField: {
+        //       select: {
+        //         field_name: true,
+        //         iv: true,
+        //         tag: true,
+        //       },
+        //     },
+        //   },
+        // },
       },
       where: {
         accounts: {
           user_id: Number(user.id),
         },
+        OR: [
+          {
+            accounts: {
+              account_email: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          },
+          {
+            services: {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        accounts: {
+          account_email: 'asc',
+        },
       },
     });
 
-    subscriptions.map((sub) => {
-      if (sub.subscription_detail.EncryptedField.length > 0) {
-        sub.subscription_detail.password = this.HelperEncryptData.decryptData(
+    const total = await this.prisma.subscription.count({
+      where: {
+        accounts: {
+          user_id: Number(user.id),
+        },
+        OR: [
           {
-            data: sub.subscription_detail.password,
-            iv: sub.subscription_detail.EncryptedField[0].iv,
-            tag: sub.subscription_detail.EncryptedField[0].tag,
+            accounts: {
+              account_email: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
           },
-          Buffer.from(derivedMasterKey),
-        );
-      }
+          {
+            services: {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      },
     });
-
-    if (subscriptions.length == 0) {
-      return {
-        ok: false,
-        msg: 'No hay subcripciones creadas con este usuario',
-      };
-    }
 
     return this.ApiResponseService.success(
       { subscriptions },
       'Subscription list loaded successfully.',
+      {
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     );
   }
 

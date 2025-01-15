@@ -2,8 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { useEffect, useState } from "react";
 import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
-import { AccountsResponse } from "@/infrastructure/interfaces/account.response";
-import { useAccountStore } from "@/vash/store";
 
 interface Props {
   limit: number;

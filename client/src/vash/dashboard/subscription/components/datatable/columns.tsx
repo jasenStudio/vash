@@ -1,7 +1,5 @@
-import { ColumnDef, SortDirection, Row, FilterFn } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, MoreHorizontal } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,31 +8,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-
-import { useDialog } from "@/vash/store/ui/useDialog";
+import { ColumnDef, SortDirection } from "@tanstack/react-table";
+import { ChevronDownIcon, ChevronUpIcon, MoreHorizontal } from "lucide-react";
 import { t } from "i18next";
-export type Account = {
-  id: string;
+import MenuActions from "./MenuActions/MenuActions";
+import { ColumnStatus } from "./columns/status/ColumnStatus";
+export type Subcription = {
   account_email: string;
-  status: string;
-  created_at: string;
-};
-
-const myCustomFilterFn: FilterFn<Account> = (
-  row: Row<Account>,
-  _columnId: string,
-  filterValue: any,
-  _addMeta: (meta: any) => void
-) => {
-  filterValue = filterValue.toLowerCase();
-  const filterParts = filterValue.split(" ");
-
-  const rowValues =
-    `${row.original.account_email} ${row.original.status}`.toLowerCase();
-
-  return filterParts.every((part: string) => rowValues.includes(part));
+  account_id: number;
+  id: number;
+  name_service: string;
+  services_id: number;
+  status: boolean;
+  user_name_subscription: null | string;
 };
 
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -49,7 +35,7 @@ const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
   return null;
 };
 
-export const columns: ColumnDef<Account>[] = [
+export const columns: ColumnDef<Subcription>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -87,7 +73,6 @@ export const columns: ColumnDef<Account>[] = [
   {
     id: "account_email",
     accessorKey: "account_email",
-    filterFn: myCustomFilterFn,
     header: ({ column }) => {
       return (
         <Button
@@ -101,66 +86,33 @@ export const columns: ColumnDef<Account>[] = [
     },
   },
   {
-    id: "status",
-    accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            status
-            <SortedIcon isSorted={column.getIsSorted()} />
-          </Button>
-        </div>
-      );
-    },
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const castStatus = status === "true" ? t("common.active") : "Inactive";
-      return <div className="text-right font-medium p-4">{castStatus}</div>;
-    },
+    id: "name_service",
+    accessorKey: "name_service",
+    header: "services",
   },
   {
-    id: "created_at",
-    accessorKey: "created_at",
-    header: ({ column }) => {
-      return (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            created_at
-            <SortedIcon isSorted={column.getIsSorted()} />
-          </Button>
-        </div>
-      );
-    },
+    id: "user_name_subscription",
+    accessorKey: "user_name_subscription",
+    header: "Username",
+  },
+  {
+    id: "status",
+    accessorKey: "status",
     cell: ({ row }) => {
-      const date = row.getValue("created_at") as string;
-      return (
-        <div className="text-right p-4">
-          {format(new Date(date), "dd-MM-uuu", {
-            locale: es,
-          })}
-        </div>
-      );
+      const status = row.getValue("status") as string;
+
+      return <ColumnStatus status={status} />;
     },
-    enableSorting: true,
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const account = row.original;
-
-      const onOpen = useDialog((state) => state.onOpen);
-      const setData = useDialog((state) => state.setData);
+      const subscription = row.original;
 
       return (
         <>
-          <DropdownMenu>
+          <MenuActions subscription={subscription} />
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
@@ -169,29 +121,27 @@ export const columns: ColumnDef<Account>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  onOpen("dialog", "account", "update");
-                  setData(account);
-                }}
-              >
-                Editar cuenta
-              </DropdownMenuItem>
+              <DropdownMenuItem> {t("common.ViewDetails")}</DropdownMenuItem>
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View account</DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e: any) => {
                   e.stopPropagation();
-                  console.log(account.id);
-                  onOpen("alert", "account", "delete");
-                  setData(account.id);
                 }}
               >
-                Delete ACCOUNT
+                {t("entities.subscriptions.update")}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  console.log(subcription.id);
+                }}
+              >
+                {t("entities.subscriptions.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </>
       );
     },

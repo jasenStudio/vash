@@ -8,12 +8,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { SubcriptionService } from '../services/subcription.service';
 import {
   CreateSubcriptionDto,
+  QueryListSubscription,
   UpdateSubcriptionDetailDto,
   UpdateSubcriptionDto,
 } from '../dto/subcription.dto';
@@ -31,13 +33,18 @@ export class SubcriptionController {
   constructor(private readonly __subcriptionService: SubcriptionService) {}
 
   @Get('')
-  async findAllSubcriptions(@Req() req: Request, @CurrentUser() user) {
+  async findAllSubcriptions(
+    @Req() req: Request,
+    @CurrentUser() user,
+    @Query() query: QueryListSubscription,
+  ) {
     const deriveMasterKey = Buffer.from(req['derivedKey'].data);
 
     const { iat, exp, ...rest } = user;
     return await this.__subcriptionService.findAllSubcriptions(
       deriveMasterKey,
       rest,
+      query,
     );
   }
 

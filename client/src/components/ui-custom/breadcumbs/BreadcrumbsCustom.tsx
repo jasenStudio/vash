@@ -6,8 +6,11 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useTranslation } from "react-i18next";
 
 export const BreadcrumbsCustom = memo(() => {
+  const { t } = useTranslation();
+
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter(Boolean);
 
