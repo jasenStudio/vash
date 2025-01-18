@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { useDialog } from "@/vash/store/ui/useDialog";
-
+import { t } from "i18next";
 export type Account = {
   id: string;
   account_email: string;
@@ -118,7 +118,7 @@ export const columns: ColumnDef<Account>[] = [
     },
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      const castStatus = status === "true" ? "Active" : "Inactive";
+      const castStatus = status === "true" ? t("common.active") : "Inactive";
       return <div className="text-right font-medium p-4">{castStatus}</div>;
     },
   },

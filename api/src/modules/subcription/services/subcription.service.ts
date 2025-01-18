@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   CreateSubcriptionDto,
+  QueryListSubscription,
   UpdateSubcriptionDetailDto,
   UpdateSubcriptionDto,
 } from '../dto/subcription.dto';
@@ -21,10 +22,15 @@ export class SubcriptionService {
     );
   }
 
-  async findAllSubcriptions(derivedMasterKey: Buffer, user: ReqUserToken) {
+  async findAllSubcriptions(
+    derivedMasterKey: Buffer,
+    user: ReqUserToken,
+    query: QueryListSubscription,
+  ) {
     return await this.subcriptionRepository.allSubcriptions(
       derivedMasterKey,
       user,
+      query,
     );
   }
 

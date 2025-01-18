@@ -55,12 +55,12 @@ const data = {
       ],
     },
     {
-      title: "Building Your Application",
-      url: "#",
+      title: "Subscriptions",
+      url: "/subscriptions/list",
       items: [
         {
-          title: "Routing",
-          url: "#",
+          title: "List subscription",
+          url: "/subscriptions/list",
         },
         {
           title: "Data Fetching",

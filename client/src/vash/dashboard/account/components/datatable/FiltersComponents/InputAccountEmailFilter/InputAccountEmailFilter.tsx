@@ -12,7 +12,7 @@ export const InputAccountEmailFilter: FC<InputFilterProps> = memo(
       <div className="w-full my-2">
         <Input
           placeholder="Filter emails..."
-          value={value}
+          value={value || ""}
           onChange={onChangeFilter}
           className="max-w-sm"
         />

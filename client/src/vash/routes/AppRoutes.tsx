@@ -9,6 +9,9 @@ const AuthRouter = React.lazy(() => import("../auth/router/AuthRouter"));
 const AccountRouter = React.lazy(
   () => import("../dashboard/account/router/AccountRouter")
 );
+const SubscriptionRouter = React.lazy(
+  () => import("../dashboard/subscription/router/SubscriptionRouter")
+);
 
 export const AppRoutes = () => {
   const checkStatusAuth = useAuthStore((state) => state.checkStatusAuth);
@@ -33,6 +36,7 @@ export const AppRoutes = () => {
           <>
             <Route element={<LayoutRoot />}>
               <Route path="/accounts/*" element={<AccountRouter />} />
+              <Route path="/subscriptions/*" element={<SubscriptionRouter />} />
               <Route path="*" element={<Navigate to="/accounts" />} />
             </Route>
           </>

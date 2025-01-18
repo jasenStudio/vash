@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import { z } from "zod";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+
 import {
   Dialog,
   DialogContent,

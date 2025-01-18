@@ -19,7 +19,9 @@
         "createProcess": "",
         "close": "Cancelar",
         "saveChanges": "Guardar Cambios",
-        "save": "Guardar"
+        "save": "Guardar",
+        "active": "Activo",
+        "inactive": "Inactivo"
     },
     "configuration": {
         "title": "Configuración",
@@ -54,6 +56,12 @@
             "updated": "Cuenta actualizada con éxito",
             "deleted": "Cuenta eliminada con éxito",
             "updated_error": "Hubo un error al actualizar la cuenta"
+        },
+        "subscriptions": {
+            "subscriptions": "subscripciones",
+            "create": "Crear Subscripcion",
+            "update": "Editar Subscripcion",
+            "delete": "Eliminar Subscripción"
         }
     },
     "validations": {

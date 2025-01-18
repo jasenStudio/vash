@@ -1,6 +1,12 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, MinLength } from 'class-validator';
 
+export interface QueryListSubscription {
+  page: string;
+  limit: string;
+  search: string;
+}
+
 export class CreateSubcriptionDetailDto {
   @ApiProperty()
   @IsNotEmpty()

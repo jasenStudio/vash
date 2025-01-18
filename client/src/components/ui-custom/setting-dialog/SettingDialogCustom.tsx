@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 
 //* icons
 import { Sun, Moon, Settings } from "lucide-react";
@@ -84,137 +84,139 @@ const data = [
   },
 ];
 
-export const SettingDialogCustom = ({
-  text,
-  className,
-  open,
-  onOpenChange,
-  customTrigger,
-}: SettingsDialogProps) => {
-  const { config, handleConfigChange, handleSave } = useConfiguration();
-  const { currentLanguage } = useCurrentLanguage();
-  const { theme } = useTheme();
-  const { t } = useTranslation();
+export const SettingDialogCustom = memo(
+  ({
+    text,
+    className,
+    open,
+    onOpenChange,
+    customTrigger,
+  }: SettingsDialogProps) => {
+    const { config, handleConfigChange, handleSave } = useConfiguration();
+    const { currentLanguage } = useCurrentLanguage();
+    const { theme } = useTheme();
+    const { t } = useTranslation();
 
-  useEffect(() => {
-    handleConfigChange("theme", theme);
-    handleConfigChange("language", currentLanguage);
-    console.log("render");
-  }, [theme, currentLanguage]);
+    useEffect(() => {
+      handleConfigChange("theme", theme);
+      handleConfigChange("language", currentLanguage);
+      console.log("render");
+    }, [theme, currentLanguage]);
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {!customTrigger && (
-        <DialogTrigger asChild>
-          <Button variant="ghost" className={className}>
-            <Settings size={20} />
-            {!!text && text}
-          </Button>
-        </DialogTrigger>
-      )}
-
-      <DialogContent className="sm:max-w-[425px]">
-        {/* header */}
-        <DialogHeader>
-          <DialogTitle className="block my-2 text-xl">
-            {t("configuration.title")}
-          </DialogTitle>
-          <DialogDescription className="text-start text-black dark:text-slate-200 my-4 text-[17px]">
-            {t("configuration.description")}
-          </DialogDescription>
-        </DialogHeader>
-
-        {/* body */}
-
-        <div>
-          <span id="selectThemeLabel">{t("configuration.selectTheme")}</span>
-          <Select
-            value={config.theme}
-            onValueChange={(value: Theme) => {
-              handleConfigChange("theme", value);
-            }}
-          >
-            <SelectTrigger
-              className="w-full text-[17px] my-2"
-              aria-labelledby="selectThemeLabel"
-            >
-              <SelectValue placeholder="Selecciona una Tema" />
-            </SelectTrigger>
-            <SelectContent>
-              {data
-                .filter(
-                  (SelectItem) => SelectItem.typeConfiguration === "theme"
-                )
-                .map((selectItem) => (
-                  <SelectItem
-                    key={selectItem.id}
-                    value={selectItem.value}
-                    className="flex flex-row justify-center items-center text-[16px] py-3"
-                  >
-                    {selectItem.icon}
-                    {t(selectItem.text)}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <span id="selectLanguageLabel">
-            {t("configuration.selectLanguage")}
-          </span>
-          <Select
-            value={config.language}
-            onValueChange={(value: string) => {
-              handleConfigChange("language", value);
-            }}
-          >
-            <SelectTrigger
-              className="w-full text-[17px]"
-              aria-labelledby="selectLanguageLabel"
-              id="theme"
-            >
-              <SelectValue placeholder="Selecciona una idioma" />
-            </SelectTrigger>
-            <SelectContent>
-              {data
-                .filter((item) => item.typeConfiguration === "language")
-                .map((item) => (
-                  <SelectItem
-                    key={item.id}
-                    value={item.value}
-                    className="flex flex-row justify-center items-center text-[16px] py-3"
-                  >
-                    {item.icon}
-                    {t(item.text)}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* footer */}
-        <DialogFooter className="mt-2">
-          <DialogClose asChild className="my-3">
-            <Button
-              variant="ghost"
-              type="button"
-              className="font-bold text-[16px] py-6"
-            >
-              {t("common.close")}
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        {!customTrigger && (
+          <DialogTrigger asChild>
+            <Button variant="ghost" className={className}>
+              <Settings size={20} />
+              {!!text && text}
             </Button>
-          </DialogClose>
-          <DialogClose asChild className="my-3">
-            <Button
-              type="button"
-              onClick={handleSave}
-              className="bg-button-primary  hover:bg-button-primary-foreground text-[16px] py-6
+          </DialogTrigger>
+        )}
+
+        <DialogContent className="sm:max-w-[425px]">
+          {/* header */}
+          <DialogHeader>
+            <DialogTitle className="block my-2 text-xl">
+              {t("configuration.title")}
+            </DialogTitle>
+            <DialogDescription className="text-start text-black dark:text-slate-200 my-4 text-[17px]">
+              {t("configuration.description")}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* body */}
+
+          <div>
+            <span id="selectThemeLabel">{t("configuration.selectTheme")}</span>
+            <Select
+              value={config.theme}
+              onValueChange={(value: Theme) => {
+                handleConfigChange("theme", value);
+              }}
+            >
+              <SelectTrigger
+                className="w-full text-[17px] my-2"
+                aria-labelledby="selectThemeLabel"
+              >
+                <SelectValue placeholder="Selecciona una Tema" />
+              </SelectTrigger>
+              <SelectContent>
+                {data
+                  .filter(
+                    (SelectItem) => SelectItem.typeConfiguration === "theme"
+                  )
+                  .map((selectItem) => (
+                    <SelectItem
+                      key={selectItem.id}
+                      value={selectItem.value}
+                      className="flex flex-row justify-center items-center text-[16px] py-3"
+                    >
+                      {selectItem.icon}
+                      {t(selectItem.text)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <span id="selectLanguageLabel">
+              {t("configuration.selectLanguage")}
+            </span>
+            <Select
+              value={config.language}
+              onValueChange={(value: string) => {
+                handleConfigChange("language", value);
+              }}
+            >
+              <SelectTrigger
+                className="w-full text-[17px]"
+                aria-labelledby="selectLanguageLabel"
+                id="theme"
+              >
+                <SelectValue placeholder="Selecciona una idioma" />
+              </SelectTrigger>
+              <SelectContent>
+                {data
+                  .filter((item) => item.typeConfiguration === "language")
+                  .map((item) => (
+                    <SelectItem
+                      key={item.id}
+                      value={item.value}
+                      className="flex flex-row justify-center items-center text-[16px] py-3"
+                    >
+                      {item.icon}
+                      {t(item.text)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* footer */}
+          <DialogFooter className="mt-2">
+            <DialogClose asChild className="my-3">
+              <Button
+                variant="ghost"
+                type="button"
+                className="font-bold text-[16px] py-6"
+              >
+                {t("common.close")}
+              </Button>
+            </DialogClose>
+            <DialogClose asChild className="my-3">
+              <Button
+                type="button"
+                onClick={handleSave}
+                className="bg-button-primary  hover:bg-button-primary-foreground text-[16px] py-6
                font-bold rounded-sm dark:text-white"
-            >
-              {t("common.saveChanges")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+              >
+                {t("common.saveChanges")}
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);

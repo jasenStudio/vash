@@ -1,5 +1,5 @@
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM2MDQ4NTkzLCJleHAiOjE3MzYwNTU3OTN9.3OJo4gba9Q4CjC8ORdIoLFsSjzE6SCpMIQWYxctNbZg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM2ODIyNzUyLCJleHAiOjE3MzY4Mjk5NTJ9.qemttbF0JAibjw2T5xCTQv202uuzdtY1_sgwC-hVuK0
 ###* module subcription
 POST http://localhost:3000/api/subcription/new
 Content-Type: application/json
@@ -18,6 +18,20 @@ Authorization: Bearer {{token}}
 
 ###* module subcription find all
 GET http://localhost:3000/api/subcription
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* module subcription find all with params query
+GET http://localhost:3000/api/subcription?limit=10&page=2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* module subcription find all with params query search
+GET http://localhost:3000/api/subcription?limit=10&page=3&search=
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
