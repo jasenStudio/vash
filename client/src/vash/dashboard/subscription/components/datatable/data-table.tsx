@@ -6,6 +6,9 @@ import {
   getCoreRowModel,
   useReactTable,
   VisibilityState,
+  /* Filter */
+  ColumnFiltersState,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -22,13 +25,19 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { InputSubscriptionEmailFilter, SelectStatusFilter } from "..";
+
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useIsMobile } from "@/hooks";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useDebounce, useIsMobile } from "@/hooks";
+import { useSubscriptionDataTableView } from "@/vash/dashboard/subscription/hooks";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  search?: string;
+  onSearch?: (term: string) => void;
 }
 
 const columnName = (name: string) => {
@@ -47,40 +56,83 @@ const columnName = (name: string) => {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onSearch,
 }: DataTableProps<TData, TValue>) {
+  //** Filter states */
+  const [filterInput, setFilterInput] = useState<string>("");
+  const [currentStatus, setCurrentStatus] = useState("all");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const debounce_term = useDebounce(filterInput, 400);
+
+  //** Visible Columns */
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+
+  //* hook mobile view
+  const isMobile = useIsMobile();
+
+  //* Hook view datatable
+  useSubscriptionDataTableView({ isMobile, columns, setColumnVisibility });
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    /* Filter */
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnVisibility,
+      columnFilters,
     },
   });
-  const isMobile = useIsMobile();
-  const mobileVisibleColumns = ["account_email", "actions", "select"];
-  const VisibleColumnsDefault = columns
-    .filter((col) => col.id !== "user_name_subscription")
-    .map((col) => col.id);
+  const inputEmail = table
+    .getColumn("account_email")
+    ?.getFilterValue() as string;
+
+  const handleStatusSelect = useCallback((value: string) => {
+    if (value === "all") {
+      table.getColumn("status")?.setFilterValue(undefined);
+      setCurrentStatus("all");
+      return;
+    }
+    table.getColumn("status")?.setFilterValue(value);
+    setCurrentStatus(value);
+  }, []);
+
+  const handleAccountInput = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setCurrentStatus("all");
+      table.getColumn("status")?.setFilterValue(undefined);
+      table.getColumn("account_email")?.setFilterValue(event.target.value);
+      setFilterInput(event.target.value);
+    },
+    [table]
+  );
+
   useEffect(() => {
-    const visibleColumns = isMobile
-      ? mobileVisibleColumns
-      : VisibleColumnsDefault;
-    const newVisibility: VisibilityState = {};
-
-    columns.forEach((column) => {
-      if (column.id) {
-        newVisibility[column.id] = visibleColumns.includes(column.id);
-      }
-    });
-
-    setColumnVisibility(newVisibility);
-  }, [isMobile, columns]);
+    onSearch && onSearch(debounce_term);
+  }, [debounce_term]);
 
   return (
     <>
       <div className="flex flex-col sm:grid sm:grid-cols-4 items-center py-4 justify-between">
+        <div className="w-full my-2">
+          <InputSubscriptionEmailFilter
+            value={inputEmail}
+            onChangeFilter={handleAccountInput}
+          />
+        </div>
+
+        <div className="w-full my-2">
+          <SelectStatusFilter
+            status={currentStatus}
+            onStatusSelectChange={handleStatusSelect}
+          />
+        </div>
+
+        <div className={`w-full`}></div>
+
         <div className="w-full my-2">
           {" "}
           {/* <ButtonCreateAccount onOpen={onOpen} /> */}

@@ -77,6 +77,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [filterInput, setFilterInput] = useState("");
   const [currentStatus, setCurrentStatus] = useState("all");
+
   const { table, rowSelection, setColumnVisibility } = useAccountDataTable({
     data,
     columns,
@@ -88,11 +89,14 @@ export function DataTable<TData, TValue>({
   const rowsFiltered = table.getFilteredRowModel().rows.length;
   const rows_generated = table.getRowModel().rows;
   const [messageInfo, setMessageInfo] = useState("");
+
+  //** Dialog Component */
   const onOpen = useDialog((state) => state.onOpen);
   const isOpen = useDialog((state) => state.isOpen);
   const typeComponent = useDialog((state) => state.typeComponent);
   const setData = useDialog((state) => state.setData);
 
+  //* View columns table for desktop and mobile
   useAccountDataTablemobile({ isMobile, columns, setColumnVisibility });
 
   const inputEmail = table

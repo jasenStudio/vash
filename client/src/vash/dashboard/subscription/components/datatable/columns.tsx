@@ -1,16 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { ColumnDef, SortDirection } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, MoreHorizontal } from "lucide-react";
-import { t } from "i18next";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+
 import MenuActions from "./MenuActions/MenuActions";
 import { ColumnStatus } from "./columns/status/ColumnStatus";
 export type Subcription = {
