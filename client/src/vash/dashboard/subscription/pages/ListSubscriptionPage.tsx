@@ -7,13 +7,21 @@ import { subscriptionResponse } from "@/infrastructure/interfaces/subscription.r
 import { useState } from "react";
 const ListSubscriptionPage = () => {
   const [search, setSearch] = useState<string>("");
-  const [LimitSusbcription, _setlimitSubscription] = useState<number>(5);
+  const [LimitSusbcription, setlimitSubscription] = useState<number>(5);
+  useTitle("lista de subscriptions");
 
-  const { subscriptions } = useSubscriptions({
+  const {
+    subscriptions,
+    subscriptionsQuery,
+    page,
+    totalPages,
+    nextPage,
+    prevPage,
+    setPage,
+  } = useSubscriptions({
     limit: LimitSusbcription,
     search: search,
   });
-  useTitle("lista de subscriptions");
 
   const subscriptionsMapper = subscriptions.map((sub: subscriptionResponse) => {
     const { status, ...rest } = SubscriptionMapper.SubcriptionToEntity(sub);
@@ -30,6 +38,15 @@ const ListSubscriptionPage = () => {
         data={subscriptionsMapper}
         onSearch={setSearch}
         search={search}
+        subscriptionsQuery={subscriptionsQuery}
+        /* Paginations */
+        limitSubscription={LimitSusbcription}
+        page={page}
+        totalPages={totalPages}
+        onLimitSubscription={setlimitSubscription}
+        onNextPage={nextPage}
+        onPrevPage={prevPage}
+        onSetPage={setPage}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { ColumnDef, SortDirection } from "@tanstack/react-table";
+import { ColumnDef, SortDirection, Row, FilterFn } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import MenuActions from "./MenuActions/MenuActions";
@@ -14,6 +14,21 @@ export type Subcription = {
   services_id: number;
   status: boolean;
   user_name_subscription: null | string;
+};
+
+const myCustomFilterFn: FilterFn<Subcription> = (
+  row: Row<Subcription>,
+  _columnId: string,
+  filterValue: any,
+  _addMeta: (meta: any) => void
+) => {
+  filterValue = filterValue.toLowerCase();
+  const filterParts = filterValue.split(" ");
+
+  const rowValues =
+    `${row.original.account_email} ${row.original.status}`.toLowerCase();
+
+  return filterParts.every((part: string) => rowValues.includes(part));
 };
 
 const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
@@ -66,6 +81,7 @@ export const columns: ColumnDef<Subcription>[] = [
   {
     id: "account_email",
     accessorKey: "account_email",
+    filterFn: myCustomFilterFn,
     header: ({ column }) => {
       return (
         <Button

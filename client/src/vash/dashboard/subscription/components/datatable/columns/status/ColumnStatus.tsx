@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
+//* TODO GROUPIN COMPONENT
 export const ColumnStatus = memo(({ status }: { status: string }) => {
   const { t } = useTranslation();
   const castStatus =

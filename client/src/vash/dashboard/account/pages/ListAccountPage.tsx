@@ -43,8 +43,8 @@ const ListAccountPage = () => {
           columns={columns}
           data={accountsMap}
           limitAccount={limitAccount}
-          nextPage={nextPage}
           onLimitAccount={setlimitAccount}
+          nextPage={nextPage}
           onSetPage={setPage}
           page={page}
           prevPage={prevPage}
