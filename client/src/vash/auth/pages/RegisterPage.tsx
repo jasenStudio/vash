@@ -63,7 +63,7 @@ const RegisterPage = () => {
       return;
     }
 
-    toast.success("Usuario registrado", { duration: 1000 });
+    toast.success("Usuario registrado", { duration: 2500 });
     navigate("/sign-in");
   }
   return (

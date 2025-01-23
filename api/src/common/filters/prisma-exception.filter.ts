@@ -32,7 +32,6 @@ const codeMessage = (exception) => {
   let statusCode;
   let field;
 
-  console.log(exception);
   switch (exception.code) {
     case 'P2002':
       statusCode = HttpStatus.BAD_REQUEST;

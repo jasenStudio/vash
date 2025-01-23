@@ -16,6 +16,10 @@ export const useAccountMutation = () => {
     onMutate: async (newAccount) => {
       console.log("Mutación optimista iniciada");
 
+      await queryClient.cancelQueries({
+        queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
+      });
+
       const previousData = queryClient.getQueryData<AccountsResponse>([
         "accounts",
         { page: 1, limit: 5, search: "" },
@@ -28,7 +32,7 @@ export const useAccountMutation = () => {
         status: true,
         // Fecha válida
       };
-
+      console.log(optimisticAccount, "optimisticAccount");
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
         (old: AccountsResponse) => {
@@ -55,7 +59,6 @@ export const useAccountMutation = () => {
       });
       const allQueries = queryClient.getQueryCache().findAll();
 
-      console.log(allQueries);
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
         (old: AccountsResponse) => {
@@ -84,38 +87,34 @@ export const useAccountMutation = () => {
     },
     onError: (error, _variables, context) => {
       //TODO mejorar manipulacion
-      if (error instanceof Error) {
-        const error_account_exist = "El account_email ya está en uso";
-        const { message } = error;
-        if (message.includes(error_account_exist)) {
-          toast.error(t("errors.account_email_exists"), { duration: 5000 });
+
+      const error_account_exist = "account_email";
+      const { message } = error;
+
+      queryClient.setQueryData(
+        ["accounts", { page: 1, limit: 5, search: "" }],
+        (old: AccountsResponse) => {
+          if (!old) return context?.previousData;
+
+          const accounts = old.data.accounts.filter(
+            (account) => account.id !== context?.optimisticAccount.id
+          );
+
+          return {
+            ...old,
+            data: {
+              accounts,
+            },
+          };
         }
+      );
 
-        queryClient.removeQueries({
-          queryKey: ["account", context?.optimisticAccount.id],
-        });
-
-        queryClient.setQueryData(
-          ["accounts", { page: 1, limit: 5, search: "" }],
-          (old: AccountsResponse) => {
-            if (!old) return context?.previousData;
-
-            const accounts = old.data.accounts.filter(
-              (account) => account.id !== context?.optimisticAccount.id
-            );
-
-            return {
-              ...old,
-              data: {
-                accounts,
-              },
-            };
-          }
-        );
-      } else {
-        console.error("Error inesperado en la mutación:", error);
+      if (message.includes(error_account_exist)) {
         toast.error(t("errors.account_email_exists"), { duration: 5000 });
+        return;
       }
+
+      toast.error("Ops hubo un error al crear la cuenta", { duration: 5000 });
     },
   });
 

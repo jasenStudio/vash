@@ -35,7 +35,13 @@ export class AccountService {
       const { data } = await vashApi.post(URL, { account_email });
       return data;
     } catch (error) {
-      ErrorMapper.handleError(error, "Ops , you can't create account");
+      console.log(error);
+      const error_response = ErrorMapper.handleError(
+        error,
+        "Ops , you can't create account"
+      );
+
+      throw error_response;
     }
   };
 
