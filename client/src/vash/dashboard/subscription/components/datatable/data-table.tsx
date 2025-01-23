@@ -85,7 +85,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   onSearch,
-  subscriptionsQuery,
+
   limitSubscription,
   page,
   totalPages,
