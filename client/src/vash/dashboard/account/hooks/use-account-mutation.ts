@@ -7,18 +7,20 @@ import {
 } from "@/infrastructure/interfaces/account.response";
 import { toast } from "sonner";
 import { t } from "i18next";
+import { useAccountStore } from "@/vash/store";
 
 export const useAccountMutation = () => {
   const queryClient = useQueryClient();
-
+  const addAccount = useAccountStore((state) => state.addRecord);
+  const getAccount = useAccountStore((state) => state.records);
   const mutation = useMutation({
     mutationFn: AccountService.store,
     onMutate: async (newAccount) => {
       console.log("Mutación optimista iniciada");
 
-      await queryClient.cancelQueries({
-        queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-      });
+      // await queryClient.cancelQueries({
+      //   queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
+      // });
 
       const previousData = queryClient.getQueryData<AccountsResponse>([
         "accounts",
@@ -59,6 +61,8 @@ export const useAccountMutation = () => {
       });
       const allQueries = queryClient.getQueryCache().findAll();
 
+      console.log(allQueries, "allQueries");
+
       queryClient.setQueryData(
         ["accounts", { page: 1, limit: 5, search: "" }],
         (old: AccountsResponse) => {
@@ -83,6 +87,8 @@ export const useAccountMutation = () => {
           };
         }
       );
+      addAccount(account);
+      console.log(getAccount, "getAccount");
       toast.success(t("entities.account.success"), { duration: 5000 });
     },
     onError: (error, _variables, context) => {

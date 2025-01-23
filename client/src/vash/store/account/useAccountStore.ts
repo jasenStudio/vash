@@ -3,33 +3,33 @@ import { create, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
 
 interface AccountState {
-  updateRecords: Map<string, any>;
+  records: Map<string, any>;
 }
 
 interface Actions {
-  addUpdateRecord: (account: Partial<Account>) => void;
-  getUpdateRecord: (id: string) => any;
-  clearUpdateRecord: () => void;
+  addRecord: (account: Partial<Account>) => void;
+  getRecord: (id: string) => any;
+  clearRecords: () => void;
 }
 
 const storeApi: StateCreator<
   AccountState & Actions,
   [["zustand/devtools", never]]
 > = (set) => ({
-  updateRecords: new Map(),
-  addUpdateRecord: (account: Partial<Account>) =>
+  records: new Map(),
+  addRecord: (account: Partial<Account>) =>
     set(
       (state) => {
-        state.updateRecords.set(String(account.id!), account);
-        return { updateRecords: state.updateRecords };
+        state.records.set(String(account.id!), account);
+        console.log(account, "accountValueStore");
+        return { records: state.records };
       },
       false,
-      "addUpdateRecord"
+      "addRecord"
     ),
-  getUpdateRecord: (id: string) =>
-    set((state) => state.updateRecords.get(id), false, "getUpdateRecord"),
-  clearUpdateRecord: () =>
-    set({ updateRecords: new Map() }, false, "clearUpdateRecord"),
+  getRecord: (id: string) =>
+    set((state) => state.records.get(id), false, "getRecord"),
+  clearRecords: () => set({ records: new Map() }, false, "clearRecords"),
 });
 
 export const useAccountStore = create<AccountState & Actions>()(
