@@ -15,6 +15,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    //TODO THINKING ABOUT ADD error field in response
     const { message, statusCode, field } = codeMessage(exception);
 
     response.status(statusCode).json({
@@ -30,6 +31,8 @@ const codeMessage = (exception) => {
   let message;
   let statusCode;
   let field;
+
+  console.log(exception);
   switch (exception.code) {
     case 'P2002':
       statusCode = HttpStatus.BAD_REQUEST;

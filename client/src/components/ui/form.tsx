@@ -159,7 +159,7 @@ const FormMessage = React.forwardRef<
   }
 
   const message = enableTranslation ? t(`${body}`) : body;
-  console.log(message);
+
   return (
     <p
       ref={ref}

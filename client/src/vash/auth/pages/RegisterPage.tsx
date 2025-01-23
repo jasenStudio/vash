@@ -29,16 +29,18 @@ const RegisterPage = () => {
   const [password, setPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState(true);
   const startRegister = useAuthStore((state) => state.register);
+  // const msgError = useAuthStore.getState().msgError;
+  // const clearMessage = useAuthStore((state) => state.clearMessage);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      user_name: "",
-      confirmPassword: "",
+      email: "johndoe@gmail.com",
+      password: "Jorge019*",
+      user_name: "john-doe",
+      confirmPassword: "Jorge019*",
     },
   });
 
@@ -55,12 +57,14 @@ const RegisterPage = () => {
       ...user,
     });
 
-    if (!response) return;
+    if (!response) {
+      const { msgError, status } = useAuthStore.getState();
+      status === "unauthenticated" && toast.error(msgError);
+      return;
+    }
 
-    toast.success("Usuario registrado", { duration: 5000 });
-    setTimeout(() => {
-      navigate("/sign-in");
-    }, 1000);
+    toast.success("Usuario registrado", { duration: 1000 });
+    navigate("/sign-in");
   }
   return (
     <>
@@ -97,7 +101,6 @@ const RegisterPage = () => {
                       icon={
                         <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       }
-                      placeholder="Ej: xxxxx@gmail.com"
                       {...field}
                       className="border-slate-400 py-7 rounded-sm"
                     />
@@ -120,7 +123,6 @@ const RegisterPage = () => {
                       icon={
                         <UserRound className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       }
-                      placeholder="Ej: johndoe"
                       {...field}
                       className="border-slate-400 py-7 rounded-sm"
                     />
@@ -140,7 +142,6 @@ const RegisterPage = () => {
                   <FormControl>
                     <Input
                       type={password ? "password" : "text"}
-                      placeholder="Ej: Xxxxxxx."
                       iconLeft
                       icon={
                         !password ? (
@@ -148,14 +149,12 @@ const RegisterPage = () => {
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                             onClick={() => {
                               setPassword(true);
-                              console.log("aqui");
                             }}
                           />
                         ) : (
                           <EyeClosed
                             onClick={() => {
                               setPassword(false);
-                              console.log("aqui");
                             }}
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400  "
                           />
@@ -183,7 +182,6 @@ const RegisterPage = () => {
                   <FormControl>
                     <Input
                       type={confirmPassword ? "password" : "text"}
-                      placeholder="Ej: Xxxxxxx."
                       iconLeft
                       icon={
                         !confirmPassword ? (

@@ -14,6 +14,7 @@ export class AuthService {
 
   async register(authUserPayload: CreateAuthUserDto) {
     const registerUser = await this.authRespository.register(authUserPayload);
+    console.log(registerUser);
     return registerUser;
   }
 

@@ -5,6 +5,7 @@ import { vashApi } from "@/api/vashApi";
 import { AuthResponse } from "@/infrastructure/interfaces/auth.responses";
 import { User } from "../../../domain/entities/user";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
+import { ErrorMapper } from "@/infrastructure/mapper/error.mapper";
 
 export class AuthService {
   static login = async (user_name: string, password: string) => {
@@ -19,13 +20,22 @@ export class AuthService {
       return data;
     } catch (error) {
       //TODO REfactor error response
-      if (error instanceof AxiosError) {
-        if (error.code === "ERR_NETWORK") {
-          throw new Error(`503 Service Unavailable - ${error.code} `);
-        }
-        throw new Error(JSON.stringify(error.response?.data));
-      }
-      throw new Error("Unable to login");
+
+      const response_error = ErrorMapper.handleError(
+        error,
+        "Ops , you can't logIn"
+      );
+
+      throw response_error;
+      // console.log(error);
+      // if (error instanceof AxiosError) {
+      //   if (error.code === "ERR_NETWORK") {
+      //     throw new Error(`503 Service Unavailable - ${error.code} `);
+      //   }
+      //   console.log("Aqui");
+      //   throw new Error(JSON.stringify((error as any).response?.data));
+      // }
+      // throw new Error(JSON.stringify((error as any).response?.data));
     }
   };
 
@@ -61,12 +71,19 @@ export class AuthService {
       });
       return data;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error.response?.data);
-        throw new Error(error.response?.data.message);
-      }
-      // console.log(error);
-      throw new Error("Unable to register");
+      console.log(error);
+      const response_error = ErrorMapper.handleError(
+        error,
+        "Ops , you can't register User"
+      );
+      console.log(response_error);
+      throw response_error;
+      // if (error instanceof AxiosError) {
+      //   console.log(error.response?.data);
+      //   throw new Error(error.response?.data.message);
+      // }
+      // // console.log(error);
+      // throw new Error("Unable to register");
     }
   };
 }

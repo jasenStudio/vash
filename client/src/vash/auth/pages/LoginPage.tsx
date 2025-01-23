@@ -51,14 +51,15 @@ const LoginPage: FC = () => {
   } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const response = await login(values.username, values.password);
+    const response = await login(
+      values.username.toLowerCase(),
+      values.password
+    );
 
-    if (!response)
-      setTimeout(() => {
-        const { msgError, status } = useAuthStore.getState();
-        status === "unauthenticated" && toast.error(msgError);
-        clearMessage();
-      }, 100);
+    if (!response) {
+      const { msgError, status } = useAuthStore.getState();
+      status === "unauthenticated" && toast.error(msgError);
+    }
   }
 
   return (
@@ -152,7 +153,7 @@ const LoginPage: FC = () => {
               type="submit"
               role="button"
               aria-label="Sign in"
-              className="bg-button-primary  hover:bg-button-primary-foreground text-xl font-bold py-4 rounded-sm w-full dark:text-white"
+              className="bg-button-primary text-white hover:bg-button-primary-foreground text-xl font-bold py-4 rounded-sm w-full dark:text-white"
             >
               {isSubmitting ? (
                 <span className="animate-pulse">Iniciando...</span>

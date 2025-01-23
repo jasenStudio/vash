@@ -40,8 +40,6 @@ export class AuthRepository {
 
     const derivedKey = this.cryptoHelper.deriveMasterKey(password, user.id);
 
-    console.log(derivedKey);
-
     const payload = {
       id: user.id,
       email: user.email,
