@@ -36,7 +36,6 @@ const LoginPage: FC = () => {
   const [password, setPassword] = useState(true);
   const { t } = useTranslation();
   const login = useAuthStore((state) => state.login);
-  const clearMessage = useAuthStore((state) => state.clearMessage);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

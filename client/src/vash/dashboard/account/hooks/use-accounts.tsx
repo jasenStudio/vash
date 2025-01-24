@@ -1,10 +1,9 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { useEffect, useState } from "react";
 import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
 import { useAccountStore } from "@/vash/store";
 import { Account } from "@/domain";
-import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 interface Props {
   limit: number;
@@ -17,13 +16,9 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     setLimit,
     setSearch,
     setTotal,
-    totalPage: totalPageStore,
-    page: pageStore,
   } = usePaginationStore((state) => state);
 
   const records = useAccountStore((state) => state.records);
-  const actions = useAccountStore((state) => state.actionsCrud);
-  const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
 

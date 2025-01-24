@@ -195,7 +195,7 @@ import { useAccountStore } from "@/vash/store";
 import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 export const useAccountsDeleteMutation = () => {
-  const { page, limit, search, setPage, setTotal } = usePaginationStore();
+  const { page, limit, search, setPage } = usePaginationStore();
   const setAction = useAccountStore((state) => state.setAction);
   const queryClient = useQueryClient();
 
