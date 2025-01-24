@@ -8,6 +8,7 @@ import {
 import { toast } from "sonner";
 import { t } from "i18next";
 import { useAccountStore } from "@/vash/store";
+import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 export const useAccountMutation = () => {
   const queryClient = useQueryClient();
@@ -87,7 +88,7 @@ export const useAccountMutation = () => {
           };
         }
       );
-      addAccount(account);
+      addAccount(account, ActionsAccount.create);
       console.log(getAccount, "getAccount");
       toast.success(t("entities.account.success"), { duration: 5000 });
     },

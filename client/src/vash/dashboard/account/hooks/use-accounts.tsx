@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { useEffect, useState } from "react";
 import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
 import { useAccountStore } from "@/vash/store";
 import { Account } from "@/domain";
+import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 interface Props {
   limit: number;
@@ -16,9 +17,13 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     setLimit,
     setSearch,
     setTotal,
+    totalPage: totalPageStore,
+    page: pageStore,
   } = usePaginationStore((state) => state);
 
   const records = useAccountStore((state) => state.records);
+  const actions = useAccountStore((state) => state.actionsCrud);
+  const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
 
@@ -28,7 +33,6 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     staleTime: 1000 * 60 * 60,
     placeholderData: (previousData) => previousData,
     select: (data) => {
-      console.log(data.meta, "data");
       if (data.meta.page !== 1 && records.size > 0) {
         data.data.accounts = data.data.accounts.filter((account: Account) => {
           const accountId = String(account.id);
@@ -64,6 +68,7 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     if (page > totalPages) {
       setPage(totalPages);
     }
+
     setTotal(totalPages);
   }, [totalPages]);
 
@@ -71,12 +76,30 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     if (page < totalPages) {
       setPage((prevPage) => prevPage + 1);
     }
+    // if (actions === "delete" && page <= totalPages) {
+    //   console.log("Esta invalidando la query");
+    //   queryClient.invalidateQueries({
+    //     queryKey: ["accounts", { page: page, limit, search }],
+    //   });
+    // }
+    // if (page == totalPages) {
+    //   useAccountStore.setState({ actionsCrud: null });
+    // }
   };
 
   const prevPage = () => {
     if (page > 1) {
       setPage((prevPage) => prevPage - 1);
     }
+    // if (actions === "delete" && page >= 1) {
+    //   console.log("Esta invalidando la query Prev Page");
+    //   queryClient.invalidateQueries({
+    //     queryKey: ["accounts", { page: page, limit, search }],
+    //   });
+    // }
+    // if (page == 1) {
+    //   useAccountStore.setState({ actionsCrud: null });
+    // }
   };
 
   return {

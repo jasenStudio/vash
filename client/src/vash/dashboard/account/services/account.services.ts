@@ -33,6 +33,7 @@ export class AccountService {
 
     try {
       const { data } = await vashApi.post(URL, { account_email });
+      console.log(data);
       return data;
     } catch (error) {
       console.log(error);
