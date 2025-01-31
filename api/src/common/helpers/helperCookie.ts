@@ -12,7 +12,7 @@ export class CookieHelper {
     response.cookie(nameCookie, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'prod' || true,
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: duration,
     });
   }
@@ -21,7 +21,7 @@ export class CookieHelper {
     response.clearCookie(nameCookie, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'prod' || true,
-      sameSite: 'strict',
+      sameSite: 'none',
     });
   }
 }

@@ -38,7 +38,6 @@ export class AccountController {
     @Req() request: Request,
     @Query() query: QueryListAccount,
   ) {
-    console.log(query.page, query.limit, query['search']);
     return await this.__accountService.findAllAccount(user, query);
   }
 
@@ -79,7 +78,6 @@ export class AccountController {
     @CurrentUser() user,
     @Body() accountsPayload: AccountIdsDto,
   ) {
-    console.log(accountsPayload);
     return await this.__accountService.deleteAccounts(user, accountsPayload);
   }
 }

@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 
 export function NavUser({
   user,
@@ -25,6 +26,7 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const logout = useAuthStore((state) => state.logout);
   const { isMobile } = useSidebar();
   const FallbackCustom = (): string => {
     if (!user.name) {
@@ -72,7 +74,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()}>
               <LogOut />
               Cerrar Sesión
             </DropdownMenuItem>

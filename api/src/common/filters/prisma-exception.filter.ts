@@ -18,8 +18,6 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     //TODO THINKING ABOUT ADD error field in response
     const { message, statusCode, field } = codeMessage(exception);
 
-    console.log(exception, 'esta haciendo algo aqui');
-
     response.status(statusCode).json({
       ok: false,
       statusCode,

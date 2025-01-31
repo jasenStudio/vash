@@ -28,9 +28,18 @@ async function bootstrap() {
 
   app.use(cookieParser(process.env.COOKIE_SECRET));
   app.enableCors({
-    origin: 'http://localhost:5173', // Dominio del frontend
-    credentials: true, // Permitir cookies
+    origin:
+      process.env.NODE_ENV === 'prod'
+        ? 'https://vash.onrender.com'
+        : 'http://localhost:5173',
+    credentials: true,
   });
+
+  console.log(
+    process.env.NODE_ENV === 'prod'
+      ? 'https://vash.onrender.com'
+      : 'http://localhost:5173',
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Vash')
