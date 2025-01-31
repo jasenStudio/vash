@@ -8,7 +8,6 @@ import { AuthService } from "@/vash/auth/services/auth.services";
 interface AuthState {
   status: AuthStatus;
   user?: User;
-  token?: string;
   msgError?: string;
 }
 interface Actions {
@@ -18,10 +17,6 @@ interface Actions {
   clearMessage: () => void;
   logout: () => void;
 }
-const clearAuthStorage = () => {
-  localStorage.removeItem("auth-token");
-  localStorage.removeItem("auth-token-expiration");
-};
 
 const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   status: "checking",
@@ -30,11 +25,10 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   msgError: undefined,
   login: async (user_name: string, password: string) => {
     try {
-      const { data, token } = await AuthService.login(user_name, password);
+      const { data } = await AuthService.login(user_name, password);
       set({
         user: data.user,
         status: "authenticated",
-        token: token,
         msgError: undefined,
       });
 
@@ -42,7 +36,6 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
     } catch (error) {
       set(() => ({
         status: "unauthenticated",
-        token: undefined,
         user: undefined,
         msgError: (error as Error).message,
       }));
@@ -52,41 +45,20 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
 
   checkStatusAuth: async () => {
     try {
-      const storageToken = localStorage.getItem("auth-token");
-      const expiration = localStorage.getItem("auth-token-expiration");
-
-      if (!storageToken || !expiration) {
-        set({ status: "unauthenticated", token: undefined, user: undefined });
-        return;
-      }
-
-      const expirationDate = new Date(expiration);
-      const currentDate = new Date();
-      const timeRemaining = expirationDate.getTime() - currentDate.getTime();
-
-      if (timeRemaining > 300000) {
-        set((state) => ({
+      const { data, ok } = await AuthService.checkStatusAuth();
+      console.log(data);
+      if (ok) {
+        set({
           status: "authenticated",
-          user: state.user,
-          token: state.token,
-        }));
-        return;
+          user: data.user,
+        });
       }
-
-      const { data, token } = await AuthService.checkStatusAuth();
-      set({
-        status: "authenticated",
-        user: data.user,
-        token: token,
-      });
     } catch (error) {
       set({
         status: "unauthenticated",
-        token: undefined,
         user: undefined,
         msgError: "Token invalido",
       });
-      clearAuthStorage();
     }
   },
 
@@ -114,21 +86,25 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   clearMessage: () => {
     set(() => ({ msgError: undefined }));
   },
-  logout: () => {
-    clearAuthStorage();
-    set(() => ({
-      status: "unauthenticated",
-      token: undefined,
-      user: undefined,
-      msgError: undefined,
-    }));
+  logout: async () => {
+    try {
+      const { message } = await AuthService.logout();
+
+      set(() => ({
+        status: "unauthenticated",
+        user: undefined,
+        msgError: message,
+      }));
+    } catch (error) {
+      console.log((error as Error).message);
+    }
   },
 });
 export const useAuthStore = create<AuthState & Actions>()(
   devtools(
     persist(storeApi, {
       name: "auth-token",
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      partialize: (state) => ({ user: state.user }),
     })
   )
 );

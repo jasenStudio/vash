@@ -21,5 +21,6 @@ export interface loginUserResponse {
     user: auth_user;
   };
   token: string;
+  refreshToken?: string;
   expiration?: string;
 }

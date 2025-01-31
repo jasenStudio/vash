@@ -1,5 +1,10 @@
 import { AxiosError } from "axios";
 
+interface ErrorCustom {
+  error?: string;
+  message: string;
+  statusCode?: number;
+}
 export class ErrorMapper {
   static handleError(error: unknown, message: string) {
     if (error instanceof AxiosError) {
@@ -11,7 +16,11 @@ export class ErrorMapper {
         };
       }
 
-      return this.errorToEntity(error.response?.data);
+      return this.errorToEntity({
+        message: error.response?.data.message || error.message,
+        name: error.name,
+        statusCode: error.response?.data.statusCode,
+      });
     } else {
       const castingError = error as {
         error?: string;
@@ -27,7 +36,7 @@ export class ErrorMapper {
     }
   }
 
-  static errorToEntity(error: Error) {
+  static errorToEntity(error: Error | ErrorCustom) {
     const castingError = error as unknown as {
       message: string;
       ok: boolean;
@@ -36,8 +45,8 @@ export class ErrorMapper {
 
     return {
       message: castingError.message,
-      ok: castingError.ok,
-      statusCode: castingError.statusCode,
+      ok: castingError.ok || false,
+      statusCode: castingError.statusCode || 500,
     };
   }
 }

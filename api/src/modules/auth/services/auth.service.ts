@@ -7,8 +7,11 @@ import { loginUserResponse } from '../entities/auth-user.entity';
 @Injectable()
 export class AuthService {
   constructor(private readonly authRespository: AuthRepository) {}
-  async login(userLoginPayload: LoginUserDto) {
-    const loginUser = await this.authRespository.login(userLoginPayload);
+  async login(userLoginPayload: LoginUserDto, userAgent: string) {
+    const loginUser = await this.authRespository.login(
+      userLoginPayload,
+      userAgent,
+    );
     return loginUser;
   }
 
@@ -20,5 +23,9 @@ export class AuthService {
 
   async renewToken(user: ReqUserToken) {
     return await this.authRespository.renew(user);
+  }
+
+  async logout(accessToken: string, refreshToken: string) {
+    return await this.authRespository.logout(accessToken, refreshToken);
   }
 }

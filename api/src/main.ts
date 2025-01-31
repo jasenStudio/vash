@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
+import * as cookieParser from 'cookie-parser';
 
 import helmet from 'helmet';
 
@@ -24,7 +25,12 @@ async function bootstrap() {
   //   allowedHeaders: 'Content-Type, Authorization',
   //   credentials: true,
   // });
-  app.enableCors();
+
+  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.enableCors({
+    origin: 'http://localhost:5173', // Dominio del frontend
+    credentials: true, // Permitir cookies
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Vash')
