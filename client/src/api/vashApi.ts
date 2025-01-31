@@ -1,5 +1,4 @@
 import { getDeviceType } from "@/lib/deviceType";
-import { useAuthStore } from "@/vash/store/auth/useAuthStore";
 
 import axios, { AxiosError } from "axios";
 
