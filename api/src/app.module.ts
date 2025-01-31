@@ -22,6 +22,7 @@ import { SubcriptionModule } from './modules/subcription/subcription.module';
 import { SubcriptionService } from './modules/subcription/services/subcription.service';
 import { UserModule } from './modules/user/user.module';
 import { ValidateToken } from './common/middlewares/validateJwt.middleware';
+import { PrismaService } from './modules/prisma/services/prisma.service';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { ValidateToken } from './common/middlewares/validateJwt.middleware';
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         API_KEY_SECRET: Joi.string().required(),
+        API_KEY_SECRET_REFRESH: Joi.string().required(),
+        SALT_HASH: Joi.string().required(),
       }),
     }),
     AccountModule,
@@ -42,7 +45,7 @@ import { ValidateToken } from './common/middlewares/validateJwt.middleware';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtHelper, SubcriptionService],
+  providers: [AppService, JwtHelper, SubcriptionService, PrismaService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

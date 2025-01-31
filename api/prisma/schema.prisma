@@ -8,17 +8,45 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  user_name  String    @unique
-  password   String
-  is_admin   Boolean   @default(false)
-  status     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  accounts   Account[]
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  user_name     String         @unique
+  password      String
+  is_admin      Boolean        @default(false)
+  status        Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  accounts      Account[]
+  refreshTokens RefreshToken[]
+  RevokedToken  RevokedToken[]
 
   @@map("users")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  jti        String   @unique // Identificador único del refresh token
+  token_hash String // Almacena el refresh token hasheado
+  user_id    Int // Relación con el usuario
+  user_agent String // User agent del cliente
+  expires_at DateTime // Fecha de expiración del refresh token
+  created_at DateTime @default(now()) // Fecha de creación
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade) // Relación con el modelo User
+
+  @@map("refresh_tokens") // Nombre de la tabla en la base de datos
+}
+
+model RevokedToken {
+  id         Int       @id @default(autoincrement())
+  jti        String    @unique // Identificador único del refresh token
+  token_hash String // Almacena el refresh token hasheado
+  user_id    Int // Relación con el usuario
+  type       TokenType // Tipo de token (access o refresh)
+  expires_at DateTime // Fecha de expiración del refresh token
+  created_at DateTime  @default(now()) // Fecha de creación
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("revoked_tokens") // Nombre de la tabla en la base de datos
 }
 
 model Account {
@@ -127,4 +155,9 @@ enum Method_type {
   email_recovery
   token_recovery
   phone_recovery
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
 }

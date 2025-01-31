@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { useAuthStore } from "../store/auth/useAuthStore";
 import { LayoutRoot } from "../Layout";
@@ -24,6 +24,7 @@ export const AppRoutes = () => {
   if (current_status === "checking") {
     return <LoaderCustom />;
   }
+
   return (
     <Suspense fallback={<LoaderCustom />}>
       <Routes>
