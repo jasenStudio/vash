@@ -157,10 +157,14 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const accessToken = req.cookies['access_token'];
+    let accessToken = req.cookies['access_token'];
     const refreshToken = req.cookies['refresh_token'];
 
-    if (!accessToken || !refreshToken) {
+    if (!accessToken) {
+      accessToken = '';
+    }
+
+    if (!refreshToken) {
       return res.status(400).json({ message: 'Tokens no proporcionados' });
     }
     try {
