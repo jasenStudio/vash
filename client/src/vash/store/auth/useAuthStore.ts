@@ -4,6 +4,7 @@ import { devtools, persist } from "zustand/middleware";
 import { AuthStatus } from "@/infrastructure/interfaces/auth.status";
 import { User } from "@/domain/entities/user";
 import { AuthService } from "@/vash/auth/services/auth.services";
+import { CloudFog } from "lucide-react";
 
 interface AuthState {
   status: AuthStatus;
