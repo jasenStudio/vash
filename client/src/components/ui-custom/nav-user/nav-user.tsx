@@ -27,6 +27,7 @@ export function NavUser({
   };
 }) {
   const logout = useAuthStore((state) => state.logout);
+
   const { isMobile } = useSidebar();
   const FallbackCustom = (): string => {
     if (!user.name) {
@@ -74,7 +75,12 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logout()}>
+            <DropdownMenuItem
+              onClick={() => {
+                logout();
+                document.body.style.pointerEvents = "auto";
+              }}
+            >
               <LogOut />
               Cerrar Sesión
             </DropdownMenuItem>
