@@ -24,4 +24,9 @@ export class CookieHelper {
       sameSite: 'none',
     });
   }
+
+  public static clearSessionCookies(res: Response) {
+    CookieHelper.clearCookie(res, 'access_token');
+    CookieHelper.clearCookie(res, 'refresh_token');
+  }
 }

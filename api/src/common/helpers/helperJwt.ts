@@ -9,11 +9,33 @@ import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 import { ConfigType } from '@nestjs/config';
 import config from '../../config/configuration';
 import * as bcrypt from 'bcrypt';
+import {
+  ACCESS_TOKEN_COOKIE_DURATION,
+  ACCESS_TOKEN_DURATION,
+  errors,
+} from '../constants';
+import { CookieHelper } from './helperCookie';
+import { Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 interface revokedTokenSchema {
   jti: string;
   id: number;
   exp: any;
+}
+
+interface ObjectAccessToken {
+  accessToken: string;
+  decodeAccessToken: revokedTokenSchema;
+}
+
+interface dataTokens {
+  res: Response;
+  accessToken: string;
+  refreshToken: string;
+  decodedRefreshToken: any; //TODO Pendiente por tipar
+  accessTokenPayloadVerified: any;
+  storedRefreshToken: any;
 }
 
 @Injectable()
@@ -25,7 +47,15 @@ export class JwtHelper {
     private readonly prisma: PrismaService,
   ) {}
 
-  generateToken(payload: any, duration: string = '15m'): string {
+  decodeToken(token: string): any {
+    try {
+      return this.jwtService.decode(token);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  generateAccessToken(payload: any, duration: string = '15m'): string {
     try {
       return this.jwtService.sign(payload, {
         expiresIn: duration,
@@ -47,7 +77,7 @@ export class JwtHelper {
     }
   }
 
-  async verifyAccessToken(token: string) {
+  async verifyAndCheckAccessTokenStatus(token: string) {
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.__config.api_secret,
@@ -58,17 +88,21 @@ export class JwtHelper {
       });
 
       if (isTokenRevoked) {
-        throw new ForbiddenException('Access token ha sido revocado');
+        console.log('revocado');
+        throw new ForbiddenException(errors.auth.accessToken.revoked);
       }
 
       return payload;
     } catch (error) {
-      console.error('Error al verificar el access token:', error);
-      throw new ForbiddenException('Access token inválido o expirado!');
+      if (error.response.error === errors.auth.accessToken.revoked.error) {
+        throw error;
+      }
+
+      throw new ForbiddenException(errors.auth.accessToken.invalid);
     }
   }
 
-  async verifyRefreshToken(token: string) {
+  async verifyAndCheckRefreshTokenStatus(token: string) {
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.__config.api_secret_refresh,
@@ -95,15 +129,11 @@ export class JwtHelper {
         );
       }
 
-      return payload;
+      return { ...payload, user_agent: storedRefreshToken.user_agent };
     } catch (error) {
       console.error('Error al verificar el access token:', error);
       throw new ForbiddenException('refresh token inválido o expirado!');
     }
-  }
-
-  decodeToken(token: string): any {
-    return this.jwtService.decode(token);
   }
 
   async revokedToken(
@@ -131,12 +161,123 @@ export class JwtHelper {
       return revokedToken;
     } catch (error) {
       console.error(`Error al revocar el ${type}_TOKEN`, error);
-      throw new ForbiddenException('refresh token inválido o expirado!');
+      throw new ForbiddenException(`${type}_TOKEN inválido o expirado!`);
     }
   }
 
-  expiresIn(seconds: number) {
-    const expirationDate = new Date(Date.now() + seconds * 1000);
-    return expirationDate.toISOString();
+  async revokeTokensByUserAgent({
+    accessToken,
+    accessTokenPayloadVerified,
+    decodedRefreshToken,
+    refreshToken,
+    res,
+    storedRefreshToken,
+  }: dataTokens) {
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        jti: storedRefreshToken.jti,
+      },
+    });
+
+    console.log('debe salir en error');
+    await this.revokedToken(accessTokenPayloadVerified, accessToken, 'ACCESS');
+
+    await this.revokedToken(decodedRefreshToken, refreshToken, 'REFRESH');
+
+    CookieHelper.clearSessionCookies(res);
+
+    throw new ForbiddenException(
+      'Actividad sospechosa detectada. Inicie sesión nuevamente.',
+    );
+  }
+
+  async verifyAccessTokens(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+    decodedRefreshTokenCurrent: any,
+    userAgentCurrent: string,
+  ) {
+    try {
+      if (!accessToken) {
+        throw new UnauthorizedException('Access Token falta o es invalido');
+      }
+
+      if (!refreshToken) {
+        throw new UnauthorizedException('Refresh Token falta o es invalido');
+      }
+
+      const accessTokenPayloadVerified =
+        await this.verifyAndCheckAccessTokenStatus(accessToken);
+
+      console.log(accessTokenPayloadVerified);
+
+      const storedRefreshToken = await this.prisma.refreshToken.findUnique({
+        where: { jti: decodedRefreshTokenCurrent.jti },
+      });
+
+      console.log(storedRefreshToken);
+      if (!storedRefreshToken) {
+        throw new ForbiddenException('Refresh token inválido o no encontrado.');
+      }
+
+      if (
+        accessTokenPayloadVerified.user_agent !== userAgentCurrent ||
+        storedRefreshToken.user_agent !== userAgentCurrent
+      ) {
+        console.log('aui debe enterar');
+        await this.revokeTokensByUserAgent({
+          res,
+          accessToken,
+          refreshToken,
+          storedRefreshToken,
+          decodedRefreshToken: decodedRefreshTokenCurrent,
+          accessTokenPayloadVerified,
+        });
+      }
+
+      const { jti, derivedKey, iat, exp, ...user } = accessTokenPayloadVerified;
+
+      return {
+        user,
+        jti,
+        derivedKey,
+        exp,
+        iat,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyRefreshTokens(res: Response, refreshToken: string) {
+    try {
+      if (!refreshToken) {
+        throw new UnauthorizedException(errors.auth.session.expired);
+      }
+
+      const refreshTokenPayload =
+        await this.verifyAndCheckRefreshTokenStatus(refreshToken);
+
+      const { jti, exp, iat, ...newAccessTokenPayload } = refreshTokenPayload;
+
+      const newAccessToken = this.generateAccessToken(
+        { jti: uuidv4(), ...newAccessTokenPayload },
+        ACCESS_TOKEN_DURATION,
+      );
+
+      CookieHelper.clearCookie(res, 'access_token');
+
+      CookieHelper.setCookie(
+        res,
+        'access_token',
+        newAccessToken,
+        ACCESS_TOKEN_COOKIE_DURATION,
+      );
+
+      return { refreshTokenPayload, newAccessToken, newAccessTokenPayload };
+    } catch (error) {
+      throw error;
+    }
   }
 }

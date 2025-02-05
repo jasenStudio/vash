@@ -13,7 +13,12 @@ const vashApi = axios.create({
 vashApi.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    console.log(error);
+    if (error.response?.data) {
+      const errorResponse = (error.response?.data as { error: string }).error;
+      if (errorResponse === "session_expired") {
+        location.replace("sign-in");
+      }
+    }
     return Promise.reject(error);
   }
 );
