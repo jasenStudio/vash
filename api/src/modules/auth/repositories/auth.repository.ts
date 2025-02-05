@@ -19,9 +19,15 @@ import { PrismaService } from '../../prisma/services/prisma.service';
 
 import { v4 as uuidv4 } from 'uuid'; // Para generar UUIDs
 import {
+  ACCESS_TOKEN_COOKIE_DURATION,
   ACCESS_TOKEN_DURATION,
+  errors,
   REFRESH_TOKEN_DURATION,
 } from 'src/common/constants';
+import { Response } from 'express';
+import { CookieHelper } from 'src/common/helpers/helperCookie';
+import { JwtService } from '@nestjs/jwt';
+import { optimizedDataUserAgent } from 'src/common/decorators/user-agent/user-agent';
 
 @Injectable()
 export class AuthRepository {
@@ -31,6 +37,7 @@ export class AuthRepository {
     private readonly __apiResponse: ApiResponseService,
     private cryptoHelper: cryptoHelper,
     private prisma: PrismaService,
+    private JwtService: JwtService,
   ) {}
   async login(
     userAuthLogin: LoginUserDto,
@@ -59,6 +66,7 @@ export class AuthRepository {
       is_admin: user.is_admin,
       status: user.status,
       derivedKey: derivedKey,
+      user_agent: userAgent,
     };
 
     const { jti, ...payloadRefresh } = payload;
@@ -76,7 +84,10 @@ export class AuthRepository {
       user_name: user.user_name,
     };
 
-    const token = this.JwtHelper.generateToken(payload, ACCESS_TOKEN_DURATION);
+    const token = this.JwtHelper.generateAccessToken(
+      payload,
+      ACCESS_TOKEN_DURATION,
+    );
 
     const refreshToken = this.JwtHelper.generateRefreshToken(
       payloadRefreshToken,
@@ -102,7 +113,7 @@ export class AuthRepository {
       ...userAuthPayload,
     });
 
-    const token = this.JwtHelper.generateToken(
+    const token = this.JwtHelper.generateAccessToken(
       {
         id: user.id,
         user: user.email,
@@ -119,24 +130,87 @@ export class AuthRepository {
       is_admin: user.is_admin,
       user_name: user.user_name,
     };
-    const expiration = this.JwtHelper.expiresIn(7200);
+
     return this.__apiResponse.success(
       { user: user_response },
       'usuario registrado exitosamente',
-      { token, expiration },
+      { token },
     );
   }
 
-  async renew(payload: ReqUserToken) {
-    console.log({ payload }, 'user');
-    const token = this.JwtHelper.generateToken(payload);
-    const expiration = this.JwtHelper.expiresIn(7200);
+  async renew(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+    userAgent: string,
+    device: string,
+  ) {
+    const decodedRefreshTokenCurrent = this.JwtHelper.decodeToken(refreshToken);
+    const decodedAccessTokenCurrent = this.JwtHelper.decodeToken(accessToken);
 
-    return this.__apiResponse.success(
-      { user: payload },
-      'token renovado con exito',
-      { token, expiration },
-    );
+    const userAgentCurrent = optimizedDataUserAgent(userAgent, device);
+
+    try {
+      const { user } = await this.JwtHelper.verifyAccessTokens(
+        res,
+        accessToken,
+        refreshToken,
+        decodedRefreshTokenCurrent,
+        userAgentCurrent,
+      );
+
+      return this.__apiResponse.success({ user }, 'Token Valido');
+    } catch (accessTokenError) {
+      try {
+        if (
+          accessTokenError.response.error ===
+          errors.auth.accessToken.revoked.error
+        ) {
+          await this.JwtHelper.revokeTokensByUserAgent({
+            res,
+            accessToken,
+            refreshToken,
+            storedRefreshToken: decodedRefreshTokenCurrent,
+            decodedRefreshToken: decodedRefreshTokenCurrent,
+            accessTokenPayloadVerified: this.JwtHelper.decodeToken(accessToken),
+          });
+        }
+
+        const { newAccessTokenPayload } =
+          await this.JwtHelper.verifyRefreshTokens(res, refreshToken);
+
+        return this.__apiResponse.success(
+          { user: newAccessTokenPayload },
+          'Tokens renovados exitosamente',
+        );
+      } catch (error) {
+        console.error('Error en /renew:', error);
+
+        if (decodedAccessTokenCurrent) {
+          await this.JwtHelper.revokedToken(
+            decodedAccessTokenCurrent,
+            accessToken,
+            'ACCESS',
+          );
+        }
+
+        if (decodedRefreshTokenCurrent) {
+          await this.prisma.refreshToken.deleteMany({
+            where: decodedRefreshTokenCurrent.jti,
+          });
+
+          await this.JwtHelper.revokedToken(
+            decodedRefreshTokenCurrent,
+            refreshToken,
+            'REFRESH',
+          );
+        }
+
+        CookieHelper.clearSessionCookies(res);
+
+        throw new UnauthorizedException('Token inválido o expirado');
+      }
+    }
   }
 
   async logout(accessToken: string, refreshToken: string) {
@@ -187,21 +261,17 @@ export class AuthRepository {
   ) {
     const { jti } = this.JwtHelper.decodeToken(refreshToken);
 
-    console.log(this.JwtHelper.decodeToken(refreshToken));
-
-    // Hashear el refresh token antes de almacenarlo
     const token_hash = await bcrypt.hash(refreshToken, 10);
-    // Calcular la fecha de expiración (7 días a partir de ahora)
+
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    // Crear el registro en la base de datos
     await this.prisma.refreshToken.create({
       data: {
         jti,
         user_agent,
-        token_hash, // Campo correcto según el esquema
-        user_id: userId, // ID del usuario
-        expires_at: expiresAt, // Fecha de expiración
+        token_hash,
+        user_id: userId,
+        expires_at: expiresAt,
       },
     });
 

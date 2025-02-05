@@ -21,5 +21,5 @@ export const optimizedDataUserAgent = (userAgent: string, device: string) => {
     device: device,
   };
 
-  return `${optimizedData.browser} ${optimizedData.browser_version} - ${optimizedData.os} ${optimizedData.os_version} - ${optimizedData.device}`;
+  return `${optimizedData.browser} - ${optimizedData.os} - ${optimizedData.device}`;
 };

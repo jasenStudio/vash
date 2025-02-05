@@ -4,3 +4,4 @@ export {
 } from './Cookie';
 
 export { ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from './Token';
+export { errors } from './Errors';

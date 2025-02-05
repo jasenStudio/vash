@@ -51,9 +51,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(ValidateToken)
-      .forRoutes('users', 'subcription', 'subcriptions-details', 'accounts', {
-        path: 'auth/renew',
-        method: RequestMethod.GET,
-      });
+      .forRoutes('users', 'subcription', 'subcriptions-details', 'accounts');
   }
 }

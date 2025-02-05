@@ -83,76 +83,23 @@ export class AuthController {
 
   @Get('renew')
   async renew(@Req() req: Request, @Res() res: Response) {
+    console.log('entra en renew');
     const refreshToken = req.cookies['refresh_token'];
     const accessToken = req.cookies['access_token'];
+    const userAgent = req.headers['user-agent'];
+    const device = req.headers['x-device-info']
+      ? (req.headers['x-device-info'] as string)
+      : 'Desktop';
 
-    if (!accessToken) {
-      throw new UnauthorizedException('No access token provided');
-    }
+    const result = await this.__authService.renewToken(
+      res,
+      accessToken,
+      refreshToken,
+      userAgent,
+      device,
+    );
 
-    if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token provided');
-    }
-
-    const decodedAccessTokenCurrent = this.JwtHelper.decodeToken(accessToken);
-    const decodeRefreshTokenCurrent = this.JwtHelper.decodeToken(refreshToken);
-
-    try {
-      // 1️⃣ Verificar y decodificar el refresh token
-      const payload = await this.JwtHelper.verifyRefreshToken(refreshToken);
-
-      const { jti, exp, derivedKey, ...newAccessTokenPayload } = payload;
-
-      // 2️⃣ Generar un nuevo access token
-      const newAccessToken = await this.JwtHelper.generateToken(
-        { jti: uuidv4(), ...newAccessTokenPayload, derivedKey },
-        ACCESS_TOKEN_DURATION,
-      );
-
-      await this.JwtHelper.revokedToken(
-        decodedAccessTokenCurrent,
-        accessToken,
-        'ACCESS',
-      );
-
-      // 4️⃣ Limpiar cookies antiguas
-      CookieHelper.clearCookie(res, 'access_token');
-
-      // 5️⃣ Configurar las nuevas cookies
-      CookieHelper.setCookie(
-        res,
-        'access_token',
-        newAccessToken,
-        ACCESS_TOKEN_COOKIE_DURATION,
-      );
-
-      return res.status(200).json({
-        ok: true,
-        message: 'Tokens renovados exitosamente',
-        data: {
-          user: newAccessTokenPayload,
-        },
-      });
-    } catch (error) {
-      console.error('Error en /renew:', error);
-
-      await this.JwtHelper.revokedToken(
-        decodedAccessTokenCurrent,
-        accessToken,
-        'ACCESS',
-      );
-
-      await this.JwtHelper.revokedToken(
-        decodeRefreshTokenCurrent,
-        refreshToken,
-        'REFRESH',
-      );
-
-      CookieHelper.clearCookie(res, 'access_token');
-      CookieHelper.clearCookie(res, 'refresh_token');
-
-      throw new UnauthorizedException('Token inválido o expirado');
-    }
+    return res.status(200).json({ ...result });
   }
 
   @Post('logout')
@@ -168,14 +115,11 @@ export class AuthController {
       return res.status(400).json({ message: 'Tokens no proporcionados' });
     }
     try {
-      // Llamar al servicio de autenticación para cerrar la sesión
       const result = await this.__authService.logout(accessToken, refreshToken);
 
-      // Eliminar las cookies del cliente
       CookieHelper.clearCookie(res, 'access_token');
       CookieHelper.clearCookie(res, 'refresh_token');
 
-      // Enviar una respuesta de éxito
       return res.status(200).json({ ok: true, message: result.message });
     } catch (error) {
       // Manejar errores

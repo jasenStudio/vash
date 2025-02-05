@@ -3,6 +3,7 @@ import { UserService } from '../../user/services/user.service';
 import { AuthRepository } from '../repositories/auth.repository';
 import { CreateAuthUserDto, LoginUserDto, ReqUserToken } from '../dto/auth.dto';
 import { loginUserResponse } from '../entities/auth-user.entity';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -21,8 +22,20 @@ export class AuthService {
     return registerUser;
   }
 
-  async renewToken(user: ReqUserToken) {
-    return await this.authRespository.renew(user);
+  async renewToken(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+    userAgent: string,
+    device: string,
+  ) {
+    return await this.authRespository.renew(
+      res,
+      accessToken,
+      refreshToken,
+      userAgent,
+      device,
+    );
   }
 
   async logout(accessToken: string, refreshToken: string) {
