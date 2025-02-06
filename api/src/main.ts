@@ -4,9 +4,18 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import * as cookieParser from 'cookie-parser';
-
+import { doubleCsrf } from 'csrf-csrf';
 import helmet from 'helmet';
-
+import { NextFunction, Request, Response } from 'express';
+const { doubleCsrfProtection } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET, // Cambia esto por una clave secreta segura
+  cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
+  cookieOptions: {
+    httpOnly: true,
+    secure: true, // Asegúrate de que esto esté en true para producción
+    sameSite: 'none', // Opcional, pero recomendado para mayor seguridad
+  },
+});
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
@@ -19,6 +28,7 @@ async function bootstrap() {
   app.use(helmet());
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new PrismaExceptionFilter());
+
   // app.enableCors({
   //   origin: 'http://localhost:5173/',
   //   methods: 'GET,POST,PUT,DELETE',
@@ -26,7 +36,27 @@ async function bootstrap() {
   //   credentials: true,
   // });
 
-  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(cookieParser(process.env.CSRF_SECRET));
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const csrfExemptRoutes = [
+      '/api/auth/logout',
+      '/api/auth/sign-in',
+      '/api/auth/sign-up',
+      '/api/auth/token-csrf',
+      '/api/auth/renew',
+    ]; // Rutas que NO necesitan CSRF
+
+    if (
+      (req.method === 'POST' ||
+        req.method === 'PUT' ||
+        req.method === 'DELETE') &&
+      !csrfExemptRoutes.includes(req.path) // Solo proteger si NO está en la lista
+    ) {
+      return doubleCsrfProtection(req, res, next);
+    }
+
+    next(); // Continuar sin protección CSRF en rutas excluidas
+  });
   app.enableCors({
     origin:
       process.env.NODE_ENV === 'prod'

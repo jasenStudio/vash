@@ -8,6 +8,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { CreateAuthUserDto, LoginUserDto } from '../dto/auth.dto';
@@ -23,7 +24,17 @@ import {
   ACCESS_TOKEN_DURATION,
   REFRESH_TOKEN_COOKIE_DURATION,
 } from 'src/common/constants';
+import { doubleCsrf } from 'csrf-csrf';
 
+const { generateToken } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET, // Cambia esto por una clave secreta segura
+  cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
+  cookieOptions: {
+    httpOnly: true,
+    secure: true, // Asegúrate de que esto esté en true para producción
+    sameSite: 'none', // Opcional, pero recomendado para mayor seguridad
+  },
+});
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -56,6 +67,7 @@ export class AuthController {
 
     CookieHelper.clearCookie(res, 'access_token');
     CookieHelper.clearCookie(res, 'refresh_token');
+    CookieHelper.clearCookie(res, 'csrf-token');
 
     CookieHelper.setCookie(
       res,
@@ -83,7 +95,6 @@ export class AuthController {
 
   @Get('renew')
   async renew(@Req() req: Request, @Res() res: Response) {
-    console.log('entra en renew');
     const refreshToken = req.cookies['refresh_token'];
     const accessToken = req.cookies['access_token'];
     const userAgent = req.headers['user-agent'];
@@ -107,27 +118,43 @@ export class AuthController {
     let accessToken = req.cookies['access_token'];
     const refreshToken = req.cookies['refresh_token'];
 
-    if (!accessToken) {
-      accessToken = '';
-    }
-
-    if (!refreshToken) {
-      return res.status(400).json({ message: 'Tokens no proporcionados' });
-    }
     try {
+      if (!accessToken) {
+        accessToken = '';
+      }
+      if (!refreshToken) {
+        CookieHelper.ClearSessionCookiesTokens(res);
+        throw new NotFoundException({
+          error: 'not_found_tokens',
+          message: 'Tokens no proporcionados',
+        });
+      }
       const result = await this.__authService.logout(accessToken, refreshToken);
 
-      CookieHelper.clearCookie(res, 'access_token');
-      CookieHelper.clearCookie(res, 'refresh_token');
+      CookieHelper.ClearSessionCookiesTokens(res);
 
       return res.status(200).json({ ok: true, message: result.message });
     } catch (error) {
       // Manejar errores
+      if (error.response.error === 'not_found_tokens') {
+        throw error;
+      }
       return res.status(500).json({
         ok: false,
         message: 'Error al cerrar la sesión',
         error: { code: 500 },
       });
+    }
+  }
+
+  @Get('token-csrf')
+  async tokencsrg(@Req() req: Request, @Res() res: Response) {
+    try {
+      const token = generateToken(req, res, true);
+      return res.status(200).json({ token });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error generating CSRF token' });
     }
   }
 }

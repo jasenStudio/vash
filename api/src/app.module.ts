@@ -49,8 +49,19 @@ import { PrismaService } from './modules/prisma/services/prisma.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ValidateToken)
-      .forRoutes('users', 'subcription', 'subcriptions-details', 'accounts');
+    consumer.apply(ValidateToken).forRoutes(
+      'users',
+      'subcription',
+      'subcriptions-details',
+      'accounts',
+      {
+        path: '/auth/token-csrf',
+        method: RequestMethod.GET,
+      },
+      {
+        path: '/auth/renew',
+        method: RequestMethod.GET,
+      },
+    );
   }
 }

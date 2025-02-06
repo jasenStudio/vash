@@ -184,8 +184,6 @@ export class AuthRepository {
           'Tokens renovados exitosamente',
         );
       } catch (error) {
-        console.error('Error en /renew:', error);
-
         if (decodedAccessTokenCurrent) {
           await this.JwtHelper.revokedToken(
             decodedAccessTokenCurrent,

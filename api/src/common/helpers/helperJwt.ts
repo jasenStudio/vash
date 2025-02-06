@@ -210,13 +210,10 @@ export class JwtHelper {
       const accessTokenPayloadVerified =
         await this.verifyAndCheckAccessTokenStatus(accessToken);
 
-      console.log(accessTokenPayloadVerified);
-
       const storedRefreshToken = await this.prisma.refreshToken.findUnique({
         where: { jti: decodedRefreshTokenCurrent.jti },
       });
 
-      console.log(storedRefreshToken);
       if (!storedRefreshToken) {
         throw new ForbiddenException('Refresh token inválido o no encontrado.');
       }

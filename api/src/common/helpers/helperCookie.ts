@@ -29,4 +29,10 @@ export class CookieHelper {
     CookieHelper.clearCookie(res, 'access_token');
     CookieHelper.clearCookie(res, 'refresh_token');
   }
+
+  public static ClearSessionCookiesTokens(res: Response) {
+    CookieHelper.clearCookie(res, 'access_token');
+    CookieHelper.clearCookie(res, 'refresh_token');
+    CookieHelper.clearCookie(res, 'csrf-token');
+  }
 }

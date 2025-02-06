@@ -4,7 +4,6 @@ import { devtools, persist } from "zustand/middleware";
 import { AuthStatus } from "@/infrastructure/interfaces/auth.status";
 import { User } from "@/domain/entities/user";
 import { AuthService } from "@/vash/auth/services/auth.services";
-import { CloudFog } from "lucide-react";
 
 interface AuthState {
   status: AuthStatus;
@@ -17,6 +16,7 @@ interface Actions {
   register: (payload: User) => Promise<boolean>;
   clearMessage: () => void;
   logout: () => void;
+  actionUnauthenticated: () => void;
 }
 
 const storeApi: StateCreator<AuthState & Actions> = (set) => ({
@@ -47,7 +47,7 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   checkStatusAuth: async () => {
     try {
       const { data, ok } = await AuthService.checkStatusAuth();
-      console.log(data);
+
       if (ok) {
         set({
           status: "authenticated",
@@ -100,6 +100,12 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
       console.log((error as Error).message);
     }
   },
+  actionUnauthenticated: () =>
+    set(() => ({
+      status: "unauthenticated",
+      user: undefined,
+      msgError: undefined,
+    })),
 });
 export const useAuthStore = create<AuthState & Actions>()(
   devtools(

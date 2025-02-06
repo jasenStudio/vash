@@ -33,7 +33,7 @@ export class AuthService {
   static checkStatusAuth = async () => {
     try {
       const { data } = await vashApi.get<AuthCheckStatusRespone>("/auth/renew");
-      console.log(data);
+
       return data;
     } catch (error) {
       const response_error = ErrorMapper.handleError(

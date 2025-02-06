@@ -33,6 +33,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "crypto-js": "^4.2.0",
+    "csrf-csrf": "^3.1.0",
     "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "reflect-metadata": "^0.2.0",

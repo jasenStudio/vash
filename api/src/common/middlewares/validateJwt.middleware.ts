@@ -43,6 +43,11 @@ export class ValidateToken implements NestMiddleware {
     const decodedAccessToken = this.JwtHelper.decodeToken(accessToken);
 
     const userAgentCurrent = optimizedDataUserAgent(userAgent, device);
+    console.log('🚀 ~ ValidateToken ~ use ~ path:', req.path);
+
+    if (req.path === '/api/auth/renew') {
+      return next();
+    }
 
     try {
       const { user, derivedKey } = await this.JwtHelper.verifyAccessTokens(
@@ -75,8 +80,6 @@ export class ValidateToken implements NestMiddleware {
 
         const { refreshTokenPayload } =
           await this.JwtHelper.verifyRefreshTokens(res, refreshToken);
-
-        console.log(refreshTokenPayload);
 
         req['user'] = refreshTokenPayload;
         req['derivedKey'] = refreshTokenPayload.derivedKey;
