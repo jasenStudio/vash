@@ -28,7 +28,6 @@ async function getCsrfToken() {
 
     return csrfToken;
   } catch (error) {
-    console.error("Error obteniendo CSRF Token:", error);
     throw error;
   } finally {
     isFetchingCsrf = false;
@@ -53,6 +52,7 @@ vashApi.interceptors.request.use(async (config) => {
     config.headers["x-device-info"] = getDeviceType();
 
     const excludedRoutes = ["/auth/token-csrf", "/auth/renew"];
+    console.log(config.url);
     if (!excludedRoutes.some((route) => config.url?.includes(route))) {
       if (!csrfToken) {
         csrfToken = await getCsrfToken();
@@ -62,7 +62,7 @@ vashApi.interceptors.request.use(async (config) => {
       }
     }
   } catch (error) {
-    console.error("Error en interceptor de request:", error);
+    throw error;
   }
   return config;
 });
