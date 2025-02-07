@@ -4,7 +4,9 @@ import { devtools, persist } from "zustand/middleware";
 import { AuthStatus } from "@/infrastructure/interfaces/auth.status";
 import { User } from "@/domain/entities/user";
 import { AuthService } from "@/vash/auth/services/auth.services";
+import { QueryClient } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 interface AuthState {
   status: AuthStatus;
   user?: User;
@@ -89,6 +91,7 @@ const storeApi: StateCreator<AuthState & Actions> = (set) => ({
   },
   logout: async () => {
     try {
+      queryClient.clear();
       const { message } = await AuthService.logout();
 
       set(() => ({

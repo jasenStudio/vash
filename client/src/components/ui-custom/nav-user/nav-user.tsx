@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/vash/store/auth/useAuthStore";
+import { queryClient } from "@/vash/providers/tanstack-provider";
 
 export function NavUser({
   user,
@@ -77,6 +78,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
+                queryClient.clear();
                 logout();
                 document.body.style.pointerEvents = "auto";
               }}
