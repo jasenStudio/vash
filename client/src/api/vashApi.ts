@@ -56,6 +56,7 @@ vashApi.interceptors.request.use(async (config) => {
       "/auth/renew",
       "/auth/sign-in",
       "/auth/sign-up",
+      "/api/auth/logout",
     ];
     console.log(config.url);
     if (!excludedRoutes.some((route) => config.url?.includes(route))) {
