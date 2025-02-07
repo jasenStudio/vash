@@ -51,7 +51,12 @@ vashApi.interceptors.request.use(async (config) => {
   try {
     config.headers["x-device-info"] = getDeviceType();
 
-    const excludedRoutes = ["/auth/token-csrf", "/auth/renew"];
+    const excludedRoutes = [
+      "/auth/token-csrf",
+      "/auth/renew",
+      "/auth/sign-in",
+      "/auth/sign-up",
+    ];
     console.log(config.url);
     if (!excludedRoutes.some((route) => config.url?.includes(route))) {
       if (!csrfToken) {

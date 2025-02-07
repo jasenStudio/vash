@@ -194,7 +194,9 @@ export class AuthRepository {
 
         if (decodedRefreshTokenCurrent) {
           await this.prisma.refreshToken.deleteMany({
-            where: decodedRefreshTokenCurrent.jti,
+            where: {
+              jti: decodedRefreshTokenCurrent.jti,
+            },
           });
 
           await this.JwtHelper.revokedToken(
