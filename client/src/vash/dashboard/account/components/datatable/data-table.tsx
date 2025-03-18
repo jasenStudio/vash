@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
     columns,
   });
   const isMobile = useIsMobile();
-  const isDeleteRecord = Object.keys(rowSelection).length > 0;
+  const isDeleteRecord = Object.keys(rowSelection).length > 1;
   const debounce_term = useDebounce(filterInput, 400);
   const rowsSelected = table.getFilteredSelectedRowModel().rows.length;
   const rowsFiltered = table.getFilteredRowModel().rows.length;

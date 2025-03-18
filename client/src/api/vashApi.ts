@@ -58,7 +58,7 @@ vashApi.interceptors.request.use(async (config) => {
       "/auth/sign-up",
       "/api/auth/logout",
     ];
-    console.log(config.url);
+
     if (!excludedRoutes.some((route) => config.url?.includes(route))) {
       if (!csrfToken) {
         csrfToken = await getCsrfToken();
