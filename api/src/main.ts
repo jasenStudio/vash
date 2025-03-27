@@ -7,6 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import helmet from 'helmet';
 import { NextFunction, Request, Response } from 'express';
+
 const { doubleCsrfProtection } = doubleCsrf({
   getSecret: () => process.env.CSRF_SECRET, // Cambia esto por una clave secreta segura
   cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
@@ -16,6 +17,7 @@ const { doubleCsrfProtection } = doubleCsrf({
     sameSite: 'none', // Opcional, pero recomendado para mayor seguridad
   },
 });
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
@@ -57,6 +59,7 @@ async function bootstrap() {
 
     next(); // Continuar sin protección CSRF en rutas excluidas
   });
+
   app.enableCors({
     origin:
       process.env.NODE_ENV === 'prod'

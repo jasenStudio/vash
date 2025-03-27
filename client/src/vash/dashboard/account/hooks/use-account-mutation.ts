@@ -1,181 +1,153 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AccountService } from "../services/account.services";
 import { Account } from "@/domain";
-import {
-  AccountCreateResponse,
-  AccountsResponse,
-} from "@/infrastructure/interfaces/account.response";
+import { AccountsResponse } from "@/infrastructure/interfaces/account.response";
 import { toast } from "sonner";
-import { t } from "i18next";
-import { useAccountStore } from "@/vash/store";
-import { ActionsAccount } from "@/vash/store/account/useAccountStore";
+
+import { usePaginationStore } from "@/vash/store";
 
 export const useAccountMutation = () => {
   const queryClient = useQueryClient();
-  const addAccount = useAccountStore((state) => state.addRecord);
-  const getAccount = useAccountStore((state) => state.records);
-  const mutation = useMutation({
+  const { page, limit, search } = usePaginationStore();
+
+  //***Store Pagination *****/
+  const pageCurrent = usePaginationStore((state) => state.limit);
+
+  const mutation = useMutation<any, Error, any>({
     mutationFn: AccountService.store,
     onMutate: async (newAccount) => {
-      console.log("Mutación optimista iniciada");
+      const queryKey = ["accounts", { page: 1, limit, search: "" }];
 
-      // await queryClient.cancelQueries({
-      //   queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-      // });
+      await queryClient.cancelQueries({ queryKey });
 
-      const previousData = queryClient.getQueryData<AccountsResponse>([
-        "accounts",
-        { page: 1, limit: 5, search: "" },
-      ]);
+      const previousData = queryClient.getQueryData<AccountsResponse>(queryKey);
 
-      const optimisticAccount: Partial<Account> = {
-        id: Math.random(),
-        account_email: newAccount,
-        created_at: String(new Date()),
-        status: true,
-        // Fecha válida
-      };
-      console.log(optimisticAccount, "optimisticAccount");
-      queryClient.setQueryData(
-        ["accounts", { page: 1, limit: 5, search: "" }],
-        (old: AccountsResponse) => {
-          if (!old) return previousData;
-          return {
-            ...old,
-            data: {
-              accounts: [optimisticAccount, ...old.data.accounts],
-            },
-          };
+      if (previousData) {
+        // 1. Crear el nuevo registro optimista
+        const optimisticAccount: Partial<Account> = {
+          id: Math.random(),
+          account_email: newAccount,
+          created_at: new Date().toISOString(),
+        };
+
+        // 2. Actualizar la primera página con el nuevo registro
+        const updatedAccounts = [
+          optimisticAccount,
+          ...previousData.data.accounts,
+        ];
+        const newTotal = previousData.meta.total + 1;
+        const newTotalPages = Math.ceil(newTotal / limit);
+
+        queryClient.setQueryData(queryKey, {
+          ...previousData,
+          data: { accounts: updatedAccounts },
+          meta: {
+            ...previousData.meta,
+            total: newTotal,
+            totalPages: newTotalPages,
+          },
+        });
+
+        // 3. Función para redistribuir registros
+        const redistributeRecords = (currentPage: number) => {
+          const currentPageKey = [
+            "accounts",
+            { page: currentPage, limit, search },
+          ];
+          const nextPageKey = [
+            "accounts",
+            { page: currentPage + 1, limit, search },
+          ];
+
+          const currentPageData =
+            queryClient.getQueryData<AccountsResponse>(currentPageKey);
+          const nextPageData =
+            queryClient.getQueryData<AccountsResponse>(nextPageKey);
+
+          if (!currentPageData) return;
+
+          // Si excede el límite o es la última página y necesita una nueva
+          if (currentPageData.data.accounts.length > limit) {
+            const accountsToMove = currentPageData.data.accounts.slice(limit);
+            const remainingAccounts = currentPageData.data.accounts.slice(
+              0,
+              limit
+            );
+
+            // Actualizar página actual
+            queryClient.setQueryData(currentPageKey, {
+              ...currentPageData,
+              data: { accounts: remainingAccounts },
+            });
+
+            // Manejar página siguiente
+            if (currentPage < newTotalPages) {
+              // Si ya existe la página siguiente
+              if (nextPageData) {
+                queryClient.setQueryData(nextPageKey, {
+                  ...nextPageData,
+                  data: {
+                    accounts: [
+                      ...accountsToMove,
+                      ...nextPageData.data.accounts,
+                    ],
+                  },
+                });
+              } else {
+                // Crear nueva página si no existe
+                queryClient.setQueryData(nextPageKey, {
+                  ...currentPageData,
+                  data: { accounts: accountsToMove },
+                  meta: {
+                    ...currentPageData.meta,
+                    currentPage: currentPage + 1,
+                  },
+                });
+              }
+
+              // Verificar si la página siguiente ahora excede el límite
+              const updatedNextData =
+                queryClient.getQueryData<AccountsResponse>(nextPageKey);
+              if (updatedNextData!.data.accounts.length > limit) {
+                redistributeRecords(currentPage + 1);
+              }
+            }
+          }
+        };
+
+        // 4. Iniciar la redistribución desde la primera página
+        redistributeRecords(1);
+
+        // 5. Actualizar metadata en todas las páginas
+        for (let i = 1; i <= newTotalPages; i++) {
+          const pageKey = ["accounts", { page: i, limit, search }];
+          const pageData = queryClient.getQueryData<AccountsResponse>(pageKey);
+
+          if (pageData) {
+            queryClient.setQueryData(pageKey, {
+              ...pageData,
+              meta: {
+                ...pageData.meta,
+                total: newTotal,
+                totalPages: newTotalPages,
+              },
+            });
+          }
         }
-      );
-
-      return { optimisticAccount, previousData };
-    },
-    onSuccess: (
-      accountResponse: AccountCreateResponse,
-      _variables,
-      context
-    ) => {
-      const { account } = accountResponse.data;
-      queryClient.removeQueries({
-        queryKey: ["account", context?.optimisticAccount.id],
-      });
-      const allQueries = queryClient.getQueryCache().findAll();
-
-      console.log(allQueries, "allQueries");
-
-      queryClient.setQueryData(
-        ["accounts", { page: 1, limit: 5, search: "" }],
-        (old: AccountsResponse) => {
-          if (!old) return context.previousData;
-
-          const accounts = old.data.accounts.map((cacheAccount) => {
-            return cacheAccount.id === context.optimisticAccount.id
-              ? account
-              : cacheAccount;
-          });
-          console.log(accounts, "accounts");
-          return {
-            ...old,
-            data: {
-              accounts,
-            },
-            meta: {
-              ...old.meta,
-              total: old.meta.total + 1,
-              totalPages: Math.ceil((old.meta.total + 1) / old.meta.limit),
-            },
-          };
-        }
-      );
-      addAccount(account, ActionsAccount.create);
-      console.log(getAccount, "getAccount");
-      toast.success(t("entities.account.success"), { duration: 5000 });
-    },
-    onError: (error, _variables, context) => {
-      //TODO mejorar manipulacion
-
-      const error_account_exist = "account_email";
-      const { message } = error;
-
-      queryClient.setQueryData(
-        ["accounts", { page: 1, limit: 5, search: "" }],
-        (old: AccountsResponse) => {
-          if (!old) return context?.previousData;
-
-          const accounts = old.data.accounts.filter(
-            (account) => account.id !== context?.optimisticAccount.id
-          );
-
-          return {
-            ...old,
-            data: {
-              accounts,
-            },
-          };
-        }
-      );
-
-      if (message.includes(error_account_exist)) {
-        toast.error(t("errors.account_email_exists"), { duration: 5000 });
-        return;
       }
 
-      toast.error("Ops hubo un error al crear la cuenta", { duration: 5000 });
+      return { previousData };
+    },
+    // ... otros handlers (onError, onSettled)
+
+    onError: (_error, _variables, context: any) => {
+      toast.error("An error occurred while creating the account");
+    },
+    onSettled: () => {},
+    onSuccess: (result, variables, context) => {
+      toast.success("Account added successfully");
     },
   });
 
   return mutation;
 };
-
-//* funcional  */
-//   onMutate: async (newAccount) => {
-//     console.log("Mutación optimista iniciada");
-
-//     await queryClient.cancelQueries({
-//       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-//     });
-
-//     const previousData = queryClient.getQueryData<AccountsResponse>([
-//       "accounts",
-//       { page: 1, limit: 5, search: "" },
-//     ]);
-
-//     const optimisticAccount: Partial<Account> = {
-//       id: Math.random(),
-//       account_email: newAccount,
-//       created_at: new Date().toISOString(), // Fecha válida
-//     };
-
-//     queryClient.setQueryData(
-//       ["accounts", { page: 1, limit: 5, search: "" }],
-//       (old: AccountsResponse) => {
-//         if (!old) return previousData;
-//         return {
-//           ...old,
-//           data: {
-//             accounts: [optimisticAccount, ...old.data.accounts],
-//           },
-//         };
-//       }
-//     );
-
-//     return { previousData };
-//   },
-//   onError: (error, newAccount, context) => {
-//     console.error("Error en la mutación", error);
-//     if (context?.previousData) {
-//       queryClient.setQueryData(
-//         ["accounts", { page: 1, limit: 5, search: "" }],
-//         context.previousData
-//       );
-//     }
-//   },
-//   onSettled: () => {
-//     queryClient.invalidateQueries({
-//       queryKey: ["accounts", { page: 1, limit: 5, search: "" }],
-//     });
-//   },
-// });
-
-// return mutation;

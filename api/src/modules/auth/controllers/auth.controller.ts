@@ -7,7 +7,6 @@ import {
   Get,
   Req,
   Res,
-  UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
@@ -98,6 +97,7 @@ export class AuthController {
     const refreshToken = req.cookies['refresh_token'];
     const accessToken = req.cookies['access_token'];
     const userAgent = req.headers['user-agent'];
+
     const device = req.headers['x-device-info']
       ? (req.headers['x-device-info'] as string)
       : 'Desktop';
