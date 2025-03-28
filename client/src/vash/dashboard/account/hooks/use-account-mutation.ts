@@ -3,34 +3,53 @@ import { AccountService } from "../services/account.services";
 import { Account } from "@/domain";
 import { AccountsResponse } from "@/infrastructure/interfaces/account.response";
 import { toast } from "sonner";
-
-import { usePaginationStore } from "@/vash/store";
+import { useAccountStore, usePaginationStore } from "@/vash/store";
+import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 export const useAccountMutation = () => {
   const queryClient = useQueryClient();
   const { page, limit, search } = usePaginationStore();
-
-  //***Store Pagination *****/
-  const pageCurrent = usePaginationStore((state) => state.limit);
+  const addRecord = useAccountStore((state) => state.addRecord);
 
   const mutation = useMutation<any, Error, any>({
     mutationFn: AccountService.store,
     onMutate: async (newAccount) => {
       const queryKey = ["accounts", { page: 1, limit, search: "" }];
 
+      let accountToMoveOptimistic: Partial<Account> = {
+        account_email: "",
+        created_at: "",
+        updated_at: "",
+        user_id: 0,
+      };
+
       await queryClient.cancelQueries({ queryKey });
 
       const previousData = queryClient.getQueryData<AccountsResponse>(queryKey);
 
       if (previousData) {
-        // 1. Crear el nuevo registro optimista
+        // 1. Crear snapshot del estado actual para posible rollback
+        const snapshot = {
+          pages: {} as Record<number, AccountsResponse>,
+          meta: { ...previousData.meta },
+        };
+
+        // Capturar estado actual de todas las páginas
+        for (let i = 1; i <= previousData.meta.totalPages; i++) {
+          const pageKey = ["accounts", { page: i, limit, search }];
+          const pageData = queryClient.getQueryData<AccountsResponse>(pageKey);
+          if (pageData) {
+            snapshot.pages[i] = { ...pageData };
+          }
+        }
+
+        // 2. Actualización optimista
         const optimisticAccount: Partial<Account> = {
           id: Math.random(),
           account_email: newAccount,
           created_at: new Date().toISOString(),
         };
 
-        // 2. Actualizar la primera página con el nuevo registro
         const updatedAccounts = [
           optimisticAccount,
           ...previousData.data.accounts,
@@ -48,7 +67,7 @@ export const useAccountMutation = () => {
           },
         });
 
-        // 3. Función para redistribuir registros
+        // 3. Redistribuir registros
         const redistributeRecords = (currentPage: number) => {
           const currentPageKey = [
             "accounts",
@@ -66,14 +85,28 @@ export const useAccountMutation = () => {
 
           if (!currentPageData) return;
 
-          // Si excede el límite o es la última página y necesita una nueva
-          if (currentPageData.data.accounts.length > limit) {
-            const accountsToMove = currentPageData.data.accounts.slice(limit);
-            const remainingAccounts = currentPageData.data.accounts.slice(
-              0,
-              limit
-            );
+          const accountsToMove = currentPageData.data.accounts.slice(limit);
 
+          console.log(accountsToMove, "cuentas a mover");
+
+          const remainingAccounts = currentPageData.data.accounts.slice(
+            0,
+            limit
+          );
+
+          //* 1. Agregando nuevo Registro a pagina actual sin cache disponible para la siguiente pagina
+          if (
+            currentPageData.data.accounts.length > limit &&
+            !queryClient.getQueryData(nextPageKey)
+          ) {
+            queryClient.setQueryData(currentPageKey, {
+              ...currentPageData,
+              data: { accounts: remainingAccounts },
+            });
+
+            accountToMoveOptimistic = { ...accountsToMove[0] };
+          } else if (currentPageData.data.accounts.length > limit) {
+            //* 2. agregando nuevo registro a pagina actual con cache disponible para todas las paginas
             // Actualizar página actual
             queryClient.setQueryData(currentPageKey, {
               ...currentPageData,
@@ -82,7 +115,6 @@ export const useAccountMutation = () => {
 
             // Manejar página siguiente
             if (currentPage < newTotalPages) {
-              // Si ya existe la página siguiente
               if (nextPageData) {
                 queryClient.setQueryData(nextPageKey, {
                   ...nextPageData,
@@ -115,10 +147,9 @@ export const useAccountMutation = () => {
           }
         };
 
-        // 4. Iniciar la redistribución desde la primera página
         redistributeRecords(1);
 
-        // 5. Actualizar metadata en todas las páginas
+        // 4. Actualizar metadata en todas las páginas
         for (let i = 1; i <= newTotalPages; i++) {
           const pageKey = ["accounts", { page: i, limit, search }];
           const pageData = queryClient.getQueryData<AccountsResponse>(pageKey);
@@ -134,18 +165,91 @@ export const useAccountMutation = () => {
             });
           }
         }
+
+        return {
+          snapshot,
+          optimisticAccount,
+          previousData,
+          accountToMoveOptimistic,
+        };
+      }
+    },
+    onError: (error, _variables, context: any) => {
+      // Revertir todos los cambios si hay error
+      if (context?.snapshot) {
+        // Restaurar páginas individuales
+        for (const [page, data] of Object.entries(context.snapshot.pages)) {
+          queryClient.setQueryData(
+            ["accounts", { page: parseInt(page), limit, search }],
+            data
+          );
+        }
+
+        // Restaurar metadata global en la primera página
+        queryClient.setQueryData(
+          ["accounts", { page: 1, limit, search: "" }],
+          (old) =>
+            old && {
+              ...old,
+              meta: context.snapshot.meta,
+            }
+        );
       }
 
-      return { previousData };
+      // Mostrar error específico si es de duplicado
+      if (
+        error.message.includes("duplicate") ||
+        error.message.includes("exist")
+      ) {
+        toast.error("La cuenta ya existe");
+      } else {
+        toast.error("Error al agregar la cuenta: " + error.message);
+      }
     },
-    // ... otros handlers (onError, onSettled)
+    onSuccess: (accountResponse, _variables, context) => {
+      const contexto = context as {
+        snapshot: any;
+        optimisticAccount: Account;
+        previousData: AccountsResponse;
+        accountToMoveOptimistic: Partial<Account>;
+      };
 
-    onError: (_error, _variables, context: any) => {
-      toast.error("An error occurred while creating the account");
+      const { account } = accountResponse.data!;
+
+      console.log(contexto.accountToMoveOptimistic);
+
+      addRecord(
+        {
+          ...contexto.accountToMoveOptimistic,
+          overridingAccountId: account.id,
+        },
+        ActionsAccount.create
+      );
+
+      queryClient.setQueryData(
+        ["accounts", { page, limit, search }],
+        (old: AccountsResponse) => {
+          if (!old) return contexto.previousData;
+
+          const accounts = old.data.accounts.map((cacheAccount) => {
+            return cacheAccount.id === contexto.optimisticAccount.id
+              ? account
+              : cacheAccount;
+          });
+
+          return {
+            ...old,
+            data: {
+              accounts,
+            },
+          };
+        }
+      );
+
+      toast.success("Cuenta agregada exitosamente");
     },
-    onSettled: () => {},
-    onSuccess: (result, variables, context) => {
-      toast.success("Account added successfully");
+    onSettled: () => {
+      // Limpieza adicional si es necesaria
     },
   });
 

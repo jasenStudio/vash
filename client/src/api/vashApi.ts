@@ -13,7 +13,7 @@ const vashApi = axios.create({
 let csrfToken: string | null = null;
 let isFetchingCsrf = false;
 
-async function getCsrfToken() {
+export async function getCsrfToken() {
   if (csrfToken) return csrfToken;
   if (isFetchingCsrf) return null;
 
@@ -35,7 +35,10 @@ async function getCsrfToken() {
 }
 
 vashApi.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(response);
+    return response;
+  },
   (error: AxiosError) => {
     if (error.response?.data) {
       const errorResponse = (error.response?.data as { error: string }).error;
@@ -59,8 +62,10 @@ vashApi.interceptors.request.use(async (config) => {
       "/api/auth/logout",
     ];
 
-    if (!excludedRoutes.some((route) => config.url?.includes(route))) {
+    // Verificar si la URL termina exactamente en una de las rutas excluidas
+    if (!excludedRoutes.some((route) => config.url?.endsWith(route))) {
       if (!csrfToken) {
+        console.log("aQUI");
         csrfToken = await getCsrfToken();
       }
       if (csrfToken) {

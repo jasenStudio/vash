@@ -3,11 +3,12 @@ import { columns } from "../components/datatable/columns";
 import { DataTable } from "../components/datatable/data-table";
 import useAccounts from "../hooks/use-accounts";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Account } from "@/domain";
 
 const ListAccountPage = () => {
   useTitle("lista de cuentas");
+
   const [limitAccount, setlimitAccount] = useState<number>(5);
   const [search, setSearch] = useState<string>("");
   const {

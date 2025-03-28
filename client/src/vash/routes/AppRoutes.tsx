@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthStore } from "../store/auth/useAuthStore";
 import { LayoutRoot } from "../Layout";
 import LoaderCustom from "@/components/ui-custom/loader/LoaderCustom";
+import { getCsrfToken, vashApi } from "@/api/vashApi";
 
 const AuthRouter = React.lazy(() => import("../auth/router/AuthRouter"));
 const AccountRouter = React.lazy(

@@ -13,8 +13,9 @@ const { doubleCsrfProtection } = doubleCsrf({
   cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
   cookieOptions: {
     httpOnly: true,
-    secure: true, // Asegúrate de que esto esté en true para producción
-    sameSite: 'none', // Opcional, pero recomendado para mayor seguridad
+    secure: process.env.NODE_ENV === 'prod' || true, // Asegúrate de que esto esté en true para producción
+    sameSite: 'none',
+    // Opcional, pero recomendado para mayor seguridad
   },
 });
 

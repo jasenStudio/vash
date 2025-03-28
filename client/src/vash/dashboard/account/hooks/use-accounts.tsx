@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePaginationStore } from "@/vash/store/ui/usePaginationStore";
 import { useAccountStore } from "@/vash/store";
 import { Account } from "@/domain";
+import { ActionsAccount } from "@/vash/store/account/useAccountStore";
 
 interface Props {
   limit: number;
@@ -19,6 +20,7 @@ const useAccounts = ({ limit, search = "" }: Props) => {
   } = usePaginationStore((state) => state);
 
   const records = useAccountStore((state) => state.records);
+  const actionRecords = useAccountStore((state) => state.actionsCrud);
 
   const [page, setPage] = useState(1);
 
@@ -29,20 +31,40 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     placeholderData: (previousData) => previousData,
     select: (data) => {
       if (data.meta.page !== 1 && records.size > 0) {
-        data.data.accounts = data.data.accounts.filter((account: Account) => {
-          const accountId = String(account.id);
+        if (actionRecords === ActionsAccount.create) {
+          data.data.accounts = data.data.accounts.map((account: Account) => {
+            const accountId = String(account.id);
 
-          // Verifica si el registro existe en `records`
-          if (records.has(accountId)) {
-            // Si existe, elimínalo del Map
-            records.delete(accountId);
-            // Retorna false para eliminarlo del array
-            return false;
-          }
+            const foundKey = [...records.entries()].find(
+              ([, value]) => value.overridingAccountId === accountId
+            )?.[0];
 
-          // Si no existe, mantén el elemento en el array
-          return true;
-        });
+            if (foundKey) {
+              const newAccount = records.get(foundKey);
+              records.delete(foundKey);
+              return newAccount;
+            }
+
+            return account;
+          });
+        }
+
+        if (actionRecords === ActionsAccount.delete) {
+          data.data.accounts = data.data.accounts.filter((account: Account) => {
+            const accountId = String(account.id);
+
+            // Verifica si el registro existe en `records`
+            if (records.has(accountId)) {
+              // Si existe, elimínalo del Map
+              records.delete(accountId);
+              // Retorna false para eliminarlo del array
+              return false;
+            }
+
+            // Si no existe, mantén el elemento en el array
+            return true;
+          });
+        }
       }
       return data;
     },
@@ -71,30 +93,12 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     if (page < totalPages) {
       setPage((prevPage) => prevPage + 1);
     }
-    // if (actions === "delete" && page <= totalPages) {
-    //   console.log("Esta invalidando la query");
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["accounts", { page: page, limit, search }],
-    //   });
-    // }
-    // if (page == totalPages) {
-    //   useAccountStore.setState({ actionsCrud: null });
-    // }
   };
 
   const prevPage = () => {
     if (page > 1) {
       setPage((prevPage) => prevPage - 1);
     }
-    // if (actions === "delete" && page >= 1) {
-    //   console.log("Esta invalidando la query Prev Page");
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["accounts", { page: page, limit, search }],
-    //   });
-    // }
-    // if (page == 1) {
-    //   useAccountStore.setState({ actionsCrud: null });
-    // }
   };
 
   return {

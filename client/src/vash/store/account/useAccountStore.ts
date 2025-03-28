@@ -1,5 +1,3 @@
-import { Account } from "@/domain";
-
 import { create, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -8,13 +6,23 @@ export enum ActionsAccount {
   update = "update",
   delete = "delete",
 }
+
+interface LikeAccount {
+  id?: number;
+  account_email?: string;
+  status?: boolean;
+  user_id?: number;
+  overridingAccountId?: number;
+  created_at?: string;
+  updated_at?: string;
+}
 interface AccountState {
   records: Map<string, any>;
   actionsCrud: ActionsAccount | null;
 }
 
 interface Actions {
-  addRecord: (account: Partial<Account>, action: ActionsAccount) => void;
+  addRecord: (account: LikeAccount, action: ActionsAccount) => void;
   setAction: (action: ActionsAccount) => void;
   getRecord: (id: string) => any;
   clearRecords: () => void;
@@ -26,11 +34,13 @@ const storeApi: StateCreator<
 > = (set) => ({
   actionsCrud: null,
   records: new Map(),
-  addRecord: (account: Partial<Account>) =>
+  addRecord: (account: LikeAccount, action: ActionsAccount) =>
     set(
       (state) => {
         state.records.set(String(account.id!), account);
+        state.actionsCrud = action;
         console.log(account, "accountValueStore");
+        console.log(state.records, "recordsValueStore");
         return { records: state.records };
       },
       false,

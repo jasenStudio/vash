@@ -26,12 +26,12 @@ import {
 import { doubleCsrf } from 'csrf-csrf';
 
 const { generateToken } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET, // Cambia esto por una clave secreta segura
-  cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
+  getSecret: () => process.env.CSRF_SECRET,
+  cookieName: 'csrf-token',
   cookieOptions: {
     httpOnly: true,
-    secure: true, // Asegúrate de que esto esté en true para producción
-    sameSite: 'none', // Opcional, pero recomendado para mayor seguridad
+    secure: process.env.NODE_ENV === 'prod' || true,
+    sameSite: 'none',
   },
 });
 @ApiTags('Auth')
@@ -58,6 +58,7 @@ export class AuthController {
   async login(
     @Body() payload: LoginUserDto,
     @Res() res: Response,
+    @Req() req: Request,
     @UserAgent() userAgent: string,
   ) {
     const result = await this.__authService.login(payload, userAgent);
@@ -67,6 +68,8 @@ export class AuthController {
     CookieHelper.clearCookie(res, 'access_token');
     CookieHelper.clearCookie(res, 'refresh_token');
     CookieHelper.clearCookie(res, 'csrf-token');
+
+    const csrfToken = generateToken(req, res, true);
 
     CookieHelper.setCookie(
       res,
@@ -87,6 +90,7 @@ export class AuthController {
 
     return res.status(200).json(result);
   }
+
   @Post('sign-up')
   async register(@Body() payload: CreateAuthUserDto) {
     return await this.__authService.register(payload);
@@ -150,6 +154,8 @@ export class AuthController {
   @Get('token-csrf')
   async tokencsrg(@Req() req: Request, @Res() res: Response) {
     try {
+      console.log(req.cookies['csrf-token']);
+
       const token = generateToken(req, res, true);
       return res.status(200).json({ token });
     } catch (error) {
