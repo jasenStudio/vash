@@ -96,7 +96,9 @@ export class ValidateToken implements NestMiddleware {
 
         if (decodedRefreshToken) {
           await this.prisma.refreshToken.deleteMany({
-            where: decodedRefreshToken.jti,
+            where: {
+              jti: decodedRefreshToken.jti,
+            },
           });
 
           await this.JwtHelper.revokedToken(

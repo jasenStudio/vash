@@ -24,16 +24,8 @@ import {
   REFRESH_TOKEN_COOKIE_DURATION,
 } from 'src/common/constants';
 import { doubleCsrf } from 'csrf-csrf';
+import { customDoubleCsrf } from 'src/common/helpers/HelpersCsrf';
 
-const { generateToken } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET,
-  cookieName: 'csrf-token',
-  cookieOptions: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'prod' || true,
-    sameSite: 'none',
-  },
-});
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -63,13 +55,15 @@ export class AuthController {
   ) {
     const result = await this.__authService.login(payload, userAgent);
 
+    const { generateToken } = customDoubleCsrf();
+
     const { refreshToken, token: newAccessToken } = result;
 
     CookieHelper.clearCookie(res, 'access_token');
     CookieHelper.clearCookie(res, 'refresh_token');
     CookieHelper.clearCookie(res, 'csrf-token');
 
-    const csrfToken = generateToken(req, res, true);
+    const csrfToken = generateToken(req, res);
 
     CookieHelper.setCookie(
       res,
@@ -156,8 +150,13 @@ export class AuthController {
     try {
       console.log(req.cookies['csrf-token']);
 
+      const { generateToken } = customDoubleCsrf();
+
       const token = generateToken(req, res, true);
-      return res.status(200).json({ token });
+
+      const expiresIn = 600; // Coincide con el maxAge de tu cookie
+      const expiresAt = Date.now() + expiresIn * 1000;
+      return res.status(200).json({ token, expiresIn, expiresAt });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error generating CSRF token' });

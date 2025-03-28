@@ -11,8 +11,8 @@ export class CookieHelper {
   ) {
     response.cookie(nameCookie, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'prod' || true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'prod',
+      sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
       maxAge: duration,
     });
   }
@@ -20,8 +20,8 @@ export class CookieHelper {
   public static clearCookie(response: Response, nameCookie: string) {
     response.clearCookie(nameCookie, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'prod' || true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'prod',
+      sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
     });
   }
 

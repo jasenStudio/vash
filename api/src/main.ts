@@ -4,20 +4,21 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import * as cookieParser from 'cookie-parser';
-import { doubleCsrf } from 'csrf-csrf';
+import { doubleCsrf, DoubleCsrfConfigOptions } from 'csrf-csrf';
 import helmet from 'helmet';
 import { NextFunction, Request, Response } from 'express';
+import { customDoubleCsrf } from './common/helpers/HelpersCsrf';
 
-const { doubleCsrfProtection } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET, // Cambia esto por una clave secreta segura
-  cookieName: 'csrf-token', // Nombre de la cookie que contendrá el token CSRF
-  cookieOptions: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'prod' || true, // Asegúrate de que esto esté en true para producción
-    sameSite: 'none',
-    // Opcional, pero recomendado para mayor seguridad
-  },
-});
+// export const csrfOptions: DoubleCsrfConfigOptions = {
+//   getSecret: () => process.env.CSRF_SECRET,
+//   cookieName: 'csrf-token',
+//   cookieOptions: {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'prod',
+//     sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
+//     maxAge: 600,
+//   },
+// };
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,14 +33,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new PrismaExceptionFilter());
 
-  // app.enableCors({
-  //   origin: 'http://localhost:5173/',
-  //   methods: 'GET,POST,PUT,DELETE',
-  //   allowedHeaders: 'Content-Type, Authorization',
-  //   credentials: true,
-  // });
-
   app.use(cookieParser(process.env.CSRF_SECRET));
+
+  const { doubleCsrfProtection, validateRequest } = customDoubleCsrf();
+
+  // const { doubleCsrfProtection, validateRequest, invalidCsrfTokenError } =
+  //   doubleCsrf(csrfOptions);
+
   app.use((req: Request, res: Response, next: NextFunction) => {
     const csrfExemptRoutes = [
       '/api/auth/logout',
@@ -47,18 +47,22 @@ async function bootstrap() {
       '/api/auth/sign-up',
       '/api/auth/token-csrf',
       '/api/auth/renew',
-    ]; // Rutas que NO necesitan CSRF
+    ];
 
-    if (
-      (req.method === 'POST' ||
-        req.method === 'PUT' ||
-        req.method === 'DELETE') &&
-      !csrfExemptRoutes.includes(req.path) // Solo proteger si NO está en la lista
-    ) {
-      return doubleCsrfProtection(req, res, next);
+    try {
+      const validate = validateRequest(req);
+
+      if (
+        ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) &&
+        !csrfExemptRoutes.some((route) => req.path.startsWith(route))
+      ) {
+        return doubleCsrfProtection(req, res, next);
+      }
+    } catch (error) {
+      console.log(error + 'Algun eeror');
     }
 
-    next(); // Continuar sin protección CSRF en rutas excluidas
+    next();
   });
 
   app.enableCors({
