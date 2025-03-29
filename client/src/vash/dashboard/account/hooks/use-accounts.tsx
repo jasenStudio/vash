@@ -32,21 +32,25 @@ const useAccounts = ({ limit, search = "" }: Props) => {
     select: (data) => {
       if (data.meta.page !== 1 && records.size > 0) {
         if (actionRecords === ActionsAccount.create) {
-          data.data.accounts = data.data.accounts.map((account: Account) => {
-            const accountId = String(account.id);
-
-            const foundKey = [...records.entries()].find(
-              ([, value]) => value.overridingAccountId === accountId
-            )?.[0];
-
-            if (foundKey) {
-              const newAccount = records.get(foundKey);
-              records.delete(foundKey);
-              return newAccount;
-            }
-
-            return account;
+          const overwritingIdsMap = new Map();
+          // Preprocesamos cuentasMovidas para crear un Map de overwritingId -> datos
+          records.forEach(({ overridingAccountId, ...rest }) => {
+            overwritingIdsMap.set(overridingAccountId, rest);
           });
+
+          const accountsUpdates: Account[] = data.data.accounts.map(
+            (account: Account) => {
+              return overwritingIdsMap.has(account.id)
+                ? { ...overwritingIdsMap.get(account.id) }
+                : account;
+            }
+          );
+
+          accountsUpdates.sort((a, b) =>
+            a.account_email.localeCompare(b.account_email)
+          );
+
+          data.data.accounts = accountsUpdates;
         }
 
         if (actionRecords === ActionsAccount.delete) {
