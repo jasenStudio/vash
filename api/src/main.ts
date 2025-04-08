@@ -35,7 +35,7 @@ async function bootstrap() {
 
   app.use(cookieParser(process.env.CSRF_SECRET));
 
-  const { doubleCsrfProtection, validateRequest } = customDoubleCsrf();
+  const { doubleCsrfProtection } = customDoubleCsrf();
 
   // const { doubleCsrfProtection, validateRequest, invalidCsrfTokenError } =
   //   doubleCsrf(csrfOptions);
@@ -50,8 +50,6 @@ async function bootstrap() {
     ];
 
     try {
-      const validate = validateRequest(req);
-
       if (
         ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) &&
         !csrfExemptRoutes.some((route) => req.path.startsWith(route))

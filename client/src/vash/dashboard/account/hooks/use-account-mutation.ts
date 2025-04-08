@@ -28,13 +28,11 @@ export const useAccountMutation = () => {
       const previousData = queryClient.getQueryData<AccountsResponse>(queryKey);
 
       if (previousData) {
-        // 1. Crear snapshot del estado actual para posible rollback
         const snapshot = {
           pages: {} as Record<number, AccountsResponse>,
           meta: { ...previousData.meta },
         };
 
-        // Capturar estado actual de todas las páginas
         for (let i = 1; i <= previousData.meta.totalPages; i++) {
           const pageKey = ["accounts", { page: i, limit, search }];
           const pageData = queryClient.getQueryData<AccountsResponse>(pageKey);
@@ -43,7 +41,6 @@ export const useAccountMutation = () => {
           }
         }
 
-        // 2. Actualización optimista
         const optimisticAccount: Partial<Account> = {
           id: Math.random(),
           account_email: newAccount,
@@ -67,7 +64,6 @@ export const useAccountMutation = () => {
           },
         });
 
-        // 3. Redistribuir registros
         const redistributeRecords = (currentPage: number) => {
           const currentPageKey = [
             "accounts",
@@ -87,8 +83,6 @@ export const useAccountMutation = () => {
 
           const accountsToMove = currentPageData.data.accounts.slice(limit);
 
-          console.log(accountsToMove, "cuentas a mover");
-
           const remainingAccounts = currentPageData.data.accounts.slice(
             0,
             limit
@@ -107,7 +101,7 @@ export const useAccountMutation = () => {
             accountToMoveOptimistic = { ...accountsToMove[0] };
           } else if (currentPageData.data.accounts.length > limit) {
             //* 2. agregando nuevo registro a pagina actual con cache disponible para todas las paginas
-            // Actualizar página actual
+
             queryClient.setQueryData(currentPageKey, {
               ...currentPageData,
               data: { accounts: remainingAccounts },
@@ -216,8 +210,6 @@ export const useAccountMutation = () => {
 
       const { account } = accountResponse.data!;
 
-      console.log(contexto.accountToMoveOptimistic);
-
       addRecord(
         {
           ...contexto.accountToMoveOptimistic,
@@ -247,9 +239,6 @@ export const useAccountMutation = () => {
       );
 
       toast.success("Cuenta agregada exitosamente");
-    },
-    onSettled: () => {
-      // Limpieza adicional si es necesaria
     },
   });
 

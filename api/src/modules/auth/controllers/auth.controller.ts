@@ -156,6 +156,7 @@ export class AuthController {
 
       const expiresIn = 600; // Coincide con el maxAge de tu cookie
       const expiresAt = Date.now() + expiresIn * 1000;
+
       return res.status(200).json({ token, expiresIn, expiresAt });
     } catch (error) {
       console.error(error);

@@ -39,8 +39,7 @@ const storeApi: StateCreator<
       (state) => {
         state.records.set(String(account.id!), account);
         state.actionsCrud = action;
-        console.log(account, "accountValueStore");
-        console.log(state.records, "recordsValueStore");
+
         return { records: state.records };
       },
       false,
@@ -49,7 +48,6 @@ const storeApi: StateCreator<
   getRecord: (id: string) =>
     set((state) => state.records.get(id), false, "getRecord"),
   setAction: (action: ActionsAccount) => {
-    console.log(action, "action desde el store");
     set({ actionsCrud: action }, false, "setAction");
   },
   clearRecords: () => set({ records: new Map() }, false, "clearRecords"),

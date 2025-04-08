@@ -54,14 +54,9 @@ export const FormAccountDialog: FC = memo(() => {
       : accountCreateMutation.isPending;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(account);
-    console.log(account?.id);
-    console.log(values);
-
     const { status, ...rest } = values;
     const castingStatus = status === "true" ? true : false;
 
-    console.log(castingStatus);
     actionType === "update"
       ? accountUpdateMutation.mutate({
           id: account!.id!,

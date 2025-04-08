@@ -8,6 +8,7 @@ export const customDoubleCsrf = () => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'prod',
       sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
+      maxAge: 600000,
     },
   };
 

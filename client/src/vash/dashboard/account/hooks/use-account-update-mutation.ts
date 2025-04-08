@@ -68,7 +68,6 @@ export const useAccountUpdateMutation = () => {
       queryClient.setQueryData(
         ["accounts", { page, limit, search }],
         (old: AccountsResponse) => {
-          console.log({ old }, "Cached data before update");
           if (!old) return context.previousData;
 
           const accounts = old.data.accounts.map((cacheAccount) => {
