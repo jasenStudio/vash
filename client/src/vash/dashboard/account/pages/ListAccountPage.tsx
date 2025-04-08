@@ -3,7 +3,7 @@ import { columns } from "../components/datatable/columns";
 import { DataTable } from "../components/datatable/data-table";
 import useAccounts from "../hooks/use-accounts";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Account } from "@/domain";
 
 const ListAccountPage = () => {
