@@ -64,84 +64,7 @@ export const useAccountMutation = () => {
           },
         });
 
-        const redistributeRecords = (currentPage: number) => {
-          const currentPageKey = [
-            "accounts",
-            { page: currentPage, limit, search },
-          ];
-          const nextPageKey = [
-            "accounts",
-            { page: currentPage + 1, limit, search },
-          ];
-
-          const currentPageData =
-            queryClient.getQueryData<AccountsResponse>(currentPageKey);
-          const nextPageData =
-            queryClient.getQueryData<AccountsResponse>(nextPageKey);
-
-          if (!currentPageData) return;
-
-          const accountsToMove = currentPageData.data.accounts.slice(limit);
-
-          const remainingAccounts = currentPageData.data.accounts.slice(
-            0,
-            limit
-          );
-
-          //* 1. Agregando nuevo Registro a pagina actual sin cache disponible para la siguiente pagina
-          if (
-            currentPageData.data.accounts.length > limit &&
-            !queryClient.getQueryData(nextPageKey)
-          ) {
-            queryClient.setQueryData(currentPageKey, {
-              ...currentPageData,
-              data: { accounts: remainingAccounts },
-            });
-
-            accountToMoveOptimistic = { ...accountsToMove[0] };
-          } else if (currentPageData.data.accounts.length > limit) {
-            //* 2. agregando nuevo registro a pagina actual con cache disponible para todas las paginas
-
-            queryClient.setQueryData(currentPageKey, {
-              ...currentPageData,
-              data: { accounts: remainingAccounts },
-            });
-
-            // Manejar página siguiente
-            if (currentPage < newTotalPages) {
-              if (nextPageData) {
-                queryClient.setQueryData(nextPageKey, {
-                  ...nextPageData,
-                  data: {
-                    accounts: [
-                      ...accountsToMove,
-                      ...nextPageData.data.accounts,
-                    ],
-                  },
-                });
-              } else {
-                // Crear nueva página si no existe
-                queryClient.setQueryData(nextPageKey, {
-                  ...currentPageData,
-                  data: { accounts: accountsToMove },
-                  meta: {
-                    ...currentPageData.meta,
-                    currentPage: currentPage + 1,
-                  },
-                });
-              }
-
-              // Verificar si la página siguiente ahora excede el límite
-              const updatedNextData =
-                queryClient.getQueryData<AccountsResponse>(nextPageKey);
-              if (updatedNextData!.data.accounts.length > limit) {
-                redistributeRecords(currentPage + 1);
-              }
-            }
-          }
-        };
-
-        redistributeRecords(1);
+        redistributeRecordsAccount(1, newTotalPages, accountToMoveOptimistic);
 
         // 4. Actualizar metadata en todas las páginas
         for (let i = 1; i <= newTotalPages; i++) {
@@ -241,6 +164,79 @@ export const useAccountMutation = () => {
       toast.success("Cuenta agregada exitosamente");
     },
   });
+
+  const redistributeRecordsAccount = (
+    currentPage: number,
+    newTotalPages: number,
+    accountToMoveOptimistic: Partial<Account>
+  ) => {
+    const currentPageKey = ["accounts", { page: currentPage, limit, search }];
+    const nextPageKey = ["accounts", { page: currentPage + 1, limit, search }];
+
+    const currentPageData =
+      queryClient.getQueryData<AccountsResponse>(currentPageKey);
+    const nextPageData =
+      queryClient.getQueryData<AccountsResponse>(nextPageKey);
+
+    if (!currentPageData) return;
+
+    const accountsToMove = currentPageData.data.accounts.slice(limit);
+
+    const remainingAccounts = currentPageData.data.accounts.slice(0, limit);
+
+    //* 1. Agregando nuevo Registro a pagina actual sin cache disponible para la siguiente pagina
+    if (
+      currentPageData.data.accounts.length > limit &&
+      !queryClient.getQueryData(nextPageKey)
+    ) {
+      queryClient.setQueryData(currentPageKey, {
+        ...currentPageData,
+        data: { accounts: remainingAccounts },
+      });
+
+      accountToMoveOptimistic = { ...accountsToMove[0] };
+    } else if (currentPageData.data.accounts.length > limit) {
+      //* 2. agregando nuevo registro a pagina actual con cache disponible para todas las paginas
+
+      queryClient.setQueryData(currentPageKey, {
+        ...currentPageData,
+        data: { accounts: remainingAccounts },
+      });
+
+      // Manejar página siguiente
+      if (currentPage < newTotalPages) {
+        if (nextPageData) {
+          queryClient.setQueryData(nextPageKey, {
+            ...nextPageData,
+            data: {
+              accounts: [...accountsToMove, ...nextPageData.data.accounts],
+            },
+          });
+        } else {
+          // Crear nueva página si no existe
+          queryClient.setQueryData(nextPageKey, {
+            ...currentPageData,
+            data: { accounts: accountsToMove },
+            meta: {
+              ...currentPageData.meta,
+              currentPage: currentPage + 1,
+            },
+          });
+        }
+
+        // Verificar si la página siguiente ahora excede el límite
+        const updatedNextData =
+          queryClient.getQueryData<AccountsResponse>(nextPageKey);
+        if (updatedNextData!.data.accounts.length > limit) {
+          redistributeRecordsAccount(
+            currentPage + 1,
+            newTotalPages,
+            accountToMoveOptimistic
+          );
+        }
+      }
+    }
+  };
 
   return mutation;
 };
