@@ -21,7 +21,8 @@
         "save": "Save",
         "active": "Active",
         "inactive": "Inactive",
-        "ViewDetails": "View Details"
+        "ViewDetails": "View Details",
+        "columns": "Columns"
     },
     "configuration": {
         "title": "Settings",
@@ -50,6 +51,7 @@
     "entities": {
         "account": {
             "create": "Create Account",
+            "add": "Add Account",
             "update": "Update Account",
             "delete": "Delete Account",
             "success": "Account created successfully",

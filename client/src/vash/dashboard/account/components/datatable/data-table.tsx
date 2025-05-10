@@ -44,6 +44,7 @@ import { useDialog } from "@/vash/store/ui/useDialog";
 import { AlertDialogAccount } from "../AlertDialogAccount/AlertDialogAccount";
 import { PaginationLimitControl } from "./PaginationComponents/PaginationLimitControls/PaginationLimitControl";
 import { Hourglass } from "react-loader-spinner";
+import { useTranslation } from "react-i18next";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -75,6 +76,7 @@ export function DataTable<TData, TValue>({
   onSetPage,
   onSearch,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation();
   const [filterInput, setFilterInput] = useState("");
   const [currentStatus, setCurrentStatus] = useState("all");
 
@@ -184,7 +186,7 @@ export function DataTable<TData, TValue>({
               className={`${isMobile ? "w-full" : ""}`}
             >
               <Button variant="outline" className="ml-auto">
-                Columns
+                {t("common.columns")}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
