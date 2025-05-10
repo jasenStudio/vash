@@ -1,5 +1,11 @@
 import { ColumnDef, SortDirection, Row, FilterFn } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, MoreHorizontal } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Edit,
+  MoreHorizontal,
+  Trash,
+} from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -176,10 +182,10 @@ export const columns: ColumnDef<Account>[] = [
                   setData(account);
                 }}
               >
-                Editar cuenta
+                <Edit className="ml-1" /> {t("entities.account.update")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View account</DropdownMenuItem>
+              {/* <DropdownMenuItem>View account</DropdownMenuItem>  */}
               <DropdownMenuItem
                 onClick={(e: any) => {
                   e.stopPropagation();
@@ -188,7 +194,7 @@ export const columns: ColumnDef<Account>[] = [
                   setData(account.id);
                 }}
               >
-                Delete ACCOUNT
+                <Trash className="ml-1" /> {t("entities.account.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

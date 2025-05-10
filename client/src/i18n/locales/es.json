@@ -21,7 +21,8 @@
         "saveChanges": "Guardar Cambios",
         "save": "Guardar",
         "active": "Activo",
-        "inactive": "Inactivo"
+        "inactive": "Inactivo",
+        "columns": "Columnas"
     },
     "configuration": {
         "title": "Configuración",
@@ -50,6 +51,7 @@
     "entities": {
         "account": {
             "create": "Crear Cuenta",
+            "add": "Agregar Cuenta",
             "update": "Actualizar Cuenta",
             "delete": "Eliminar Cuenta",
             "success": "Cuenta creada con éxito",
