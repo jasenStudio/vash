@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  user_name     String         @unique
+  password      String
+  is_admin      Boolean        @default(false)
+  status        Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  accounts      Account[]
+  refreshTokens RefreshToken[]
+  RevokedToken  RevokedToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  jti        String   @unique // Identificador único del refresh token
+  token_hash String // Almacena el refresh token hasheado
+  user_id    Int // Relación con el usuario
+  user_agent String // User agent del cliente
+  expires_at DateTime // Fecha de expiración del refresh token
+  created_at DateTime @default(now()) // Fecha de creación
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade) // Relación con el modelo User
+
+  @@map("refresh_tokens") // Nombre de la tabla en la base de datos
+}
+
+model RevokedToken {
+  id         Int       @id @default(autoincrement())
+  jti        String    @unique // Identificador único del refresh token
+  token_hash String // Almacena el refresh token hasheado
+  user_id    Int // Relación con el usuario
+  type       TokenType // Tipo de token (access o refresh)
+  expires_at DateTime // Fecha de expiración del refresh token
+  created_at DateTime  @default(now()) // Fecha de creación
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("revoked_tokens") // Nombre de la tabla en la base de datos
+}
+
+model Account {
+  id            Int            @id @default(autoincrement())
+  account_email String         @unique
+  user_id       Int
+  status        Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  user          User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  subscription  Subscription[]
+
+  @@map("accounts")
+}
+
+model Categories_service {
+  id         Int       @id @default(autoincrement())
+  name       String
+  status     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  services   Service[]
+
+  @@map("categories_services")
+}
+
+model Service {
+  id                     Int                @id @default(autoincrement())
+  name                   String
+  categories_services_id Int
+  status                 Boolean            @default(true)
+  created_at             DateTime           @default(now())
+  updated_at             DateTime           @updatedAt
+  categories_services    Categories_service @relation(fields: [categories_services_id], references: [id], onDelete: Cascade)
+  subscription           Subscription[]
+
+  @@map("services")
+}
+
+model Subscription {
+  id                     Int                  @id @default(autoincrement())
+  user_name_subscription String?
+  services_id            Int
+  account_id             Int
+  status                 Boolean              @default(true)
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+  accounts               Account              @relation(fields: [account_id], references: [id], onDelete: Cascade)
+  services               Service              @relation(fields: [services_id], references: [id], onDelete: Cascade)
+  subscription_detail    Subscription_detail?
+
+  @@map("subscriptions")
+}
+
+model Subscription_detail {
+  id                Int                @id @default(autoincrement())
+  password          String?
+  connect_google    Boolean            @default(false)
+  connect_github    Boolean            @default(false)
+  connect_microsoft Boolean            @default(false)
+  other_connect     String?
+  status            Boolean            @default(true)
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  comment           String?
+  subscription_id   Int                @unique
+  EncryptedField    EncryptedField[]
+  Recovery_methods  Recovery_methods[]
+  subscription      Subscription       @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions_details")
+}
+
+model EncryptedField {
+  id                 Int                  @id @default(autoincrement())
+  table_name         String
+  record_id          Int?
+  field_name         String
+  iv                 String
+  tag                String
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  record_recovery_id Int?
+  subscriptionDetail Subscription_detail? @relation(fields: [record_id], references: [id], onDelete: Cascade)
+  recovery_methods   Recovery_methods?    @relation(fields: [record_recovery_id], references: [id], onDelete: Cascade)
+
+  @@map("encrypted_fields")
+}
+
+model Recovery_methods {
+  id                     Int                 @id @default(autoincrement())
+  subscription_detail_id Int
+  method_type            Method_type
+  method_value           String?
+  status                 Boolean             @default(true)
+  created_at             DateTime            @default(now())
+  updated_at             DateTime            @updatedAt
+  EncryptedField         EncryptedField[]
+  subscription_detail    Subscription_detail @relation(fields: [subscription_detail_id], references: [id], onDelete: Cascade)
+
+  @@map("recovery_methods")
+}
+
+enum Method_type {
+  password_recovery
+  email_recovery
+  token_recovery
+  phone_recovery
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
+}

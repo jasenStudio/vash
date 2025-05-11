@@ -1,0 +1,48 @@
+### #* Listar cuentas
+GET http://localhost:3000/api/accounts?page=1&limit=5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM1NjgwMjA4LCJleHAiOjE3MzU2ODc0MDh9.yFF6D4E_3eHS_3Y545cStj0GGGqmJQ9fztivyXBrBtA
+
+{}
+
+### #* Listar cuentas
+GET http://localhost:3000/api/accounts?page=1&limit=10&search=john
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQzMTk0NDksImV4cCI6MTczNDMyNjY0OX0.L46eOdLbJFvYY1Q4D9WVugHN5HwXjTRr0dGfAq_GhuY
+
+{}
+
+### #* Crear cuenta
+POST http://localhost:3000/api/accounts/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzQ4MjUxMDgsImV4cCI6MTczNDgzMjMwOH0.5eDPWpSJYH4swO8w-9ZdcEZYDyx1VzpXLiML_ggvMVs
+
+{
+    "account_email":"jorge@gmail.com"
+}
+
+### #* edit cuenta
+PUT http://localhost:3000/api/accounts/edit/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUwNTUzNjcsImV4cCI6MTczNTA2MjU2N30.UXVac6GoEF4V8fWrBPb758lxPYV7za7M66_-IUMbqec
+
+{
+    "account_email":"johndoe@gmail.com",
+    "status": true
+}
+
+### #* deleted account
+DELETE  http://localhost:3000/api/accounts/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUxNzI0ODgsImV4cCI6MTczNTE3OTY4OH0.pQrlD7yOZVXXfvaEiwFtLwxRmA-nOnyhXz__VTsF7Rg
+
+{}
+
+### #* deleted accounts
+POST  http://localhost:3000/api/accounts/batch-delete
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MzUyMjIzMDgsImV4cCI6MTczNTIyOTUwOH0.ghtp9VOq4zzheW-a4cS58Tw7Q4jT2B2ucSslYR00Ol0
+
+{
+    "ids": [1,3,5,7]
+}

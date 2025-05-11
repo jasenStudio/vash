@@ -1,0 +1,77 @@
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwic3RhdHVzIjp0cnVlLCJkZXJpdmVkS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbNDksMTMwLDIwMSw2NSw1NCwyMjUsMTI3LDIyOCwzLDI1NSwxNDIsODUsMTUwLDIxNywyNDAsMTk2LDg2LDE2NSwzMSw3NSw5NywxMjksMTIwLDEyOCwxODUsMTU3LDgwLDY4LDExNiwyOCw3NSwxMzldfSwiaWF0IjoxNzM2ODIyNzUyLCJleHAiOjE3MzY4Mjk5NTJ9.qemttbF0JAibjw2T5xCTQv202uuzdtY1_sgwC-hVuK0
+###* module subcription
+POST http://localhost:3000/api/subcription/new
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "account_id":1,
+    "services_id":1,
+    "subscriptionDetail":{
+        "password":"1234567"
+    }
+}
+
+
+
+
+###* module subcription find all
+GET http://localhost:3000/api/subcription
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* module subcription find all with params query
+GET http://localhost:3000/api/subcription?limit=10&page=2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* module subcription find all with params query search
+GET http://localhost:3000/api/subcription?limit=10&page=3&search=
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+
+###* module subcription find by id
+GET http://localhost:3000/api/subcription/42
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}
+
+###* module subcription edit
+PUT http://localhost:3000/api/subcription/3/edit
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+
+ "user_name_subscription":"",
+ "services_id": 1,
+ "account_id": 1
+
+}
+
+
+###* module subcription find by id subcription detail
+PUT http://localhost:3000/api/subcription/41/subcription-detail/41
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password":"12345689",
+  "connect_google":true
+}
+
+###* module subcription delete
+DELETE http://localhost:3000/api/subcription/43
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{}

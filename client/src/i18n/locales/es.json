@@ -1,0 +1,72 @@
+{
+    "auth": {
+        "confirmPassword": "Confirmar Contraseña",
+        "createAccount": "Crea Cuenta",
+        "creatingAccount": "Creando tu cuenta...",
+        "email": "Correo Electrónico",
+        "haveAnAccount": "¿Ya tienes una cuenta?",
+        "notHaveAccount": "¿No tienes una cuenta?",
+        "login": "Iniciar Sesión",
+        "password": "Contraseña",
+        "readAndAgree": "He leído y acepto los ",
+        "register": "Crear Cuenta",
+        "username": "Usuario",
+        "termsAndConditions": "términos y condiciones",
+        "privacyPolicy": "la Política de Privacidad"
+    },
+    "common": {
+        "and": "y ",
+        "createProcess": "",
+        "close": "Cancelar",
+        "saveChanges": "Guardar Cambios",
+        "save": "Guardar",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "columns": "Columnas"
+    },
+    "configuration": {
+        "title": "Configuración",
+        "description": "Realiza cambios en tu configuración de tema y lenguaje aquí. Haz clic en guardar cuando termines.",
+        "selectTheme": "Selecciona un tema:",
+        "selectLanguage": "Selecciona un idioma:",
+        "messageConfirmation": "Configuración aplicada"
+    },
+    "theme": {
+        "dark": "Oscuro",
+        "light": "Claro"
+    },
+    "language": {
+        "es": "Español",
+        "en": "Ingles"
+    },
+    "footer": {
+        "allRightsReserved": "Todos los derechos reservados.",
+        "privacyPolicy": "Política de Privacidad",
+        "contact": "Contacto"
+    },
+    "errors": {
+        "unexpected_error": "Error inesperado en la mutación",
+        "account_email_exists": "La cuenta ya existe"
+    },
+    "entities": {
+        "account": {
+            "create": "Crear Cuenta",
+            "add": "Agregar Cuenta",
+            "update": "Actualizar Cuenta",
+            "delete": "Eliminar Cuenta",
+            "success": "Cuenta creada con éxito",
+            "updated": "Cuenta actualizada con éxito",
+            "deleted": "Cuenta eliminada con éxito",
+            "updated_error": "Hubo un error al actualizar la cuenta"
+        },
+        "subscriptions": {
+            "subscriptions": "subscripciones",
+            "create": "Crear Subscripcion",
+            "update": "Editar Subscripcion",
+            "delete": "Eliminar Subscripción"
+        }
+    },
+    "validations": {
+        "email": "ingresa un correo electrónico válido"
+    }
+}
