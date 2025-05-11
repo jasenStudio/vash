@@ -97,18 +97,12 @@ export const useAccountUpdateMutation = () => {
         queryKey: ["account", context?.optimisticAccount.id],
       });
 
-      queryClient.setQueryData(
-        ["accounts", { page, limit, search }],
-        (old: AccountsResponse) => {
-          if (!old) return context?.previousData;
-
-          const accounts = old.data.accounts.filter(
-            (account) => account.id !== context?.optimisticAccount.id
-          );
-
-          return { ...old, data: { accounts } };
-        }
-      );
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["accounts", { page, limit, search }],
+          context.previousData
+        );
+      }
 
       toast.error(t("entities.account.updated_error"), { duration: 5000 });
     },

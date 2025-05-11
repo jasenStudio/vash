@@ -54,10 +54,10 @@ export class AppModule implements NestModule {
       'subcription',
       'subcriptions-details',
       'accounts',
-      {
-        path: '/auth/token-csrf',
-        method: RequestMethod.GET,
-      },
+      // {
+      //   path: '/auth/token-csrf',
+      //   method: RequestMethod.GET,
+      // },
       {
         path: '/auth/renew',
         method: RequestMethod.GET,

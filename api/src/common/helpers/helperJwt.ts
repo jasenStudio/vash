@@ -207,6 +207,13 @@ export class JwtHelper {
         throw new UnauthorizedException('Refresh Token falta o es invalido');
       }
 
+      if (
+        process.env.NODE_ENV !== 'prod' &&
+        userAgentCurrent.includes('Mobile')
+      ) {
+        userAgentCurrent = userAgentCurrent.replace('Desktop', 'Mobile');
+      }
+
       const accessTokenPayloadVerified =
         await this.verifyAndCheckAccessTokenStatus(accessToken);
 
@@ -222,7 +229,12 @@ export class JwtHelper {
         accessTokenPayloadVerified.user_agent !== userAgentCurrent ||
         storedRefreshToken.user_agent !== userAgentCurrent
       ) {
-        console.log('aui debe enterar');
+        console.log({
+          userAgentCurrent: userAgentCurrent,
+          accessTokenUserAgent: accessTokenPayloadVerified.user_agent,
+          refreshToken: storedRefreshToken.user_agent,
+        });
+        console.log('aqui debe enterar');
         await this.revokeTokensByUserAgent({
           res,
           accessToken,
