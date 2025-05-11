@@ -7,18 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import { doubleCsrf, DoubleCsrfConfigOptions } from 'csrf-csrf';
 import helmet from 'helmet';
 import { NextFunction, Request, Response } from 'express';
-import { customDoubleCsrf } from './common/helpers/HelpersCsrf';
-
-// export const csrfOptions: DoubleCsrfConfigOptions = {
-//   getSecret: () => process.env.CSRF_SECRET,
-//   cookieName: 'csrf-token',
-//   cookieOptions: {
-//     httpOnly: true,
-//     secure: process.env.NODE_ENV === 'prod',
-//     sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
-//     maxAge: 600,
-//   },
-// };
+import { doubleCsrfProtection } from './common/helpers/HelpersCsrf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,12 +24,14 @@ async function bootstrap() {
 
   app.use(cookieParser(process.env.CSRF_SECRET));
 
-  const { doubleCsrfProtection } = customDoubleCsrf();
-
   // const { doubleCsrfProtection, validateRequest, invalidCsrfTokenError } =
   //   doubleCsrf(csrfOptions);
 
   app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log('use middleware');
+
+    console.log('Header:', req.headers['x-csrf-token']);
+    console.log('Cookie:', req.cookies['x-csrf-token']);
     const csrfExemptRoutes = [
       '/api/auth/logout',
       '/api/auth/sign-in',
@@ -49,17 +40,21 @@ async function bootstrap() {
       '/api/auth/renew',
     ];
 
-    try {
-      if (
-        ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) &&
-        !csrfExemptRoutes.some((route) => req.path.startsWith(route))
-      ) {
-        return doubleCsrfProtection(req, res, next);
-      }
-    } catch (error) {
-      console.log(error + 'Algun eeror');
-    }
+    const isModifyingMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(
+      req.method,
+    );
+    const isExemptRoute = csrfExemptRoutes.some((route) =>
+      req.path.startsWith(route),
+    );
 
+    if (isModifyingMethod && !isExemptRoute) {
+      try {
+        return doubleCsrfProtection(req, res, next);
+      } catch (error) {
+        console.error('CSRF middleware error:', error);
+        return res.status(403).json({ message: 'Invalid CSRF token' });
+      }
+    }
     next();
   });
 

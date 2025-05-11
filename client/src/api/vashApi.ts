@@ -11,17 +11,8 @@ const vashApi = axios.create({
 });
 
 let activeCsrfRequest: Promise<string> | null = null;
-let csrfToken: string | null = null;
-let tokenExpiresAt: number | null = null;
 
 export async function getFreshCsrfToken(): Promise<string> {
-  const now = Date.now();
-
-  if (csrfToken && tokenExpiresAt && now < tokenExpiresAt) {
-    console.log("CSRF token aún es válido, evitando nueva petición");
-    return csrfToken;
-  }
-
   if (activeCsrfRequest) {
     return activeCsrfRequest;
   }
@@ -32,9 +23,7 @@ export async function getFreshCsrfToken(): Promise<string> {
         withCredentials: true,
       })
       .then((response) => {
-        csrfToken = response.data.token;
-        tokenExpiresAt = response.data.expiresAt;
-        return csrfToken ?? "";
+        return response.data.token ?? "";
       })
       .finally(() => {
         activeCsrfRequest = null;
@@ -42,6 +31,7 @@ export async function getFreshCsrfToken(): Promise<string> {
 
     return await activeCsrfRequest;
   } catch (error) {
+    console.log(error);
     activeCsrfRequest = null;
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       useAuthStore.getState().actionUnauthenticated();

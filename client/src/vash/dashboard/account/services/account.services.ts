@@ -49,9 +49,9 @@ export class AccountService {
   static update = async ({ id, payload }: Props) => {
     const URL = `/accounts/edit/${id}`;
     const { created_at, ...rest } = payload;
-    console.log(payload);
+    // console.log(payload);
     try {
-      const { data } = await vashApi.put(URL, rest);
+      const { data } = await vashApi.put(URL, rest, { withCredentials: true });
       return data;
     } catch (error) {
       throw ErrorMapper.handleError(error, "Ops , you can't update account");

@@ -15,16 +15,13 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { UserAgent } from 'src/common/decorators/user-agent/user-agent';
 import { JwtHelper } from '../../../common/helpers/helperJwt';
-import { PrismaService } from 'src/modules/prisma/services/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
 import { CookieHelper } from 'src/common/helpers/helperCookie';
 import {
   ACCESS_TOKEN_COOKIE_DURATION,
-  ACCESS_TOKEN_DURATION,
   REFRESH_TOKEN_COOKIE_DURATION,
 } from 'src/common/constants';
-import { doubleCsrf } from 'csrf-csrf';
-import { customDoubleCsrf } from 'src/common/helpers/HelpersCsrf';
+
+import { generateToken } from 'src/common/helpers/HelpersCsrf';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -55,15 +52,20 @@ export class AuthController {
   ) {
     const result = await this.__authService.login(payload, userAgent);
 
-    const { generateToken } = customDoubleCsrf();
-
     const { refreshToken, token: newAccessToken } = result;
 
     CookieHelper.clearCookie(res, 'access_token');
     CookieHelper.clearCookie(res, 'refresh_token');
     CookieHelper.clearCookie(res, 'csrf-token');
 
-    const csrfToken = generateToken(req, res);
+    // const csrfToken = generateToken(req, res);
+
+    // res.cookie('csrf-token', csrfToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'prod',
+    //   sameSite: process.env.NODE_ENV === 'prod' ? 'none' : 'lax',
+    //   maxAge: 600000,
+    // });
 
     CookieHelper.setCookie(
       res,
@@ -108,6 +110,9 @@ export class AuthController {
       device,
     );
 
+    // const csrfToken = generateToken(req, res, true);
+    // CookieHelper.setCookie(res, 'csrf-token', csrfToken, 600000);
+
     return res.status(200).json({ ...result });
   }
 
@@ -146,18 +151,11 @@ export class AuthController {
   }
 
   @Get('token-csrf')
-  async tokencsrg(@Req() req: Request, @Res() res: Response) {
+  async tokencsrf(@Req() req: Request, @Res() res: Response) {
     try {
-      console.log(req.cookies['csrf-token']);
-
-      const { generateToken } = customDoubleCsrf();
-
+      CookieHelper.clearCookie(res, 'csrf-token');
       const token = generateToken(req, res, true);
-
-      const expiresIn = 600; // Coincide con el maxAge de tu cookie
-      const expiresAt = Date.now() + expiresIn * 1000;
-
-      return res.status(200).json({ token, expiresIn, expiresAt });
+      return res.status(200).json({ token });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error generating CSRF token' });
