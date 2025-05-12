@@ -13,8 +13,10 @@ import { useAccountDeleteMutation } from "../../hooks";
 import { memo } from "react";
 import { toast } from "sonner";
 import { useAccountsDeleteMutation } from "../../hooks/use-accounts-delete-mutation";
+import { useTranslation } from "react-i18next";
 
 export const AlertDialogAccount = memo(() => {
+  const { t } = useTranslation();
   const { actionType, dialogType, isOpen, onClose, typeComponent, data } =
     useAccountAlertDialog();
   const deleteAccountMutation = useAccountDeleteMutation();
@@ -50,19 +52,22 @@ export const AlertDialogAccount = memo(() => {
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("entities.account.confirmAccountDeletion")}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            {t("entities.account.accountDeletionWarning")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose}>
+            {t("common.close")}
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleSubmit}
             className="bg-button-primary text-white hover:bg-button-primary-foreground"
           >
-            Continue
+            {t("common.continue")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

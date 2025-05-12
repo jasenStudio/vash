@@ -100,7 +100,7 @@ export const columns: ColumnDef<Account>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          {t("common.email")}
           <SortedIcon isSorted={column.getIsSorted()} />
         </Button>
       );
@@ -116,7 +116,8 @@ export const columns: ColumnDef<Account>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            status
+            {t("common.status")}
+
             <SortedIcon isSorted={column.getIsSorted()} />
           </Button>
         </div>
@@ -124,7 +125,8 @@ export const columns: ColumnDef<Account>[] = [
     },
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      const castStatus = status === "true" ? t("common.active") : "Inactive";
+      const castStatus =
+        status === "true" ? t("common.active") : t("common.inactive");
       return <div className="text-right font-medium p-4">{castStatus}</div>;
     },
   },
@@ -138,7 +140,7 @@ export const columns: ColumnDef<Account>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            created_at
+            {t("common.created_at")}
             <SortedIcon isSorted={column.getIsSorted()} />
           </Button>
         </div>

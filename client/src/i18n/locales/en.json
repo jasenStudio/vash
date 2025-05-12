@@ -15,14 +15,21 @@
         "termsAndConditions": "Terms of Service "
     },
     "common": {
-        "and": "and ",
-        "close": "Cancel",
-        "saveChanges": "Save Changes",
-        "save": "Save",
         "active": "Active",
+        "actions": "Actions",
+        "and": "and ",
+        "all": "All",
+        "close": "Cancel",
+        "columns": "Columns",
+        "continue": "Continue",
+        "created_at": "Created At",
+        "email": "Email",
         "inactive": "Inactive",
-        "ViewDetails": "View Details",
-        "columns": "Columns"
+        "save": "Save",
+        "saveChanges": "Save Changes",
+        "select": "Select",
+        "status": "Status",
+        "ViewDetails": "View Details"
     },
     "configuration": {
         "title": "Settings",
@@ -50,14 +57,22 @@
     },
     "entities": {
         "account": {
+            "accountDeletionWarning": "This action cannot be undone. This will permanently delete this account and remove your data from our servers.",
             "create": "Create Account",
+            "confirmAccountDeletion": "Are you sure you want to delete this account?",
             "add": "Add Account",
             "update": "Update Account",
             "delete": "Delete Account",
+            "delete_accounts": "Delete Accounts",
             "success": "Account created successfully",
             "updated": "Account updated successfully",
             "deleted": "Account deleted successfully",
-            "updated_error": "An error occurred while updating the account"
+            "updated_error": "An error occurred while updating the account",
+            "filter_placeholder_account": "Filter emails",
+            "form": {
+                "email": "Email",
+                "status": "Status"
+            }
         },
         "subscriptions": {
             "subscriptions": "subscriptions",

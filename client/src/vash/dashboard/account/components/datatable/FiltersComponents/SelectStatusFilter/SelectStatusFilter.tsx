@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FC, memo } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SelectStatusFilterProps {
   status: string;
@@ -16,6 +17,7 @@ interface SelectStatusFilterProps {
 
 export const SelectStatusFilter: FC<SelectStatusFilterProps> = memo(
   ({ status, onStatusSelectChange }) => {
+    const { t } = useTranslation();
     return (
       <div className="w-full my-2">
         <Select value={status} onValueChange={onStatusSelectChange}>
@@ -24,10 +26,10 @@ export const SelectStatusFilter: FC<SelectStatusFilterProps> = memo(
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>status</SelectLabel>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="true">Active</SelectItem>
-              <SelectItem value="false">Inactive</SelectItem>
+              <SelectLabel>{t("common.status")}</SelectLabel>
+              <SelectItem value="all">{t("common.all")}</SelectItem>
+              <SelectItem value="true">{t("common.active")}</SelectItem>
+              <SelectItem value="false">{t("common.inactive")}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
