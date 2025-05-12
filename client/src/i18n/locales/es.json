@@ -15,14 +15,21 @@
         "privacyPolicy": "la Política de Privacidad"
     },
     "common": {
-        "and": "y ",
-        "createProcess": "",
-        "close": "Cancelar",
-        "saveChanges": "Guardar Cambios",
-        "save": "Guardar",
         "active": "Activo",
+        "actions": "Acciones",
+        "and": "y ",
+        "all": "Todos",
+        "close": "Cancelar",
+        "columns": "Columnas",
+        "continue": "Continuar",
+        "created_at": "Fecha de creación",
+        "createProcess": "",
+        "email": "Correo Electrónico",
         "inactive": "Inactivo",
-        "columns": "Columnas"
+        "save": "Guardar",
+        "saveChanges": "Guardar Cambios",
+        "select": "Seleccionar",
+        "status": "Estados"
     },
     "configuration": {
         "title": "Configuración",
@@ -50,14 +57,22 @@
     },
     "entities": {
         "account": {
+            "accountDeletionWarning": "Esta acción no se puede deshacer. Esto eliminará permanentemente esta cuenta y eliminará tus datos de nuestros servidores.",
             "create": "Crear Cuenta",
+            "confirmAccountDeletion": "¿Estás seguro de que deseas eliminar esta cuenta?",
             "add": "Agregar Cuenta",
             "update": "Actualizar Cuenta",
             "delete": "Eliminar Cuenta",
+            "delete_accounts": "Eliminar Cuentas",
             "success": "Cuenta creada con éxito",
             "updated": "Cuenta actualizada con éxito",
             "deleted": "Cuenta eliminada con éxito",
-            "updated_error": "Hubo un error al actualizar la cuenta"
+            "updated_error": "Hubo un error al actualizar la cuenta",
+            "filter_placeholder_account": "Filtrar correos",
+            "form": {
+                "email": "Correo Electrónico",
+                "status": "Estados"
+            }
         },
         "subscriptions": {
             "subscriptions": "subscripciones",

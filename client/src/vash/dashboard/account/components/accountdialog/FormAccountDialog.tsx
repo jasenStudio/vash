@@ -32,9 +32,11 @@ import { useAccountDialog } from "../../hooks";
 import { useAccountUpdateMutation } from "@/vash/dashboard/account/hooks/use-account-update-mutation";
 import { ButtonDialog, ButtonDialogCancel } from "..";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useTranslation } from "react-i18next";
 
 const formSchema = formAccountSchema;
 export const FormAccountDialog: FC = memo(() => {
+  const { t } = useTranslation();
   const accountCreateMutation = useAccountMutation();
   const accountUpdateMutation = useAccountUpdateMutation();
 
@@ -52,6 +54,11 @@ export const FormAccountDialog: FC = memo(() => {
     actionType === "update"
       ? accountUpdateMutation.isPending
       : accountCreateMutation.isPending;
+
+  const formTitleByAction =
+    actionType === "create"
+      ? t("entities.account.create")
+      : t("entities.account.update");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { status, ...rest } = values;
@@ -77,7 +84,7 @@ export const FormAccountDialog: FC = memo(() => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[22rem]">
         <DialogHeader>
-          <DialogTitle>{actionType} account</DialogTitle>
+          <DialogTitle>{formTitleByAction}</DialogTitle>
         </DialogHeader>
 
         <DialogDescription hidden>
@@ -91,7 +98,7 @@ export const FormAccountDialog: FC = memo(() => {
               name="account_email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>account_email</FormLabel>
+                  <FormLabel>{t("entities.account.form.email")}</FormLabel>
                   <FormControl>
                     <Input placeholder="Email" {...field} />
                   </FormControl>
@@ -106,7 +113,7 @@ export const FormAccountDialog: FC = memo(() => {
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>status</FormLabel>
+                    <FormLabel>{t("entities.account.form.status")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value.toString()}
@@ -117,8 +124,12 @@ export const FormAccountDialog: FC = memo(() => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="true">Active</SelectItem>
-                        <SelectItem value="false">Inactive</SelectItem>
+                        <SelectItem value="true">
+                          {t("common.active")}
+                        </SelectItem>
+                        <SelectItem value="false">
+                          {t("common.inactive")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -28,6 +28,7 @@ import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import {
   useAccountDataTablemobile,
   useAccountDataTable,
+  useUiColumns,
 } from "@/vash/dashboard/account/hooks";
 
 import {
@@ -208,7 +209,7 @@ export function DataTable<TData, TValue>({
                         column.toggleVisibility(!!value);
                       }}
                     >
-                      {columName}
+                      {useUiColumns(columName)}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
