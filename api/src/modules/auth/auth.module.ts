@@ -21,7 +21,6 @@ import { CookieHelper } from 'src/common/helpers/helperCookie';
   controllers: [AuthController],
   providers: [
     AuthService,
-    PrismaService,
     JwtHelper,
     cryptoHelper,
     CookieHelper,

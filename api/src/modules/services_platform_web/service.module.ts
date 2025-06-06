@@ -10,7 +10,7 @@ import { CategoriesServiceRepository, ServiceRepository } from './repositories';
 import { CategoriesService, ServicePlatformService } from './services';
 @Module({
   controllers: [ServicePlatformsController, CategoriesServicesController],
-  imports: [PrismaModule],
+  imports: [],
   providers: [
     ServicePlatformService,
     ServiceRepository,

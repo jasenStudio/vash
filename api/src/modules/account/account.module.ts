@@ -7,7 +7,7 @@ import { AccountRepository } from './repositories/account.repository';
 @Module({
   providers: [AccountService, AccountRepository],
   controllers: [AccountController],
-  imports: [PrismaModule],
+  imports: [],
   exports: [],
 })
 export class AccountModule {}

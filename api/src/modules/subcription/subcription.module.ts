@@ -13,7 +13,7 @@ import { HelperEncryptData } from 'src/common/helpers/helperEncrypteData';
 import { cryptoHelper } from 'src/common/helpers/helperCrypto';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [],
   providers: [
     SubcriptionService,
     SubcriptionRepository,
