@@ -7,7 +7,7 @@ export class SubscriptionService {
 
     try {
       const { data } = await vashApi.get(URL);
-      console.log(data);
+      console.log(data, "Aqui");
       return data;
     } catch (error) {
       ErrorMapper.handleError(error, "Opss, you can't load subscriptions");
