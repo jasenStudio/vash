@@ -151,7 +151,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex flex-col sm:grid sm:grid-cols-4 items-center py-4 justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center py-4 justify-between">
         {/**  filters account_email status */}
 
         <InputAccountEmailFilter
@@ -165,7 +165,9 @@ export function DataTable<TData, TValue>({
         />
 
         {/* deleteButton */}
-        <div className={`w-full ${isDeleteRecord && "my-2"}`}>
+        <div
+          className={`w-full ${isDeleteRecord && "flex justify-center my-2"}`}
+        >
           {isDeleteRecord ? (
             <ButtonDeleteAccount
               isDeleteRecord={isDeleteRecord}
@@ -177,7 +179,7 @@ export function DataTable<TData, TValue>({
           )}
         </div>
 
-        {/* columsVisible */}
+        {/* create account and columsVisible */}
         <div className="w-full my-2">
           {" "}
           <ButtonCreateAccount onOpen={onOpen} />

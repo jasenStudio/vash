@@ -39,6 +39,7 @@ import {
   SelectStatusFilter,
   PaginationLimitControl,
   PaginationInput,
+  ButtonCreateSubscription,
 } from "..";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,8 @@ import { useDebounce, useIsMobile } from "@/hooks";
 import { useSubscriptionDataTableView } from "@/vash/dashboard/subscription/hooks";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
+import { useDialog } from "@/vash/store/ui/useDialog";
+import { FormSubscriptionDialog } from "../SubcriptionDialog/FormSubscriptionDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -115,6 +118,9 @@ export function DataTable<TData, TValue>({
   //* Hook view datatable
   useSubscriptionDataTableView({ isMobile, columns, setColumnVisibility });
 
+  //** Dialog Component */
+  const onOpen = useDialog((state) => state.onOpen);
+
   const table = useReactTable({
     data,
     columns,
@@ -176,7 +182,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex flex-col sm:grid sm:grid-cols-4 items-center py-4 justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center py-4 justify-between">
         <div className="w-full my-2">
           <InputSubscriptionEmailFilter
             value={inputEmail}
@@ -193,11 +199,14 @@ export function DataTable<TData, TValue>({
 
         <div className={`w-full`}></div>
 
+        {/* Create subscription and columns visible */}
         <div className="w-full my-2">
           {" "}
           {/* <ButtonCreateAccount onOpen={onOpen} /> */}
+          <ButtonCreateSubscription onOpen={onOpen} />
           <DropdownMenu>
             <DropdownMenuTrigger
+              className={`${isMobile ? "w-full" : ""}`}
               asChild
               // className={`${isMobile ? "w-full" : ""}`}
             >
@@ -207,7 +216,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="center"
-              // className={`${isMobile && "min-w-[18rem]"}`}
+              className={`${isMobile && "min-w-[18rem]"}`}
             >
               {table
                 .getAllColumns()
@@ -233,6 +242,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
         </div>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -336,6 +346,8 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       </div>
+
+      <FormSubscriptionDialog />
     </>
   );
 }

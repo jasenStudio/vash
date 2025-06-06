@@ -18,7 +18,7 @@ export const SelectStatusFilter: FC<SelectStatusFilterProps> = memo(
   ({ status, onStatusSelectChange }) => {
     return (
       <Select value={status} onValueChange={onStatusSelectChange}>
-        <SelectTrigger className="w-full sm:w-[180px] sm:ml-2">
+        <SelectTrigger className="w-full sm:w-min-[180px] sm:ml-2">
           <SelectValue placeholder="Status - Active" />
         </SelectTrigger>
         <SelectContent>

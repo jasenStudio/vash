@@ -77,8 +77,10 @@
         "subscriptions": {
             "subscriptions": "subscripciones",
             "create": "Crear Subscripcion",
-            "update": "Editar Subscripcion",
-            "delete": "Eliminar Subscripción"
+            "add": "Agregar Subscripción",
+            "update": "Editar Subscripción",
+            "delete": "Eliminar Subscripción",
+            "delete_subscriptions": "Eliminar Subscripciones"
         }
     },
     "validations": {
